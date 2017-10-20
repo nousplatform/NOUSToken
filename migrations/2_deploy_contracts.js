@@ -20,15 +20,16 @@ module.exports = function(deployer) {
                 ]
             )
             .then(function(instances) {
+
                 console.log("NOUSToken:", instances[0].address);
                 console.log("RefundVault:", instances[1].address);
 
-                var instanceNousSale = NOUSSale.new(wallet, instances[0].address, instances[1].address);
-
-                instances[0].transferOwnership(instanceNousSale.address);
-                instances[1].transferOwnership(instanceNousSale.address);
-
-                return instanceNousSale.address;
+                return NOUSSale.new(wallet, instances[0].address, instances[1].address)
+                    .then(function (instanceNousSale) {
+                        instances[0].transferOwnership(instanceNousSale.address);
+                        instances[1].transferOwnership(instanceNousSale.address);
+                        return instanceNousSale.address
+                });
             })
             .then(function (nousSaleSddr) {
                 console.log("NOUSSale:", nousSaleSddr);
