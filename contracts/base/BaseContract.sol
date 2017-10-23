@@ -77,7 +77,7 @@ contract BaseContract is Ownable {
 		uint256 tokensMinted;               // The current amount of tokens minted by this agent
 		uint256 rate;						// default rate
 		uint256 minDeposit;                 // The minimum deposit amount allowed
-		//uint256 maxDeposit;                 // The maximum deposit amount allowed
+		uint256 maxDeposit;                 // The maximum deposit amount allowed
 		uint256 startTime;                  // The start time (unix format) when allowed to mint tokens
 		uint256 endTime;                    // The end time from unix format when to finish minting tokens
 		bool isFinalized;                   // Has this sales contract been completed and the ether sent to the deposit address?
@@ -146,7 +146,7 @@ contract BaseContract is Ownable {
 		SaleContractType _saleContractType,
 		uint256 _tokensLimit,
 		uint256 _minDeposit,
-		//uint256 _maxDeposit,
+		uint256 _maxDeposit,
 		uint256 _startTime,
 		uint256 _endTime,
 		uint256 _rate
@@ -171,8 +171,8 @@ contract BaseContract is Ownable {
 		newSalesAgent.saleContractType = _saleContractType;
 		newSalesAgent.tokensLimit = _tokensLimit * exponent;
 		newSalesAgent.tokensMinted = 0;
-		newSalesAgent.minDeposit = _minDeposit;
-		//newSalesAgent.maxDeposit = _maxDeposit;
+		newSalesAgent.minDeposit = _minDeposit * 1 ether;
+		newSalesAgent.maxDeposit = _maxDeposit * 1 ether;
 		newSalesAgent.startTime = _startTime;
 		newSalesAgent.endTime = _endTime;
 		newSalesAgent.rate = _rate;

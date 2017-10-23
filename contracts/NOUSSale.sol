@@ -27,7 +27,6 @@ contract NOUSSale is Crowdsale {
 		// minimum amount of funds to be raised in weis
 		targetEthMin = //5500  * (1 ether); // todo For test uncoment
 		targetEthMin = 4  * (1 ether);
-		//rate = 6400;
 
 
 		// 20% Will Be Retained by Nousplatform

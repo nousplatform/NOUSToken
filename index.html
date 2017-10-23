@@ -31,10 +31,10 @@
         <th>MinDeposit</th>
         <td><input type="text" id="MinDeposit" name="" size="27" value="0"></td>
     </tr>
-    <!--<tr>
+    <tr>
         <th>MaxDeposit</th>
         <td><input type="text" id="MaxDeposit" name="" size="27"></td>
-    </tr>-->
+    </tr>
     <tr>
         <th>StartTime</th>
         <td >
@@ -98,6 +98,7 @@
 
         var TokensLimit = document.getElementById("TokensLimit").value;
         var MinDeposit = document.getElementById("MinDeposit").value;
+        var MaxDeposit = document.getElementById("MaxDeposit").value;
 
 
 
@@ -111,7 +112,7 @@
 //        var res = "\""+saleAddr+"\","+"\""+SaleContractType+"\","+"\""+TokensLimit+"\","
 //            +"\""+MinDeposit+"\","+"\""+MaxDeposit+"\","+"\""+date_start+"\","+"\""+date_end+"\","+"\""+rate+"\"," ;
 
-        var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+date_start+","+date_end+","+rate;
+        var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+MaxDeposit+","+date_start+","+date_end+","+rate;
 
         document.getElementById("result").value = res;
     }
