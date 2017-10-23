@@ -34,6 +34,7 @@ contract BaseContract is Ownable {
 
 	address public wallet; // address where funds are collected Deposit address
 	uint256 public weiRaised; // amount of raised money in wei
+	uint256 public MAX_GAS_PRICE; // amount of raised money in wei
 
 	//bool public isGlobalFinalized = false; // global finalization
 
@@ -97,6 +98,11 @@ contract BaseContract is Ownable {
 	modifier ownerOrSale() {
 		assert(salesAgents[msg.sender].exists == true || msg.sender == owner);
 		_;
+	}
+
+	// verifies that the gas price is lower than 50 gwei
+	function validGasPrice(uint256 _gasprice) returns (bool){
+		return _gasprice <= MAX_GAS_PRICE;
 	}
 
 	//****************Constructors*******************//

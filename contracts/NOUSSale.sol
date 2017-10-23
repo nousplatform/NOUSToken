@@ -21,6 +21,9 @@ contract NOUSSale is Crowdsale {
 		// minimum amount of funds to be raised in weis
 		targetEthMax = 85000 * (1 ether);
 
+		// maximum gas price for contribution transactions
+		MAX_GAS_PRICE = 300000 wei;
+
 		// minimum amount of funds to be raised in weis
 		targetEthMin = //5500  * (1 ether); // todo For test uncoment
 		targetEthMin = 4  * (1 ether);

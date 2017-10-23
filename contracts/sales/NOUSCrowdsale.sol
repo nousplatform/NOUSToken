@@ -26,6 +26,7 @@ contract NOUSCrowdsale is SalesAgent {
 
 	function() payable external {
 		// The target ether amount
+		require(nousTokenSale.validGasPrice(tx.gasprice));
 		require(nousTokenSale.validateStateSaleContract(this));
 		require(nousTokenSale.validateContribution(msg.value));
 		require(msg.sender != 0x0);
@@ -39,7 +40,7 @@ contract NOUSCrowdsale is SalesAgent {
 		// calculate tokens - get bonus rate
 		uint256 tokens = weiAmount.mul(rate);
 
-		require(nousTokenSale.validPurchase(this, tokens)); // require tokens
+		assert(nousTokenSale.validPurchase(this, tokens)); // require tokens
 
 		bool success = nousTokenSale.buyTokens.value(msg.value)(msg.sender, tokens);
 

@@ -26,7 +26,7 @@ contract Crowdsale is BaseContract {
 
 	/// @dev this contact sale not payed/ Payed only forwardFunds TODO validate this
 
-	function buyTokens(address beneficiary, uint256 tokens) isSalesContract(msg.sender) public payable returns(bool) {
+	function buyTokens(address beneficiary, uint256 tokens) isSalesContract(msg.sender) public payable returns(bool)  {
 
 		require(saleState == SaleState.Active); // if sale is frozen TODO validate stop sale and send transaction
 		require(beneficiary != 0x0);
@@ -95,24 +95,28 @@ contract Crowdsale is BaseContract {
 	}
 
 	/// @dev global finalization is activate this function all sales wos stoped.
+	/// end pay bonuses
 	function finalizeICO(address _salesAgent) ownerOrSale() public returns(bool)  {
 		//require(!isGlobalFinalized);
 		require(salesAgents[msg.sender].saleContractType == SaleContractType.ReserveFunds);
 		require(saleState != SaleState.Ended);
 		require(salesAgents[_salesAgent].isFinalized == false);
 
-		if (goalReached()) {
-			reserveBonuses(); // reserve bonuses
-			vault.close(); // close vault contract and send ETH to Wallet
-		} else {
-			vault.enableRefunds();
-		}
+		reserveBonuses(); // reserve bonuses
 
 		token.finishMinting(); // stop mining tokens
 		saleState = SaleState.Ended; // close all sale
 
 		//isGlobalFinalized = true;
 		return true;
+	}
+
+	function closeRefunds() onlyOwner {
+		vault.close(); // close vault contract and send ETH to Wallet
+	}
+
+	function enableRefunds() onlyOwner {
+		vault.enableRefunds();
 	}
 
 	//**************Deliver*****************//

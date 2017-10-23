@@ -18,8 +18,9 @@ contract NOUSPresale is SalesAgent {
 		nousTokenSale = NOUSSale(_saleContractAddress);
 	}
 
-	function() payable external {
+	function() payable external  {
 		// The target ether amount
+		require(nousTokenSale.validGasPrice(tx.gasprice));
 		require(nousTokenSale.validateStateSaleContract(this));
 		require(nousTokenSale.validateContribution(msg.value));
 		require(msg.sender != 0x0);

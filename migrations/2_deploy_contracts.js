@@ -42,8 +42,8 @@ module.exports = function(deployer) {
 };
 
 
-function toJson(obj) { return JSON.stringify(obj.abi);}
-function unloc(i){return personal.unlockAccount(eth.accounts[i])}
+function toJson(obj) { return JSON.stringify(obj.abi); }
+function unloc(i) { return personal.unlockAccount(eth.accounts[i]) }
 
 /*
 NOUSToken: 0x860134d046fd08406fad30217ea3a21c32dd7fab
@@ -96,4 +96,17 @@ Deploying NOUSPresale...
     NOUSCrowdsale: 0xc7184f000f0b74ad6f8bf55158e9137a20179926
 NOUSPresale: 0xcab91b76e1a94b91582688c8beeaf4a774c35e27
 NOUSReservFund: 0x47da3301d02246ab5e1e010c3733aa084ee42943
+*/
+
+/*
+23.10
+NOUSToken: 0x1f6081d57f94c47e4ab509b9310778f3796633a4
+RefundVault: 0xa98e0dce0035716b408ed595ff9ad2dd5d237ab0
+NOUSSale: 0x65042ea304f99096dc35d5122d179f650e7e6e9e
+Deploying NOUSPresale...
+    Deploying NOUSCrowdsale...
+    Deploying NOUSReservFund...
+    NOUSPresale: 0x55999b24a756680843c53588c4632da69a0added
+NOUSCrowdsale: 0xa73a961770ddf53a29203161f6352884f2fd767b
+NOUSReservFund: 0x5d66eb493035b2fbe1c00de32c7aa9bc7f8956d0
 */
