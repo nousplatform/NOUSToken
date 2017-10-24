@@ -110,3 +110,15 @@ Deploying NOUSPresale...
 NOUSCrowdsale: 0xa73a961770ddf53a29203161f6352884f2fd767b
 NOUSReservFund: 0x5d66eb493035b2fbe1c00de32c7aa9bc7f8956d0
 */
+
+/*
+NOUSToken: 0xedba51dd61126dc26843f521ba4fc29dc3ff2bdf
+RefundVault: 0x3f06120593115bb81dc633881312fae2f00b908e
+NOUSSale: 0x1ddadceb68773519d2eca37d8d754796335e9f20
+Deploying NOUSPresale...
+    Deploying NOUSCrowdsale...
+    Deploying NOUSReservFund...
+    NOUSCrowdsale: 0x75a07385b02f16735e25642ec49118d626e9dde4
+NOUSPresale: 0x9e33a0cf53e1740a621207692a86209640dcfcd2
+NOUSReservFund: 0x21286015eb1087a1d2dd8f660992a40d0373897f
+*/

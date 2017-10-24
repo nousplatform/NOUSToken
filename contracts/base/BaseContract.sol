@@ -100,11 +100,6 @@ contract BaseContract is Ownable {
 		_;
 	}
 
-	// verifies that the gas price is lower than 50 gwei
-	function validGasPrice(uint256 _gasprice) returns (bool){
-		return _gasprice <= MAX_GAS_PRICE;
-	}
-
 	//****************Constructors*******************//
 
 	/// @dev constructor

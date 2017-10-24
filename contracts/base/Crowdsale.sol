@@ -47,6 +47,11 @@ contract Crowdsale is BaseContract {
 
 	//**************Validates*****************//
 
+	// verifies that the gas price is lower than 50 gwei
+	function validGasPrice(uint256 _gasprice) returns (bool){
+		return _gasprice <= MAX_GAS_PRICE;
+	}
+
 	/// @dev Validate state contract
 	function validateStateSaleContract(address _salesAgent) public returns (bool) {
 		return salesAgents[_salesAgent].isFinalized == false // No minting if the sale contract has finalised
@@ -66,9 +71,8 @@ contract Crowdsale is BaseContract {
 	/// @return A boolean that indicates if the operation was successful.
 	function validateContribution(uint256 _value) isSalesContract(msg.sender) returns (bool) {
 		return _value > 0
-		//&& wallet != 0x0 // Check the depositAddress has been verified by the account holder
 		&& _value >= salesAgents[msg.sender].minDeposit // Is it above the min deposit amount?
-		//&& _value <= salesAgents[msg.sender].maxDeposit
+		&& _value <= salesAgents[msg.sender].maxDeposit
 		&& weiRaised.add(_value) <= targetEthMax; // Does this deposit put it over the max target ether for the sale contract?
 	}
 

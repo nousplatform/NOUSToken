@@ -109,9 +109,6 @@
         var date_start = new Date(startDate.value+" "+startTime.value).getTime() / 1000;
         var date_end = new Date(endDate.value+" "+endTime.value).getTime() / 1000;
 
-//        var res = "\""+saleAddr+"\","+"\""+SaleContractType+"\","+"\""+TokensLimit+"\","
-//            +"\""+MinDeposit+"\","+"\""+MaxDeposit+"\","+"\""+date_start+"\","+"\""+date_end+"\","+"\""+rate+"\"," ;
-
         var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+MaxDeposit+","+date_start+","+date_end+","+rate;
 
         document.getElementById("result").value = res;

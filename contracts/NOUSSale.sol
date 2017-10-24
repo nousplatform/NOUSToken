@@ -22,7 +22,7 @@ contract NOUSSale is Crowdsale {
 		targetEthMax = 85000 * (1 ether);
 
 		// maximum gas price for contribution transactions
-		MAX_GAS_PRICE = 300000 wei;
+		MAX_GAS_PRICE =  50000000000 wei;
 
 		// minimum amount of funds to be raised in weis
 		targetEthMin = //5500  * (1 ether); // todo For test uncoment
