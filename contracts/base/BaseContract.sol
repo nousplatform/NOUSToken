@@ -5,6 +5,7 @@ import "../lib/SafeMath.sol";
 import "../token/MintableToken.sol";
 import "../NOUSToken.sol";
 import './RefundVault.sol';
+import './BonusForAffiliate.sol';
 
 
 contract BaseContract is Ownable {
@@ -18,6 +19,8 @@ contract BaseContract is Ownable {
 	MintableToken public token; // The token being sold
 
 	RefundVault public vault; // contract refunded value
+
+	BonusForAffiliate public affiliate; // contract refunded value
 
 	enum SaleState { Active, Pending, Ended }
 	SaleState public saleState;
@@ -46,6 +49,9 @@ contract BaseContract is Ownable {
 
 	event PayBounty(address _agent, address _wallet, bytes32 _name, uint256 _amount);
 
+	/**** Data ***********/
+
+	mapping(address => address) referral;
 
 	struct Bounty {
 		address wallet; // wallet address for transfer
@@ -62,11 +68,6 @@ contract BaseContract is Ownable {
 
 	mapping (address => SalesAgent) salesAgents; // Our contract addresses of our sales contracts
 	address[] private salesAgentsAddresses; // Keep an array of all our sales agent addresses for iteration
-
-	/*struct BonusRateStruct {
-		uint256 period; // in week rate
-		uint256 rate;
-	}*/
 
 	enum SaleContractType { Presale, Crowdsale, ReserveFunds }
 
@@ -87,7 +88,6 @@ contract BaseContract is Ownable {
 	}
 
 	/**** Modifier ***********/
-
 	/// @dev Only allow access from the latest version of a sales contract
 	modifier isSalesContract(address _sender) {
 		// Is this an authorised sale contract?
@@ -103,15 +103,19 @@ contract BaseContract is Ownable {
 	//****************Constructors*******************//
 
 	/// @dev constructor
-	function BaseContract(address _wallet, address _token, address _vault){
+	function BaseContract(address _wallet, address _token, address _vault, address _affiliate){
 		wallet = _wallet;
 
 		if (address(token) == 0x0) {
-			token = createTokenContract(_token);
+			token = MintableToken(_token);
 		}
 
 		if (address(vault) == 0x0) {
-			vault = createRefundVault(_vault);
+			vault = RefundVault(_vault);
+		}
+
+		if (address(vault) == 0x0) {
+			affiliate = BonusForAffiliate(_affiliate);
 		}
 	}
 
@@ -213,7 +217,16 @@ contract BaseContract is Ownable {
 		return vault.refund(beneficiary);
 	}
 
-	//****************Manager*******************//
+	/*** Management *******************/
+
+	/**
+	* @dev Tie affiliate and partner
+	* @params _affiliate Address affiliate
+	* @params _partner Address partner wallet
+	*/
+	function addAffiliate(address _affiliate, address _partner) onlyOwner {
+		referral[_affiliate] = _partner;
+	}
 
 	/// @dev stop sale
 	function pendingActiveSale() onlyOwner {
@@ -251,7 +264,6 @@ contract BaseContract is Ownable {
 	}
 
 	/// @dev Returns the min target amount of ether the contract wants to raise
-	/// @param _salesAgentAddress The address of the token sale agent contract
 	/*function getTargetEtherMin() constant isSalesContract(_salesAgentAddress) public returns(uint256) {
 		return targetEthMin;
 	}*/
@@ -290,6 +302,18 @@ contract BaseContract is Ownable {
 	/// @param _salesAgentAddress The address of the token sale agent contract
 	function getSaleContractTokensRate(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns(uint256) {
 		return salesAgents[_salesAgentAddress].rate;
+	}
+
+	/// @dev Returns the token total currently minted by the sale agent
+	/// @param _salesAgentAddress The address of the token sale agent contract
+	function getSaleContractMinDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns(uint256) {
+		return salesAgents[_salesAgentAddress].minDeposit;
+	}
+
+	/// @dev Returns the token total currently minted by the sale agent
+	/// @param _salesAgentAddress The address of the token sale agent contract
+	function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns(uint256) {
+		return salesAgents[_salesAgentAddress].maxDeposit;
 	}
 
 }

@@ -25,7 +25,6 @@ contract Crowdsale is BaseContract {
 	event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
 	/// @dev this contact sale not payed/ Payed only forwardFunds TODO validate this
-
 	function buyTokens(address beneficiary, uint256 tokens) isSalesContract(msg.sender) public payable returns(bool)  {
 
 		require(saleState == SaleState.Active); // if sale is frozen TODO validate stop sale and send transaction
@@ -33,6 +32,11 @@ contract Crowdsale is BaseContract {
 		require(msg.value > 0); // TODO validate
 
 		uint256 weiAmount = msg.value;
+
+		if (referral[beneficiary] != address(0)) {
+			//TODO payout 10% referal
+			//referral.addAffiliateBonus();
+		}
 
 		token.mint(beneficiary, tokens);
 		salesAgents[msg.sender].tokensMinted = salesAgents[msg.sender].tokensMinted.add(tokens); // increment tokensMinted
@@ -115,12 +119,28 @@ contract Crowdsale is BaseContract {
 		return true;
 	}
 
+	//************* Control ETH *****************//
+
+	/**
+	* @dev close refunds and send coins to wallet
+	*/
 	function closeRefunds() onlyOwner {
 		vault.close(); // close vault contract and send ETH to Wallet
 	}
 
+	/**
+	* @dev Refund coins investors
+	*/
 	function enableRefunds() onlyOwner {
 		vault.enableRefunds();
+	}
+
+	/**
+	* @dev withdraw cash on wallet
+	*/
+	function withdraw(uint256 _amount) onlyOwner public{
+		require(_amount > 0);
+		vault.withdraw(_amount * 1 ether);
 	}
 
 	//**************Deliver*****************//
@@ -217,9 +237,6 @@ contract Crowdsale is BaseContract {
 		}
 	}
 
-	function withdraw(uint256 _amount) onlyOwner public{
-		require(_amount > 0);
-		vault.withdraw(_amount * 1 ether);
-	}
+
 
 }

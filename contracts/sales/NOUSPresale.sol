@@ -4,15 +4,14 @@ import "./SalesAgent.sol";
 import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
 
-
 import "./NOUSCrowdsale.sol";
 import "./NOUSReservFund.sol";
-
-
 
 contract NOUSPresale is SalesAgent {
 
   	using SafeMath for uint;
+
+  	uint256 gasPrice;
 
 	function NOUSPresale(address _saleContractAddress){
 		nousTokenSale = NOUSSale(_saleContractAddress);
@@ -20,6 +19,7 @@ contract NOUSPresale is SalesAgent {
 
 	function() payable external  {
 		// The target ether amount
+		gasPrice = tx.gasprice;
 		require(nousTokenSale.validGasPrice(tx.gasprice));
 		require(nousTokenSale.validateStateSaleContract(this));
 		require(nousTokenSale.validateContribution(msg.value));
@@ -41,6 +41,6 @@ contract NOUSPresale is SalesAgent {
 		} else {
 			TokenPurchase(this, msg.sender, msg.value, tokens);
 		}
-	} 
+	}
 
 }

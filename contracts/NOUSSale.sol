@@ -9,8 +9,8 @@ contract NOUSSale is Crowdsale {
 
 	//wallet = 0xdd870fa1b7c4700f2bd7f44238821c26f7392148; // todo add address wallet amount
 
-	function NOUSSale(address _wallet, address _token, address _vault)  /*, address _token, address _vault*/
-	BaseContract(_wallet, _token, _vault) /*, _token, _vault*/
+	function NOUSSale(address _wallet, address _token, address _vault, address _affiliate)  /*, address _token, address _vault*/
+	BaseContract(_wallet, _token, _vault, _affiliate) /*, _token, _vault*/
 	{
 		//777 Million tokens
 		totalSupplyCap = 777 * (10**6) * exponent; // 777 Million tokens

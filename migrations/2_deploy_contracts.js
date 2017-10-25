@@ -1,6 +1,7 @@
 var NOUSToken = artifacts.require("./NOUSToken.sol");
 var NOUSSale = artifacts.require("./NOUSSale.sol");
 var RefundVault = artifacts.require("./RefundVault.sol");
+var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
 
 var NOUSPresale = artifacts.require("./NOUSPresale.sol");
 var NOUSCrowdsale = artifacts.require("./NOUSCrowdsale.sol");
@@ -16,18 +17,21 @@ module.exports = function(deployer) {
             Promise.all(
                 [
                     NOUSToken.new(),
-                    RefundVault.new(wallet)
+                    RefundVault.new(wallet),
+                    BonusForAffiliate.new(),
                 ]
             )
             .then(function(instances) {
 
                 console.log("NOUSToken:", instances[0].address);
                 console.log("RefundVault:", instances[1].address);
+                console.log("BonusForAffiliate:", instances[2].address);
 
                 return NOUSSale.new(wallet, instances[0].address, instances[1].address)
                     .then(function (instanceNousSale) {
                         instances[0].transferOwnership(instanceNousSale.address);
                         instances[1].transferOwnership(instanceNousSale.address);
+                        instances[2].transferOwnership(instanceNousSale.address);
                         return instanceNousSale.address
                 });
             })
@@ -121,4 +125,20 @@ Deploying NOUSPresale...
     NOUSCrowdsale: 0x75a07385b02f16735e25642ec49118d626e9dde4
 NOUSPresale: 0x9e33a0cf53e1740a621207692a86209640dcfcd2
 NOUSReservFund: 0x21286015eb1087a1d2dd8f660992a40d0373897f
+*/
+
+
+
+/*
+
+NOUSToken: 0x14ab8750e71b5ee09d72138a19a2f94303ca7f4e
+RefundVault: 0x16e6facdb45aef0eb67705bb8b0b9788d2ccd653
+Saving artifacts...
+    NOUSSale: 0x64226d4c4dfac033ac6ff74788de6752b2f5ab5a
+Deploying NOUSPresale...
+    Deploying NOUSCrowdsale...
+    Deploying NOUSReservFund...
+    NOUSCrowdsale: 0x58f9ec86718d82f3a5bcb962975b6f75330e49b4
+NOUSPresale: 0xafb68271944ba4a6fdc5d594e4991107d20b4f5c
+NOUSReservFund: 0x329d57de9ee2536deb2287d7d580c424cc6e3ac7
 */
