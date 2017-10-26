@@ -2,6 +2,7 @@ pragma solidity ^0.4.10;
 
 import '../lib/SafeMath.sol';
 import '../base/Ownable.sol';
+import '../base/Crowdsale.sol';
 
 contract BonusForAffiliate is Ownable {
 
@@ -43,10 +44,13 @@ contract BonusForAffiliate is Ownable {
         _;
     }
 
-    // constructor
-    function BonusForAffiliate(address _dugSale) {
-        require(dugSale != address(0));
+    /**
+    * @dev Set dug sale address
+    */
+    function setDugSale( address _dugSale ) public onlyOwner returns (bool) {
+        require(_dugSale != address(0));
         dugSale = _dugSale;
+        return true;
     }
 
     /**
@@ -55,7 +59,7 @@ contract BonusForAffiliate is Ownable {
     * @param _partner Address partner wallet
     */
     function addAffiliate(address _affiliate, address _partner) public onlyOwner {
-        require(referral[_affiliate] != address(0));
+        require(referral[_affiliate] == address(0));
         referral[_affiliate] = _partner;
     }
 
@@ -100,7 +104,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Get all partner bonuses
     * @return amount [], time [], payed [], frozen []
     */
-    function getPartnerBonuses(address _partnerWalletAddress) public onlyOwner
+    function getPartnerBonuses(address _partnerWalletAddress) constant public onlyOwner
       returns(uint256[] amount, uint256[] time, bool[] payed, bool[] frozen) {
         require(_partnerWalletAddress != address(0));
         PartnerStruct partner = partners[_partnerWalletAddress];
@@ -118,7 +122,7 @@ contract BonusForAffiliate is Ownable {
     * @param _partnerWalletAddress Address partner wallet
     * @return totalAvailable Sum total available
     */
-    function getBalance(address _partnerWalletAddress) public returns (uint256) {
+    function getBalance(address _partnerWalletAddress) constant public returns (uint256) {
         require(isPartner(_partnerWalletAddress));
         uint256 totalAvailable = 0;
         for (uint256 i = 0; i < partners[_partnerWalletAddress].bonusIndexes.length; i++) {

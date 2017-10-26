@@ -57,24 +57,27 @@
 <button style="margin:15px " id="compile" onclick="test()">Compile</button>
 <input type="text" style="margin:15px " id="result" size="100"></input>
 
-<table border="1" width="" style="">
-    <tr>
-        <th>Wallet address:</th>
-        <td><input type="text" id="wallet" size="50" ></td>
-    </tr>
-    <tr>
-        <th>Token address:</th>
-        <td><input type="text" id="token" size="50"></td>
-    </tr>
-    <tr>
-        <th>Vault address:</th>
-        <td><input type="text" id="vault" size="50"></td>
-    </tr>
-    <tr>
-        <th>Affiliate address:</th>
-        <td><input type="text" id="affiliate" size="50"></td>
-    </tr>
-</table>
+<form id="nous_sale">
+    <table border="1"  width="" style="">
+        <tr>
+            <th>Wallet address:</th>
+            <td><input type="text" id="wallet" size="50" ></td>
+        </tr>
+        <tr>
+            <th>Token address:</th>
+            <td><input type="text" id="token" size="50"></td>
+        </tr>
+        <tr>
+            <th>Vault address:</th>
+            <td><input type="text" id="vault" size="50"></td>
+        </tr>
+        <tr>
+            <th>Affiliate address:</th>
+            <td><input type="text" id="affiliate" size="50"></td>
+        </tr>
+    </table>
+</form>
+<button style="margin:15px " id="" onclick="document.getElementById('nous_sale').reset();">Reset</button>
 <button style="margin:15px " id="compile2" onclick="test2()">Compile</button>
 <input type="text" style="margin:15px " id="result2" size="100" >
     <script>

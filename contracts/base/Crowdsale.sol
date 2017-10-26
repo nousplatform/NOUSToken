@@ -145,7 +145,7 @@ contract Crowdsale is BaseContract {
     }
 
     /**
-    * @dev Refund coins investors
+    * @dev Refund coins in investors
     */
     function enableRefunds() onlyOwner {
         Vault.enableRefunds();
@@ -159,7 +159,7 @@ contract Crowdsale is BaseContract {
         Vault.withdraw(_amount * 1 ether);
     }
 
-    //**************Deliver*****************//
+    //***** Deliver *****************//
 
     /**
     * @dev Function to send NOUS to presale investors
