@@ -46,7 +46,7 @@ contract RefundVault is Ownable {
     RefundsEnabled();
   }
 
-  function refund(address investor) public returns (uint256){
+  function refund(address investor) public returns (uint256) {
     require(state == State.Refunding);
     uint256 depositedValue = deposited[investor];
     deposited[investor] = 0;
@@ -56,7 +56,7 @@ contract RefundVault is Ownable {
   }
 
   //
-  function withdraw(uint256 _amount) onlyOwner public{
+  function withdraw(uint256 _amount) onlyOwner public {
   	require(_amount > 0);
   	require(this.balance > _amount);
   	wallet.transfer(_amount);

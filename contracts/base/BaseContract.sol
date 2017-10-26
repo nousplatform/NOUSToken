@@ -6,8 +6,6 @@ import "../lib/SafeMath.sol";
 import "../token/MintableToken.sol";
 import "../NOUSToken.sol";
 import './RefundVault.sol';
-import './BonusForAffiliate.sol';
-
 
 contract BaseContract is Ownable {
 
@@ -17,11 +15,12 @@ contract BaseContract is Ownable {
 
     /**** Variables ****************/
 
-    MintableToken public token; // The token being sold
+    MintableToken public Token; // The token being sold
 
     RefundVault public Vault; // contract refunded value
 
-    BonusForAffiliate public Affiliate; // contract refunded value
+    //BonusForAffiliate public Affiliate; // contract refunded value
+    address affiliate; // address BonusForAffiliate contract
 
     enum SaleState {Active, Pending, Ended}
     SaleState public saleState;
@@ -42,7 +41,7 @@ contract BaseContract is Ownable {
     uint256 public MAX_GAS_PRICE; // amount of raised money in wei
 
     // referral links
-    mapping (address => address) referral;
+    //mapping (address => address) referral;
     uint256 percentBonusForAffiliate; // percent for bonus
 
     /**** Events ***********/
@@ -74,11 +73,11 @@ contract BaseContract is Ownable {
     enum SaleContractType {Presale, Crowdsale, ReserveFunds}
 
     struct SalesAgent {// These are contract addresses that are authorised to mint tokens
-    address saleContractAddress;        // Address of the contract
-    SaleContractType saleContractType;   // Type of the contract ie. presale, crowdsale, reserve_funds
+        address saleContractAddress;        // Address of the contract
+        SaleContractType saleContractType;  // Type of the contract ie. presale, crowdsale, reserve_funds
         uint256 tokensLimit;                // The maximum amount of tokens this sale contract is allowed to distribute
         uint256 tokensMinted;               // The current amount of tokens minted by this agent
-        uint256 rate;                        // default rate
+        uint256 rate;                       // default rate
         uint256 minDeposit;                 // The minimum deposit amount allowed
         uint256 maxDeposit;                 // The maximum deposit amount allowed
         uint256 startTime;                  // The start time (unix format) when allowed to mint tokens
@@ -102,35 +101,27 @@ contract BaseContract is Ownable {
         _;
     }
 
-    //****************Constructors*******************//
+    /*function isActiveSalesAgent(address _sender) external returns (bool) {
+        return salesAgents[_sender].exists == true &&
+            salesAgents[_sender].isFinalized == false;
+    }*/
 
+    //**** Constructors ******************//
     /// @dev constructor
-    function BaseContract(address _wallet, address _token, address _vault, address _affiliate){
+    function BaseContract(address _wallet, address _token, address _vault, address _affiliate) {
         wallet = _wallet;
 
-        if (address(token) == 0x0) {
-            token = MintableToken(_token);
+        if (address(Token) == 0x0) {
+            Token = MintableToken(_token);
         }
 
-        if (address(vault) == 0x0) {
+        if (address(Vault) == 0x0) {
             Vault = RefundVault(_vault);
         }
 
-        if (address(vault) == 0x0) {
-            Affiliate = BonusForAffiliate(_affiliate);
+        if (affiliate == 0x0) {
+            affiliate = _affiliate;
         }
-    }
-
-    // creates the token to be sold.
-    // override this method to have crowdsale of a specific mintable token.
-    function createTokenContract(address _token) internal returns (MintableToken) {
-        //return new NOUSToken();
-        return MintableToken(_token);
-    }
-
-    function createRefundVault(address _vault) internal returns (RefundVault){
-        //return new RefundVault(_wallet);
-        return RefundVault(_vault);
     }
 
     //**************Setters*****************//
@@ -221,16 +212,6 @@ contract BaseContract is Ownable {
     }
 
     /*** Management *******************/
-
-
-    /// @dev Tie affiliate and partner
-    /// @param _affiliate Address affiliate
-    /// @param _partner Address partner wallet
-    function addAffiliate(address _affiliate, address _partner) onlyOwner {
-        if (referral[_affiliate] != address(0)){
-            referral[_affiliate] = _partner;
-        }
-    }
 
     /// @dev stop sale
     function pendingActiveSale() onlyOwner {

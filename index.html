@@ -56,9 +56,28 @@
 </table>
 <button style="margin:15px " id="compile" onclick="test()">Compile</button>
 <input type="text" style="margin:15px " id="result" size="100"></input>
-<script>
 
-
+<table border="1" width="" style="">
+    <tr>
+        <th>Wallet address:</th>
+        <td><input type="text" id="wallet" size="50" ></td>
+    </tr>
+    <tr>
+        <th>Token address:</th>
+        <td><input type="text" id="token" size="50"></td>
+    </tr>
+    <tr>
+        <th>Vault address:</th>
+        <td><input type="text" id="vault" size="50"></td>
+    </tr>
+    <tr>
+        <th>Affiliate address:</th>
+        <td><input type="text" id="affiliate" size="50"></td>
+    </tr>
+</table>
+<button style="margin:15px " id="compile2" onclick="test2()">Compile</button>
+<input type="text" style="margin:15px " id="result2" size="100" >
+    <script>
 
     var date = new Date();
 
@@ -83,7 +102,6 @@
 
     var minutes = hh+":"+mm;
 
-
     startDate.value = today;
     startTime.value = minutes;
 
@@ -100,9 +118,6 @@
         var MinDeposit = document.getElementById("MinDeposit").value;
         var MaxDeposit = document.getElementById("MaxDeposit").value;
 
-
-
-
         //var MaxDeposit = document.getElementById("MaxDeposit").value;
         var rate = document.getElementById("rate").value;
 
@@ -112,6 +127,15 @@
         var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+MaxDeposit+","+date_start+","+date_end+","+rate;
 
         document.getElementById("result").value = res;
+    }
+
+    function test2() {
+        var wallet = document.getElementById('wallet').value;
+        var token = document.getElementById('token').value;
+        var vault = document.getElementById('vault').value;
+        var affiliate = document.getElementById('affiliate').value;
+        var res = '"'+ wallet +'","'+ token +'","'+ vault +'","'+ affiliate +'"';
+        document.getElementById("result2").value = res;
     }
 
 

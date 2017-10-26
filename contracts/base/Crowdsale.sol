@@ -1,9 +1,8 @@
 pragma solidity ^0.4.11;
 
-
 import './BaseContract.sol';
 import "../interfaces/SalesAgentInterface.sol";
-
+import './BonusForAffiliate.sol';
 
 /**
  * @title Crowdsale
@@ -36,12 +35,13 @@ contract Crowdsale is BaseContract {
 
         uint256 weiAmount = msg.value;
 
-        if (referral[beneficiary] != address(0)) {
-            uint256 bonus = weiAmount.div(10);
+        BonusForAffiliate Affiliate = BonusForAffiliate(affiliate);
+        address _referral = Affiliate.getPartner(beneficiary);
+
+        if (_referral != address(0)) {
+            uint256 bonus = weiAmount.mul(percentBonusForAffiliate).div(100);
             weiAmount = weiAmount.sub(bonus);
-            Affiliate.addAffiliateBonus.value(bonus)(referral[beneficiary], beneficiary);
-            //TODO payout 10% referal
-            //referral.addAffiliateBonus();
+            Affiliate.addAffiliateBonus.value(bonus)(_referral, beneficiary);
         }
 
         Token.mint(beneficiary, tokens);

@@ -1,13 +1,20 @@
 pragma solidity ^0.4.10;
 
-
 import '../lib/SafeMath.sol';
 import '../base/Ownable.sol';
-
 
 contract BonusForAffiliate is Ownable {
 
     using SafeMath for uint256;
+
+    mapping (address => address) private referral;
+
+    struct BonusStruct {
+        uint256 amount;
+        uint256 time;
+        bool payed;
+        bool frozen;
+    }
 
     struct PartnerStruct {
         bool blocked;
@@ -17,17 +24,12 @@ contract BonusForAffiliate is Ownable {
         mapping (uint256 => BonusStruct) bonuses; // if one bonus is default
     }
 
-    struct BonusStruct {
-        uint256 amount;
-        uint256 time;
-        bool payed;
-        bool frozen;
-    }
-
     // @dev partner wallet address => array bonuses for pay, bonuses for affiliate
     mapping (address => PartnerStruct) public partners;
 
     address[] partnerIndexes; // index for bonuses map
+
+    address dugSale; // address Nous Sale contract
 
     // Events
     event PayedBonus(address indexed beneficiary, uint256 weiAmount);
@@ -36,12 +38,42 @@ contract BonusForAffiliate is Ownable {
 
     event AddBonus(address indexed partner, address affiliate, uint256 amount);
 
+    modifier onlySaleAgent() {
+        assert(msg.sender == dugSale);
+        _;
+    }
+
+    // constructor
+    function BonusForAffiliate(address _dugSale) {
+        require(dugSale != address(0));
+        dugSale = _dugSale;
+    }
+
+    /**
+    * @dev Tie affiliate and partner
+    * @param _affiliate Address affiliate
+    * @param _partner Address partner wallet
+    */
+    function addAffiliate(address _affiliate, address _partner) public onlyOwner {
+        require(referral[_affiliate] != address(0));
+        referral[_affiliate] = _partner;
+    }
+
+    /**
+    * @dev return referral address
+    * _affiliate Address affiliate
+    */
+    function getPartner(address _affiliate) public returns (address) {
+        return referral[_affiliate];
+    }
+
     /**
     * @dev Add bonus for affiliate
     * @param _partnerWalletAddress Address partner wallet
     * @param _affiliateAddress Address affiliate account
     */
-    function addAffiliateBonus(address _partnerWalletAddress, address _affiliateAddress) public onlyOwner payable {
+    function addAffiliateBonus(address _partnerWalletAddress, address _affiliateAddress) public onlySaleAgent payable {
+        //require(nousSale)
         require(_partnerWalletAddress != address(0));
         require(_affiliateAddress != address(0));
         require(msg.value > 0);
@@ -68,7 +100,8 @@ contract BonusForAffiliate is Ownable {
     * @dev Get all partner bonuses
     * @return amount [], time [], payed [], frozen []
     */
-    function getPartnerBonuses(address _partnerWalletAddress) public onlyOwner returns(uint256[] amount, uint256[] time, bool[] payed, bool[] frozen) {
+    function getPartnerBonuses(address _partnerWalletAddress) public onlyOwner
+      returns(uint256[] amount, uint256[] time, bool[] payed, bool[] frozen) {
         require(_partnerWalletAddress != address(0));
         PartnerStruct partner = partners[_partnerWalletAddress];
         for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
@@ -97,11 +130,13 @@ contract BonusForAffiliate is Ownable {
     }
 
     /**
-    * @dev Pay Bonus
-    * @param partnerWalletAddress Address partner wallet
+    * @dev Pay Bonus * @param partnerWalletAddress Address partner wallet
     */
-    function payoutBonus(address partnerWalletAddress) public {
+    function payoutBonus() public {
+        address partnerWalletAddress = msg.sender;
+
         require(partnerWalletAddress != address(0));
+        require(getBalance(partnerWalletAddress) > 0);
         require(isPartner(partnerWalletAddress));
         require(partners[partnerWalletAddress].blocked);
 
@@ -146,7 +181,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Get partner status
     * @param _partnerWalletAddress Address partner wallet
     */
-    function getPartnerStaus(address _partnerWalletAddress) returns (bool) {
+    function isActivePartner(address _partnerWalletAddress) public constant returns (bool) {
         if (!isPartner(_partnerWalletAddress)) {
             return false;
         }
@@ -192,7 +227,7 @@ contract BonusForAffiliate is Ownable {
     function validateBonusStatusForPay(address _partnerWalletAddress, uint256 index) internal returns (bool) {
         PartnerStruct partner = partners[_partnerWalletAddress];
         return partner.bonuses[index].frozen == false && partner.bonuses[index].payed == false &&
-        partner.bonuses[index].time + (1 days) > now;
+        partner.bonuses[index].time + (3 minutes) > now;
     }
 
     /**
