@@ -1,6 +1,8 @@
 pragma solidity ^0.4.11;
 
+
 import "./token/MintableToken.sol";
+
 
 /**
  * @title SampleCrowdsaleToken
@@ -9,8 +11,10 @@ import "./token/MintableToken.sol";
  */
 contract NOUSToken is MintableToken {
 
-	string public constant name = "Nous token";
-	string public constant symbol = "NOUS";
-  	uint32 public constant decimals = 18;
+    string public constant name = "Nous token";
+
+    string public constant symbol = "NOUS";
+
+    uint32 public constant decimals = 18;
 
 }

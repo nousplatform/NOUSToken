@@ -19,9 +19,9 @@ contract BaseContract is Ownable {
 
     MintableToken public token; // The token being sold
 
-    RefundVault public vault; // contract refunded value
+    RefundVault public Vault; // contract refunded value
 
-    BonusForAffiliate public affiliate; // contract refunded value
+    BonusForAffiliate public Affiliate; // contract refunded value
 
     enum SaleState {Active, Pending, Ended}
     SaleState public saleState;
@@ -41,7 +41,9 @@ contract BaseContract is Ownable {
     uint256 public weiRaised; // amount of raised money in wei
     uint256 public MAX_GAS_PRICE; // amount of raised money in wei
 
-    //bool public isGlobalFinalized = false; // global finalization
+    // referral links
+    mapping (address => address) referral;
+    uint256 percentBonusForAffiliate; // percent for bonus
 
     /**** Events ***********/
 
@@ -53,17 +55,15 @@ contract BaseContract is Ownable {
 
     /**** Data ***********/
 
-    mapping (address => address) referral;
-
     struct Bounty {
-    address wallet; // wallet address for transfer
-    bytes32 name; // name bonus
-    uint256 delay; // delay to payment in month
-    uint256 percent; // percent payed
-    uint256 periodPathOfPay; // on how many equal parts to pay
-    uint256 amountReserve; // amount acured
-    uint256 totalPayout; // how is payed
-    uint256 timeLastPayout; // how is payed
+        address wallet; // wallet address for transfer
+        bytes32 name; // name bonus
+        uint256 delay; // delay to payment in month
+        uint256 percent; // percent payed
+        uint256 periodPathOfPay; // on how many equal parts to pay
+        uint256 amountReserve; // amount acured
+        uint256 totalPayout; // how is payed
+        uint256 timeLastPayout; // how is payed
     }
 
     Bounty[] bountyPayment; // array bonuses
@@ -76,17 +76,17 @@ contract BaseContract is Ownable {
     struct SalesAgent {// These are contract addresses that are authorised to mint tokens
     address saleContractAddress;        // Address of the contract
     SaleContractType saleContractType;   // Type of the contract ie. presale, crowdsale, reserve_funds
-    uint256 tokensLimit;                // The maximum amount of tokens this sale contract is allowed to distribute
-    uint256 tokensMinted;               // The current amount of tokens minted by this agent
-    uint256 rate;                        // default rate
-    uint256 minDeposit;                 // The minimum deposit amount allowed
-    uint256 maxDeposit;                 // The maximum deposit amount allowed
-    uint256 startTime;                  // The start time (unix format) when allowed to mint tokens
-    uint256 endTime;                    // The end time from unix format when to finish minting tokens
-    bool isFinalized;                   // Has this sales contract been completed and the ether sent to the deposit address?
-    bool exists;                        // Check to see if the mapping exists
-    //uint256[] bonusRatesIndex;			// index rates
-    //mapping (uint256 => BonusRateStruct) bonusRates; // if one bonus is default
+        uint256 tokensLimit;                // The maximum amount of tokens this sale contract is allowed to distribute
+        uint256 tokensMinted;               // The current amount of tokens minted by this agent
+        uint256 rate;                        // default rate
+        uint256 minDeposit;                 // The minimum deposit amount allowed
+        uint256 maxDeposit;                 // The maximum deposit amount allowed
+        uint256 startTime;                  // The start time (unix format) when allowed to mint tokens
+        uint256 endTime;                    // The end time from unix format when to finish minting tokens
+        bool isFinalized;                   // Has this sales contract been completed and the ether sent to the deposit address?
+        bool exists;                        // Check to see if the mapping exists
+        //uint256[] bonusRatesIndex;			// index rates
+        //mapping (uint256 => BonusRateStruct) bonusRates; // if one bonus is default
     }
 
     /**** Modifier ***********/
@@ -113,11 +113,11 @@ contract BaseContract is Ownable {
         }
 
         if (address(vault) == 0x0) {
-            vault = RefundVault(_vault);
+            Vault = RefundVault(_vault);
         }
 
         if (address(vault) == 0x0) {
-            affiliate = BonusForAffiliate(_affiliate);
+            Affiliate = BonusForAffiliate(_affiliate);
         }
     }
 
@@ -217,18 +217,19 @@ contract BaseContract is Ownable {
         require(!goalReached());
 
         //token. TODO get token
-        return vault.refund(beneficiary);
+        return Vault.refund(beneficiary);
     }
 
     /*** Management *******************/
 
-    /**
-    * @dev Tie affiliate and partner
-    * @params _affiliate Address affiliate
-    * @params _partner Address partner wallet
-    */
+
+    /// @dev Tie affiliate and partner
+    /// @param _affiliate Address affiliate
+    /// @param _partner Address partner wallet
     function addAffiliate(address _affiliate, address _partner) onlyOwner {
-        referral[_affiliate] = _partner;
+        if (referral[_affiliate] != address(0)){
+            referral[_affiliate] = _partner;
+        }
     }
 
     /// @dev stop sale
@@ -256,7 +257,7 @@ contract BaseContract is Ownable {
 
     /// @dev warning Change owner token contact
     function changeTokenOwner(address newOwner) onlyOwner {
-        token.transferOwnership(newOwner);
+        Token.transferOwnership(newOwner);
     }
 
     //***************Getters******************/

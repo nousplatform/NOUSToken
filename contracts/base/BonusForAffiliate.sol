@@ -53,21 +53,31 @@ contract BonusForAffiliate is Ownable {
             partners[_partnerWalletAddress] = partner;
         }
 
-        BonusStruct bonus;
+        BonusStruct memory bonus;
         bonus.amount = msg.value;
         bonus.time = now;
         bonus.payed = false;
         bonus.frozen = false;
 
         uint256 item = partners[_partnerWalletAddress].bonusIndexes.length;
-
-        uint256 _index = partners[_partnerWalletAddress].bonusIndexes.push(item + 1) - 1;
-
-        partners[_partnerWalletAddress].bonuses[_index] = bonus;
+        partners[_partnerWalletAddress].bonusIndexes.push(item);
+        partners[_partnerWalletAddress].bonuses[item] = bonus;
     }
 
-    function getPartnerBonuses(address _partnerWalletAddress) onlyOwner {
-
+    /**
+    * @dev Get all partner bonuses
+    * @return amount [], time [], payed [], frozen []
+    */
+    function getPartnerBonuses(address _partnerWalletAddress) public onlyOwner returns(uint256[] amount, uint256[] time, bool[] payed, bool[] frozen) {
+        require(_partnerWalletAddress != address(0));
+        PartnerStruct partner = partners[_partnerWalletAddress];
+        for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
+            amount[i] = partner.bonuses[i].amount;
+            time[i] = partner.bonuses[i].time;
+            payed[i] = partner.bonuses[i].payed;
+            frozen[i] = partner.bonuses[i].frozen;
+        }
+        return (amount, time, payed, frozen);
     }
 
     /**
