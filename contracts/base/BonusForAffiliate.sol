@@ -1,8 +1,12 @@
-pragma solidity ^0.4.10;
+pragma solidity 0.4.10;
 
-import '../lib/SafeMath.sol';
-import '../base/Ownable.sol';
-import '../base/Crowdsale.sol';
+import "../lib/SafeMath.sol";
+import "../base/Ownable.sol";
+import "../base/Crowdsale.sol";
+
+/**
+* @title Bonus for the invited
+*/
 
 contract BonusForAffiliate is Ownable {
 
@@ -28,9 +32,9 @@ contract BonusForAffiliate is Ownable {
     // @dev partner wallet address => array bonuses for pay, bonuses for affiliate
     mapping (address => PartnerStruct) public partners;
 
-    address[] partnerIndexes; // index for bonuses map
+    address[] private partnerIndexes; // index for bonuses map
 
-    address dugSale; // address Nous Sale contract
+    address private dugSale; // address Nous Sale contract
 
     // Events
     event PayedBonus(address indexed beneficiary, uint256 weiAmount);
@@ -45,29 +49,29 @@ contract BonusForAffiliate is Ownable {
     }
 
     /**
+    * @dev Tie affiliate and partner
+    * @param _affiliate Address affiliate
+    * @param _partner Address partner wallet
+    */
+    function addAffiliate(address _affiliate, address _partner) external onlyOwner {
+        require(referral[_affiliate] == address(0));
+        referral[_affiliate] = _partner;
+    }
+
+    /**
     * @dev Set dug sale address
     */
-    function setDugSale( address _dugSale ) public onlyOwner returns (bool) {
+    function setDugSale( address _dugSale ) external onlyOwner returns (bool) {
         require(_dugSale != address(0));
         dugSale = _dugSale;
         return true;
     }
 
     /**
-    * @dev Tie affiliate and partner
-    * @param _affiliate Address affiliate
-    * @param _partner Address partner wallet
-    */
-    function addAffiliate(address _affiliate, address _partner) public onlyOwner {
-        require(referral[_affiliate] == address(0));
-        referral[_affiliate] = _partner;
-    }
-
-    /**
     * @dev return referral address
     * _affiliate Address affiliate
     */
-    function getPartner(address _affiliate) public returns (address) {
+    function getReferralAddress(address _affiliate) external constant returns (address) {
         return referral[_affiliate];
     }
 
@@ -104,8 +108,8 @@ contract BonusForAffiliate is Ownable {
     * @dev Get all partner bonuses
     * @return amount [], time [], payed [], frozen []
     */
-    function getPartnerBonuses(address _partnerWalletAddress) constant public onlyOwner
-      returns(uint256[] amount, uint256[] time, bool[] payed, bool[] frozen) {
+    function getPartnerBonuses(address _partnerWalletAddress) public constant onlyOwner
+    returns(uint256[] amount, uint256[] time, bool[] payed, bool[] frozen) {
         require(_partnerWalletAddress != address(0));
         PartnerStruct partner = partners[_partnerWalletAddress];
         for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
@@ -122,7 +126,7 @@ contract BonusForAffiliate is Ownable {
     * @param _partnerWalletAddress Address partner wallet
     * @return totalAvailable Sum total available
     */
-    function getBalance(address _partnerWalletAddress) constant public returns (uint256) {
+    function getBalance(address _partnerWalletAddress) public constant returns (uint256) {
         require(isPartner(_partnerWalletAddress));
         uint256 totalAvailable = 0;
         for (uint256 i = 0; i < partners[_partnerWalletAddress].bonusIndexes.length; i++) {

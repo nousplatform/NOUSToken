@@ -1,8 +1,10 @@
 pragma solidity ^0.4.11;
 
+
 import './BaseContract.sol';
 import "../interfaces/SalesAgentInterface.sol";
 import './BonusForAffiliate.sol';
+
 
 /**
  * @title Crowdsale
