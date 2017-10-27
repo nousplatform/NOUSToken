@@ -1,10 +1,9 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.11;
 
 
 import "./SalesAgent.sol";
 import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
-
 import "./NOUSCrowdsale.sol";
 import "./NOUSReservFund.sol";
 

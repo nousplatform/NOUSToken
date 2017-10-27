@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.11;
 
 
 import "./token/MintableToken.sol";
@@ -14,7 +14,6 @@ contract NOUSSale is Crowdsale {
     {
         //777 Million tokens
         totalSupplyCap = 777 * (10 ** 6) * EXPONENT;
-        // 777 Million tokens
 
         //543 900 000 tokens  Available for purchase
         availablePurchase = 543900000 * EXPONENT;

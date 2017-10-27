@@ -1,7 +1,9 @@
-pragma solidity 0.4.11;
+pragma solidity ^0.4.11;
+
 
 import "./StandardToken.sol";
 import "../base/Ownable.sol";
+
 
 /**
 * @title Mintable token
