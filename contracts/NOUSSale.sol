@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.18;
 
 
 import "./token/MintableToken.sol";
@@ -9,21 +9,21 @@ contract NOUSSale is Crowdsale {
 
     //wallet = 0xdd870fa1b7c4700f2bd7f44238821c26f7392148; // todo add address wallet amount
 
-    function NOUSSale(address _wallet, address _token, address _vault, address _affiliate)  /*, address _token, address _vault*/
-    BaseContract(_wallet, _token, _vault, _affiliate) /*, _token, _vault*/
+    function NOUSSale(address _token, address _vault, address _affiliate)
+    BaseContract(_token, _vault, _affiliate)
     {
         //777 Million tokens
-        totalSupplyCap = 777 * (10 ** 6) * exponent;
+        totalSupplyCap = 777 * (10 ** 6) * EXPONENT;
         // 777 Million tokens
 
         //543 900 000 tokens  Available for purchase
-        availablePurchase = 543900000 * exponent;
+        availablePurchase = 543900000 * EXPONENT;
 
         // minimum amount of funds to be raised in weis
         targetEthMax = 85000 * (1 ether);
 
         // maximum gas price for contribution transactions
-        MAX_GAS_PRICE = 50000000000 wei;
+        maxGasPrice = 300000 wei;
 
         // minimum amount of funds to be raised in weis
         targetEthMin = //5500  * (1 ether); // todo For test uncoment
