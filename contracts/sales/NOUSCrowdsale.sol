@@ -11,8 +11,8 @@ contract NOUSCrowdsale is SalesAgent {
     using SafeMath for uint;
 
     struct BonusRateStruct {
-    uint256 period; // in week rate
-    uint256 rate;
+        uint256 period; // in week rate
+        uint256 rate;
     }
 
     BonusRateStruct[] bonusRates; // index rates

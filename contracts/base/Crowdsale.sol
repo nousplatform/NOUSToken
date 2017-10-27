@@ -1,9 +1,9 @@
 pragma solidity ^0.4.11;
 
 
-import './BaseContract.sol';
+import "./BaseContract.sol";
 import "../interfaces/SalesAgentInterface.sol";
-import './BonusForAffiliate.sol';
+import "./BonusForAffiliate.sol";
 
 
 /**
@@ -16,7 +16,6 @@ import './BonusForAffiliate.sol';
  */
 contract Crowdsale is BaseContract {
 
-    uint256 timeNow;
     /**
     * event for token purchase logging
     * @param purchaser who paid for the tokens
@@ -42,7 +41,7 @@ contract Crowdsale is BaseContract {
         if (_referral != address(0)) {
             uint256 bonus = weiAmount.mul(percentBonusForAffiliate).div(100);
             weiAmount = weiAmount.sub(bonus);
-            affiliate.addAffiliateBonus.value(bonus)(_referral, beneficiary);
+            affiliate.addAffiliateBonus.value(bonus)(beneficiary, _referral);
         }
 
         tokenContract.mint(beneficiary, tokens);
@@ -67,7 +66,7 @@ contract Crowdsale is BaseContract {
     //**************Validates*****************//
 
     // verifies that the gas price is lower than 50 gwei
-    function validGasPrice(uint256 _gasPrice) returns (bool) {
+    function validGasPrice(uint256 _gasPrice) external returns (bool) {
         return _gasPrice <= maxGasPrice;
     }
 
