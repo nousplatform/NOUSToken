@@ -41,7 +41,7 @@ contract Crowdsale is BaseContract {
         if (_referral != address(0)) {
             uint256 bonus = weiAmount.mul(percentBonusForAffiliate).div(100);
             weiAmount = weiAmount.sub(bonus);
-            affiliate.addAffiliateBonus.value(bonus)(beneficiary, _referral);
+            affiliate.addBonus.value(bonus)(beneficiary, _referral);
         }
 
         tokenContract.mint(beneficiary, tokens);
