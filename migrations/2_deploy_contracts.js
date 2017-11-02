@@ -10,7 +10,7 @@ var NOUSReservFund = artifacts.require("./NOUSReservFund.sol");
 
 module.exports = function(deployer) {
 
-    var wallet = "0xEF6e578c42Ac21AeA5b225e7c96Bf0F8206bd019";
+    var wallet = "0x078C2f53f41f14aFa8fD2ee84b107E91E081A9Bc";
 
     deployer
         .then(function() {
@@ -31,7 +31,7 @@ module.exports = function(deployer) {
                     .then(function (instanceNousSale) {
                         instances[0].transferOwnership(instanceNousSale.address);
                         instances[1].transferOwnership(instanceNousSale.address);
-                        instances[2].transferOwnership(instanceNousSale.address);
+                        instances[2].setDugSale(instanceNousSale.address);
                         return instanceNousSale.address
                 });
             })
@@ -142,3 +142,8 @@ Deploying NOUSPresale...
 NOUSPresale: 0xafb68271944ba4a6fdc5d594e4991107d20b4f5c
 NOUSReservFund: 0x329d57de9ee2536deb2287d7d580c424cc6e3ac7
 */
+
+//
+// NOUSToken: 0x14d31cd5ded4735d6e89c8f376c7940cb15227dc
+// RefundVault: 0x4cd7b59c0084684526b3ae4a0874d98a59c88ebe
+// BonusForAffiliate: 0x5581f2a3f02760e214f4f725e90e736fce715aa4

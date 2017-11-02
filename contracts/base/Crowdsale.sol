@@ -4,6 +4,8 @@ pragma solidity ^0.4.11;
 import "./BaseContract.sol";
 import "../interfaces/SalesAgentInterface.sol";
 import "./BonusForAffiliate.sol";
+import "./RefundVault.sol";
+import "../NOUSToken.sol";
 
 
 /**
@@ -47,6 +49,8 @@ contract Crowdsale is BaseContract {
         tokenContract.mint(beneficiary, tokens);
         salesAgents[msg.sender].tokensMinted = salesAgents[msg.sender].tokensMinted.add(tokens);
         // increment tokensMinted
+
+        RefundVault vaultContract = RefundVault(refundVaultAddr);
 
         vaultContract.deposit.value(weiAmount)(beneficiary);
         // transfer ETH to refund contract
@@ -146,6 +150,7 @@ contract Crowdsale is BaseContract {
     * @dev close refunds and send coins to wallet
     */
     function closeRefunds() onlyOwner {
+        RefundVault vaultContract = RefundVault(refundVaultAddr);
         vaultContract.close();
         // close vault contract and send ETH to Wallet
     }
@@ -154,6 +159,7 @@ contract Crowdsale is BaseContract {
     * @dev Refund coins in investors
     */
     function enableRefunds() onlyOwner {
+        RefundVault vaultContract = RefundVault(refundVaultAddr);
         vaultContract.enableRefunds();
     }
 
@@ -162,6 +168,7 @@ contract Crowdsale is BaseContract {
     */
     function withdraw(uint256 _amount) onlyOwner public {
         require(_amount > 0);
+        RefundVault vaultContract = RefundVault(refundVaultAddr);
         vaultContract.withdraw(_amount * 1 ether);
     }
 

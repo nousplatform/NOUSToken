@@ -22,7 +22,10 @@ contract BaseContract is Ownable {
 
     /**** Variables ****/
     MintableToken public tokenContract; // The token being sold
-    RefundVault public vaultContract; // contract refunded value
+    //RefundVault public vaultContract; // contract refunded value
+
+    //address public mintableTokenAddr; // address BonusForAffiliate contract
+    address public refundVaultAddr; // address BonusForAffiliate contract
     address public affiliateAddr; // address BonusForAffiliate contract
 
     /**** Properties ****/
@@ -72,10 +75,12 @@ contract BaseContract is Ownable {
     ) {
         if (address(tokenContract) == 0x0) {
             tokenContract = MintableToken(_token);
+            //mintableTokenAddr = _token;
         }
 
-        if (address(vaultContract) == 0x0) {
-            vaultContract = RefundVault(_vault);
+        if (refundVaultAddr == 0x0) {
+            //vaultContract = RefundVault(_vault);
+            refundVaultAddr = _vault;
         }
 
         if (affiliateAddr == 0x0) {
@@ -171,6 +176,7 @@ contract BaseContract is Ownable {
         require(!goalReached());
 
         //token. TODO get token
+        RefundVault vaultContract = RefundVault(refundVaultAddr);
         return vaultContract.refund(beneficiary);
     }
 

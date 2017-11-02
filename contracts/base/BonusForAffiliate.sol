@@ -79,6 +79,24 @@ contract BonusForAffiliate is Ownable {
     }
 
     /**
+    * @dev Block partner
+    * @param _partnerWalletAddress Address partner wallet
+    */
+    function lockUnlockPartner(address _partnerWalletAddress, bool status) public onlyOwner {
+        require(isPartner(_partnerWalletAddress));
+        partners[_partnerWalletAddress].blocked = status;
+    }
+
+    /**
+    * @dev Frozen bonus
+    * @param _partnerWalletAddress Address partner wallet
+    */
+    function frozenBonus(address _partnerWalletAddress, uint256 index, bool status) public onlyOwner {
+        require(isPartner(_partnerWalletAddress));
+        partners[_partnerWalletAddress].bonuses[index].frozen = status;
+    }
+
+    /**
     * @dev Add bonus for affiliate can only sale contract
     * @param _partnerWalletAddress Address partner wallet
     * @param _affiliateAddress Address affiliate account
@@ -109,7 +127,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Get all partner bonuses
     * @return amount [], time [], payed [], frozen []
     */
-    function getPartnerBonuses(address _partnerWalletAddress) public constant onlyOwner
+    function getPartnerBonuses(address _partnerWalletAddress) public constant
     returns(uint256[] memory index, uint256[] memory amount, uint256[] memory time, bool[] memory payed, bool[] memory frozen)
     {
         require(_partnerWalletAddress != address(0));
@@ -197,24 +215,6 @@ contract BonusForAffiliate is Ownable {
     }
 
     /**
-    * @dev Block partner
-    * @param _partnerWalletAddress Address partner wallet
-    */
-    function lockUnlockPartner(address _partnerWalletAddress, bool status) public onlyOwner {
-        require(isPartner(_partnerWalletAddress));
-        partners[_partnerWalletAddress].blocked = status;
-    }
-
-    /**
-    * @dev Frozen bonus
-    * @param _partnerWalletAddress Address partner wallet
-    */
-    function frozenBonus(address _partnerWalletAddress, uint256 index, bool status) public onlyOwner {
-        require(isPartner(_partnerWalletAddress));
-        partners[_partnerWalletAddress].bonuses[index].frozen = status;
-    }
-
-    /**
     * @dev Returns partner status blocked or
     * @param _partnerWalletAddress Address partner wallet
     */
@@ -226,7 +226,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Returns all partners
     * @return partnerWalletAddress[], totalPayout[], blockedStatus[], totalBonuses[]
     */
-    function getPartnersPayed() public onlyOwner constant
+    function getPartnersPayed() public constant
     returns (address[] memory partnerWalletAddress, uint256[] memory totalPayout, bool[] memory blockedStatus, uint256[] memory totalBonuses)
     {
         uint256 totalPartners = partnerIndexes.length;
@@ -265,20 +265,5 @@ contract BonusForAffiliate is Ownable {
             partners[_partnerWalletAddress].bonuses[index].payed == false &&
             partners[_partnerWalletAddress].bonuses[index].time + (3 minutes) < now;
     }
-
-    /**
-    * @dev validate affilate bonus exists in parner list
-    * @params _partnerWalletAddress Asddress partner wallet
-    * @params _affiliateAddress Asddress affiliate
-    */
-    /*function isAffilateBonus(address _partnerWalletAddress, address _affiliateAddress) internal returns(bool){
-        if (!isPartner(_partnerWalletAddress)) return false;
-
-        PartnerStruct _partner = partners[_partnerWalletAddress];
-
-        if (_partner.bonusIndexes.length == 0) return false;
-        return _partner.bonusIndexes[_partner.bonuses[_affiliateAddress].bonusIndex] == _affiliateAddress;
-    }*/
-
 
 }

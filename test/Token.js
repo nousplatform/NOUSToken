@@ -48,7 +48,6 @@ var checkThrow = function (error) {
 // Start the token and agent tests now
 contract('NOUSToken', function (accounts) {
 
-
     // Set our units
     var exponent = 0;
     var totalSupply = 0;
