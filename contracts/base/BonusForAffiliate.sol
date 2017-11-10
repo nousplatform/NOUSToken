@@ -262,9 +262,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Retuns status bonus
     */
     function validateBonusStatusForPay(address _partnerWalletAddress, uint256 index) internal returns (bool) {
-        return partners[_partnerWalletAddress].bonuses[index].frozen == false &&
-            partners[_partnerWalletAddress].bonuses[index].payed == false &&
-            partners[_partnerWalletAddress].bonuses[index].time + (3 minutes) < now;
+        return partners[_partnerWalletAddress].bonuses[index].frozen == false && partners[_partnerWalletAddress].bonuses[index].payed == false && partners[_partnerWalletAddress].bonuses[index].time + (3 minutes) < now;
     }
 
 }
