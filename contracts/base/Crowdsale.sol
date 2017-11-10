@@ -28,7 +28,7 @@ contract Crowdsale is BaseContract {
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
     /// @dev this contact sale not payed/ Payed only forwardFunds TODO validate this
-    function buyTokens(address beneficiary, uint256 tokens) isSalesContract(msg.sender) public payable returns (bool) {
+    function buyTokens(address beneficiary, uint256 tokens) public isSalesContract(msg.sender) payable returns (bool) {
         require(saleState == SaleState.Active);
         // if sale is frozen TODO validate stop sale and send transaction
         require(beneficiary != 0x0);
