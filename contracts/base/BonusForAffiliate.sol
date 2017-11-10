@@ -30,7 +30,7 @@ contract BonusForAffiliate is Ownable {
         mapping (uint256 => BonusStruct) bonuses; // if one bonus is default
     }
 
-    // @dev partner wallet address => array bonuses for pay, bonuses for affiliate
+    // @dev partner wallet address => array bonuses for pay, bonuses for backer
     mapping (address => PartnerStruct) private partners;
 
     address[] private partnerIndexes; // index for bonuses map
@@ -42,7 +42,7 @@ contract BonusForAffiliate is Ownable {
 
     event RejectBonus(address indexed partner, uint256 amount);
 
-    event AddBonus(address indexed partner, address affiliate, uint256 amount);
+    event AddBonus(address indexed partner, address backer, uint256 amount);
 
     modifier onlySaleAgent() {
         assert(msg.sender == dugSale);
@@ -51,20 +51,21 @@ contract BonusForAffiliate is Ownable {
 
     /**
     * @dev return referral address
-    * @param _affiliate Address affiliate
+    * @param _backer Address backer
     */
-    function getReferralAddress(address _affiliate) external constant returns (address) {
-        return referral[_affiliate];
+    function getReferralAddress(address _backer) external constant returns (address) {
+        return referral[_backer];
     }
 
     /**
-    * @dev Tie affiliate and partner
-    * @param _affiliate Address affiliate
+    * @dev Tie backer and partner
+    * @param _backer Address backer
     * @param _partner Address partner wallet
     */
-    function addAffiliate(address _affiliate, address _partner) external onlyOwner returns (bool) {
-        require(referral[_affiliate] == address(0));
-        referral[_affiliate] = _partner;
+    function addAffiliate(address _backer, address _partner) external onlyOwner returns (bool) {
+        require(referral[_backer] == address(0));
+        require(_backer != _partner);
+        referral[_backer] = _partner;
         return true;
     }
 
@@ -97,13 +98,13 @@ contract BonusForAffiliate is Ownable {
     }
 
     /**
-    * @dev Add bonus for affiliate can only sale contract
+    * @dev Add bonus for backer can only sale contract
     * @param _partnerWalletAddress Address partner wallet
-    * @param _affiliateAddress Address affiliate account
+    * @param _backerAddress Address backer account
     */
-    function addBonus(address _affiliateAddress, address _partnerWalletAddress) public onlySaleAgent payable {
+    function addBonus(address _backerAddress, address _partnerWalletAddress) public onlySaleAgent payable {
         require(_partnerWalletAddress != address(0));
-        require(referral[_affiliateAddress] == _partnerWalletAddress);
+        require(referral[_backerAddress] == _partnerWalletAddress);
         require(msg.value > 0);
 
         PartnerStruct storage partner = partners[_partnerWalletAddress];
@@ -226,7 +227,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Returns all partners
     * @return partnerWalletAddress[], totalPayout[], blockedStatus[], totalBonuses[]
     */
-    function getPartnersPayed() public constant
+    function getPartnersPaid() public constant
     returns (address[] memory partnerWalletAddress, uint256[] memory totalPayout, bool[] memory blockedStatus, uint256[] memory totalBonuses)
     {
         uint256 totalPartners = partnerIndexes.length;
