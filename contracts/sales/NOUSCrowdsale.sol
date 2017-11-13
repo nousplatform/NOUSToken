@@ -18,7 +18,7 @@ contract NOUSCrowdsale is SalesAgent {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function NOUSCrowdsale(address _saleContractAddress){
+    function NOUSCrowdsale(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
         addBonusRate(1, 7300);
         // 1 Week = 7300 NOUS
@@ -53,8 +53,7 @@ contract NOUSCrowdsale is SalesAgent {
             msg.sender.transfer(msg.value);
             // return back if not
             TokenValidateRefund(this, msg.sender, msg.value);
-        }
-        else {
+        } else {
             TokenPurchase(this, msg.sender, msg.value, tokens);
         }
     }
@@ -80,7 +79,8 @@ contract NOUSCrowdsale is SalesAgent {
         for (uint256 i = 0; i < bonusRates.length; i++) {
             uint256 toPeriod = nousTokenSale.getSaleContractStartTime(this);
             for (uint256 w = 0; w < bonusRates[i].period; w++) {
-                toPeriod = toPeriod + (5 minutes);
+                toPeriod = toPeriod + (1 weeks);
+                //toPeriod = toPeriod + (5 minutes);
                 // TODO FOR TESTING (1 weeks)
             }
             if (now < toPeriod) {

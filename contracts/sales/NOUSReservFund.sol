@@ -10,7 +10,7 @@ contract NOUSReservFund is SalesAgent {
 
     using SafeMath for uint;
 
-    function NOUSReservFund(address _saleContractAddress){
+    function NOUSReservFund(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
     }
 

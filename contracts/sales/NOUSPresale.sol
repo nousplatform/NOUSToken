@@ -14,7 +14,7 @@ contract NOUSPresale is SalesAgent {
 
     uint256 gasPrice;
 
-    function NOUSPresale(address _saleContractAddress){
+    function NOUSPresale(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
     }
 
@@ -41,8 +41,7 @@ contract NOUSPresale is SalesAgent {
             msg.sender.transfer(msg.value);
             // return back if not
             TokenValidateRefund(this, msg.sender, msg.value);
-        }
-        else {
+        } else {
             TokenPurchase(this, msg.sender, msg.value, tokens);
         }
     }

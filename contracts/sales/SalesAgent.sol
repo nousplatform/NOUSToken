@@ -1,12 +1,10 @@
 pragma solidity ^0.4.11;
 
-
 import "../NOUSSale.sol";
 import "../base/Ownable.sol";
 
 
 contract SalesAgent is Ownable {
-
     //address saleContractAddress;
     // Main contract token address
 
