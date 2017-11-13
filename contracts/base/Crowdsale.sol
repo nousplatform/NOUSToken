@@ -70,12 +70,12 @@ contract Crowdsale is BaseContract {
     //**************Validates*****************//
 
     // verifies that the gas price is lower than 50 gwei
-    function validGasPrice(uint256 _gasPrice) external returns (bool) {
+    function validGasPrice(uint256 _gasPrice) external constant returns (bool) {
         return _gasPrice <= maxGasPrice;
     }
 
     /// @dev Validate state contract
-    function validateStateSaleContract(address _salesAgent) public returns (bool) {
+    function validateStateSaleContract(address _salesAgent) public constant returns (bool) {
         return ( salesAgents[_salesAgent].isFinalized == false && // No minting if the sale contract has finalised
             now > salesAgents[_salesAgent].startTime &&
             now < salesAgents[_salesAgent].endTime
@@ -220,7 +220,6 @@ contract Crowdsale is BaseContract {
     }
 
     //**************Bonuses*****************//
-
     /// @dev reserve all bounty on this NOUSSale address contract
     function reserveBonuses() internal {
 
@@ -235,7 +234,8 @@ contract Crowdsale is BaseContract {
         }
     }
 
-    // @dev start only minet close
+    // @dev start only minet close payout after delay
+    // @dev and contract reserve funds
     function payDelayBonuses() public isSalesContract(msg.sender) {
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState == SaleState.Ended);
@@ -248,16 +248,16 @@ contract Crowdsale is BaseContract {
             // todo WARNING  For test sets minutes
             // calculate date delay  1 month = 30 dey
             for (uint256 p = 0; p < bountyPayment[i].delay; p++) {
-                //dateDelay = dateDelay + (30 days);
-                dateDelay = dateDelay + (5 minutes);
+                dateDelay = dateDelay + (30 days);
+                //dateDelay = dateDelay + (5 minutes);
             }
 
             // set last date payaout
             if (bountyPayment[i].timeLastPayout == 0) {
                 delayNextTime = dateDelay;
             } else {
-                //delayNextTime = bountyPayment[i].timeLastPayout + (30 days); // todo minutes
-                delayNextTime = bountyPayment[i].timeLastPayout + (2 minutes);
+                delayNextTime = bountyPayment[i].timeLastPayout + (30 days); // todo minutes
+                //delayNextTime = bountyPayment[i].timeLastPayout + (2 minutes);
             }
 
             // delay bonuses
