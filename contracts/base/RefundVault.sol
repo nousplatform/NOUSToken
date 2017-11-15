@@ -1,8 +1,8 @@
 pragma solidity ^0.4.11;
 
 
-import '../lib/SafeMath.sol';
-import '../base/Ownable.sol';
+import "../lib/SafeMath.sol";
+import "../base/Ownable.sol";
 
 
 /**
@@ -46,7 +46,7 @@ contract RefundVault is Ownable {
         wallet.transfer(this.balance);
     }
 
-    function enableRefunds() onlyOwner public {
+    function enableRefunds() public onlyOwner {
         require(state == State.Active);
         state = State.Refunding;
         RefundsEnabled();
@@ -61,7 +61,7 @@ contract RefundVault is Ownable {
         return depositedValue;
     }
 
-    function withdraw(uint256 _amount) onlyOwner public {
+    function withdraw(uint256 _amount) public onlyOwner {
         require(_amount > 0);
         require(this.balance > _amount);
         wallet.transfer(_amount);

@@ -18,16 +18,14 @@ import "../NOUSToken.sol";
  */
 contract Crowdsale is BaseContract {
 
-    /**
-    * event for token purchase logging
-    * @param purchaser who paid for the tokens
-    * @param beneficiary who got the tokens
-    * @param value weis paid for purchase
-    * @param amount amount of tokens purchased
-    */
+    // event for token purchase logging
+    // @param purchaser who paid for the tokens
+    // @param beneficiary who got the tokens
+    // @param value weis paid for purchase
+    // @param amount amount of tokens purchased
     event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
 
-    /// @dev this contact sale not payed/ Payed only forwardFunds TODO validate this
+    // @dev this contact sale not payed/ Payed only forwardFunds TODO validate this
     function buyTokens(address beneficiary, uint256 tokens) public isSalesContract(msg.sender) payable returns (bool) {
         require(saleState == SaleState.Active);
         // if sale is frozen TODO validate stop sale and send transaction
@@ -68,7 +66,6 @@ contract Crowdsale is BaseContract {
     }
 
     //**************Validates*****************//
-
     // verifies that the gas price is lower than 50 gwei
     function validGasPrice(uint256 _gasPrice) external constant returns (bool) {
         return _gasPrice <= maxGasPrice;
@@ -90,13 +87,14 @@ contract Crowdsale is BaseContract {
         );
     }
 
-    /// @dev General validation for a sales agent contract receiving a contribution, additional validation can be done in the sale contract if required
-    /// @param _value The value of the contribution in wei
-    /// @return A boolean that indicates if the operation was successful.
+    // @dev General validation for a sales agent contract receiving a contribution,
+    // @dev additional validation can be done in the sale contract if required
+    // @param _value The value of the contribution in wei
+    // @return A boolean that indicates if the operation was successful.
     function validateContribution(uint256 _value) isSalesContract(msg.sender) returns (bool) {
         return (_value > 0 && // value
             _value >= salesAgents[msg.sender].minDeposit && // Is it above the min deposit amount?
-            _value <= salesAgents[msg.sender].maxDeposit && //
+            _value <= salesAgents[msg.sender].maxDeposit &&
             weiRaised.add(_value) <= targetEthMax
         );
     }
@@ -111,11 +109,10 @@ contract Crowdsale is BaseContract {
         );
     }
 
-    //*******************Finalize*****************//
-
+    //***Finalize
     /// @dev Sets the contract sale agent process as completed, that sales agent is now retired
     /// oweride if ne logic and coll super finalize
-    function finalizeSaleContract(address _salesAgent) ownerOrSale() public returns (bool) {
+    function finalizeSaleContract(address _salesAgent) public ownerOrSale() returns (bool) {
         require(!salesAgents[_salesAgent].isFinalized);
         require(hasEnded(_salesAgent));
 
@@ -126,7 +123,7 @@ contract Crowdsale is BaseContract {
 
     /// @dev global finalization is activate this function all sales wos stoped.
     /// end pay bonuses
-    function finalizeICO(address _salesAgent) ownerOrSale() public returns (bool) {
+    function finalizeICO(address _salesAgent) public ownerOrSale() returns (bool) {
         //require(!isGlobalFinalized);
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState != SaleState.Ended);
@@ -145,42 +142,32 @@ contract Crowdsale is BaseContract {
     }
 
     //************* Control ETH *****************//
-
-    /**
-    * @dev close refunds and send coins to wallet
-    */
-    function closeRefunds() onlyOwner {
+    //@dev close refunds and send coins to wallet
+    function closeRefunds() public onlyOwner {
         RefundVault vaultContract = RefundVault(refundVaultAddr);
         vaultContract.close();
         // close vault contract and send ETH to Wallet
     }
 
-    /**
-    * @dev Refund coins in investors
-    */
-    function enableRefunds() onlyOwner {
+    // @dev Refund coins in investors
+    function enableRefunds() public onlyOwner {
         RefundVault vaultContract = RefundVault(refundVaultAddr);
         vaultContract.enableRefunds();
     }
 
-    /**
-    * @dev withdraw cash on wallet
-    */
-    function withdraw(uint256 _amount) onlyOwner public {
+    // @dev withdraw cash on wallet
+    function withdraw(uint256 _amount) public onlyOwner {
         require(_amount > 0);
         RefundVault vaultContract = RefundVault(refundVaultAddr);
         vaultContract.withdraw(_amount * 1 ether);
     }
 
-    //***** Deliver *****************//
-
-    /**
-    * @dev Function to send NOUS to presale investors
-    * Can only be called while the presale is not over.
-    * @param _salesAgent addresses sale agent
-    * @param _batchOfAddresses list of addresses
-    * @param _amountOf matching list of address balances
-    */
+    // Deliver
+    // @dev Function to send NOUS to presale investors
+    // Can only be called while the presale is not over.
+    // @param _salesAgent addresses sale agent
+    // @param _batchOfAddresses list of addresses
+    // @param _amountOf matching list of address balances
     function deliverPresaleTokens(address _salesAgent, address[] _batchOfAddresses, uint256[] _amountOf)
         external ownerOrSale returns (bool success)
     {
@@ -194,14 +181,13 @@ contract Crowdsale is BaseContract {
         return true;
     }
 
-    /**
-    * @dev Logic to transfer presale tokens
-    * Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from
-    * the same address will be aggregated.
-    * @param _accountHolder user address
-    * @param _amountOf balance to send out
-    */
-    function deliverTokenToClient(address _salesAgent, address _accountHolder, uint256 _amountOf) public ownerOrSale returns (bool) {
+    // @dev Logic to transfer presale tokens
+    // Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from
+    // the same address will be aggregated.
+    // @param _accountHolder user address
+    // @param _amountOf balance to send out
+    function deliverTokenToClient(address _salesAgent, address _accountHolder, uint256 _amountOf)
+    public ownerOrSale returns (bool) {
         require(_accountHolder != 0x0);
         uint256 _tokens = _amountOf.mul(EXPONENT);
         require(validPurchase(_salesAgent, _tokens));
@@ -220,20 +206,6 @@ contract Crowdsale is BaseContract {
     }
 
     //**************Bonuses*****************//
-    /// @dev reserve all bounty on this NOUSSale address contract
-    function reserveBonuses() internal {
-
-        uint256 totalSupply = tokenContract.totalSupply();
-
-        for (uint256 i = 0; i < bountyPayment.length; i++) {
-            if (bountyPayment[i].amountReserve == 0) {
-                bountyPayment[i].amountReserve = totalSupply.mul(bountyPayment[i].percent).div(100);
-                // reserve fonds on this contract
-                tokenContract.mint(this, bountyPayment[i].amountReserve);
-            }
-        }
-    }
-
     // @dev start only minet close payout after delay
     // @dev and contract reserve funds
     function payDelayBonuses() public isSalesContract(msg.sender) {
@@ -261,12 +233,27 @@ contract Crowdsale is BaseContract {
             }
 
             // delay bonuses
-            if (now >= dateDelay && bountyPayment[i].amountReserve > bountyPayment[i].totalPayout && now >= delayNextTime) {
+            if (now >= dateDelay && bountyPayment[i].amountReserve > bountyPayment[i].totalPayout &&
+              now >= delayNextTime) {
                 uint256 payout = bountyPayment[i].amountReserve.div(bountyPayment[i].periodPathOfPay);
                 tokenContract.transfer(bountyPayment[i].wallet, payout);
                 // transfer bonuses
                 bountyPayment[i].totalPayout = bountyPayment[i].totalPayout.add(payout);
                 bountyPayment[i].timeLastPayout = delayNextTime;
+            }
+        }
+    }
+
+    // @dev reserve all bounty on this NOUSSale address contract
+    function reserveBonuses() internal {
+
+        uint256 totalSupply = tokenContract.totalSupply();
+
+        for (uint256 i = 0; i < bountyPayment.length; i++) {
+            if (bountyPayment[i].amountReserve == 0) {
+                bountyPayment[i].amountReserve = totalSupply.mul(bountyPayment[i].percent).div(100);
+                // reserve fonds on this contract
+                tokenContract.mint(this, bountyPayment[i].amountReserve);
             }
         }
     }

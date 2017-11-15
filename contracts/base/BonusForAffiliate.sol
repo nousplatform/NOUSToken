@@ -53,7 +53,7 @@ contract BonusForAffiliate is Ownable {
     * @dev return referral address
     * @param _backer Address backer
     */
-    function getReferralAddress(address _backer) external constant returns (address) {
+    function getReferralAddress(address _backer) external returns (address) {
         return referral[_backer];
     }
 
@@ -132,7 +132,7 @@ contract BonusForAffiliate is Ownable {
     returns(uint256[] memory index, uint256[] memory amount, uint256[] memory time, bool[] memory payed, bool[] memory frozen)
     {
         require(_partnerWalletAddress != address(0));
-        
+
         PartnerStruct storage partner = partners[_partnerWalletAddress];
         uint256 length = partner.bonusIndexes.length;
         index = new uint256[](length);
@@ -140,7 +140,7 @@ contract BonusForAffiliate is Ownable {
         time = new uint256[](length);
         payed = new bool[](length);
         frozen = new bool[](length);
-       
+
         for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
             index[i] = i;
             amount[i] = partner.bonuses[i].amount;

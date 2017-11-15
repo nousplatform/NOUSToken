@@ -1,6 +1,5 @@
 pragma solidity ^0.4.11;
 
-
 import "./BasicToken.sol";
 import "./ERC20.sol";
 
@@ -8,6 +7,7 @@ import "./ERC20.sol";
 contract TokenRecipient {
     function receiveApproval(address _from, uint _value, address _tknAddress, bytes _extraData);
 }
+
 
 /**
  * @title Standard ERC20 token
