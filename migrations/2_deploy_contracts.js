@@ -6,6 +6,7 @@ var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
 var NOUSPresale = artifacts.require("./NOUSPresale.sol");
 var NOUSCrowdsale = artifacts.require("./NOUSCrowdsale.sol");
 var NOUSReservFund = artifacts.require("./NOUSReservFund.sol");
+var SaleAgent = artifacts.require("./SaleAgent.sol");
 
 
 module.exports = function(deployer) {
@@ -16,6 +17,7 @@ module.exports = function(deployer) {
         .then(function() {
             Promise.all(
                 [
+                    SaleAgent.new(),
                     NOUSToken.new(),
                     RefundVault.new(wallet),
                     BonusForAffiliate.new(),
@@ -23,16 +25,18 @@ module.exports = function(deployer) {
             )
             .then(function(instances) {
 
-                console.log("NOUSToken:", instances[0].address);
-                console.log("RefundVault:", instances[1].address);
-                console.log("BonusForAffiliate:", instances[2].address);
+                console.log("SaleAgent:", instances[0].address);
+                console.log("NOUSToken:", instances[1].address);
+                console.log("RefundVault:", instances[2].address);
+                console.log("BonusForAffiliate:", instances[3].address);
 
-                return NOUSSale.new(wallet, instances[0].address, instances[1].address)
+                return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address, instances[3].address)
                     .then(function (instanceNousSale) {
-                        instances[0].transferOwnership(instanceNousSale.address);
+                        instances[0].setSaleProvider(instanceNousSale.address);
                         instances[1].transferOwnership(instanceNousSale.address);
-                        instances[2].setDugSale(instanceNousSale.address);
-                        return instanceNousSale.address
+                        instances[2].transferOwnership(instanceNousSale.address);
+                        instances[3].setDugSale(instanceNousSale.address);
+                        return instanceNousSale.address;
                 });
             })
             .then(function (nousSaleSddr) {
@@ -59,7 +63,7 @@ NOUSSale: 0x572a7d0e0eacb71c1305250d75acb0830b37d5b9
   NOUSCrowdsale: 0x64729085f3065a81504dff5d1758dfcdee25abd7
   NOUSPresale: 0xace2c215e47c97a9c6ae288a0d981cd7d6a6d530
   NOUSReservFund: 0x8c55d9de8fe1f198e27093aeab1770f820404f30
- */
+*/
 
 /*
 NOUSToken: 0xfc7b61ac981d8a668ea01972c998929143b712ae

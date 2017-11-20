@@ -6,7 +6,6 @@ import "../lib/SafeMath.sol";
 import "../lib/Data.sol";
 
 
-
 contract SaleAgent is Ownable {
 
     using SafeMath for uint256;
