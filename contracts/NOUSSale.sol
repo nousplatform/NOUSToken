@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 
 import "./token/MintableToken.sol";
 import "./base/Crowdsale.sol";
+import "./lib/Data.sol";
 
 
 contract NOUSSale is Crowdsale {

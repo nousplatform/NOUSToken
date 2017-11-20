@@ -4,10 +4,14 @@ pragma solidity ^0.4.11;
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
 import "../lib/Data.sol";
-import "../token/MintableToken.sol";
-import "../NOUSToken.sol";
-import "./RefundVault.sol";
-import "./SaleAgent.sol";
+//import "../token/MintableToken.sol";
+//import "../NOUSToken.sol";
+//import "./RefundVault.sol";
+
+import "../interfaces/NOUSTokenInterface.sol";
+import "../interfaces/RefundVaultInterface.sol";
+import "../interfaces/SaleAgentInterface.sol";
+//import "./SaleAgent.sol";
 
 
 /**
@@ -22,8 +26,8 @@ contract BaseContract is Ownable {
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
     /**** Variables ****/
-    MintableToken public tokenContract; // The token being sold
-    SaleAgent public saleAgentContract; // The token being sold
+    NOUSTokenInterface public tokenContract; // The token being sold
+    SaleAgentInterface public saleAgentContract; // The token being sold
     //RefundVault public vaultContract; // contract refunded value
 
     //address public mintableTokenAddr; // address BonusForAffiliate contract
@@ -68,11 +72,11 @@ contract BaseContract is Ownable {
         address _affiliate
     ) {
         if (address(saleAgentContract) == 0x0) {
-            saleAgentContract = SaleAgent(_saleAgent);
+            saleAgentContract = SaleAgentInterface(_saleAgent);
         }
 
         if (address(tokenContract) == 0x0) {
-            tokenContract = MintableToken(_token);
+            tokenContract = NOUSTokenInterface(_token);
         }
 
         if (refundVaultAddr == 0x0) {
@@ -121,7 +125,7 @@ contract BaseContract is Ownable {
         require(!goalReached());
 
         //token. TODO get token
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
+        RefundVaultInterface vaultContract = RefundVaultInterface(refundVaultAddr);
         return vaultContract.refund(beneficiary);
     }
 

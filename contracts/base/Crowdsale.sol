@@ -3,9 +3,10 @@ pragma solidity ^0.4.11;
 
 import "./BaseContract.sol";
 import "../interfaces/SalesAgentInterface.sol";
-import "./BonusForAffiliate.sol";
-import "./RefundVault.sol";
-import "../NOUSToken.sol";
+//import "./BonusForAffiliate.sol";
+import "../interfaces/BonusForAffiliateInterface.sol";
+import "../interfaces/RefundVaultInterface.sol";
+//import "../interfaces/NOUSTokenInterface.sol";
 
 
 /**
@@ -35,7 +36,7 @@ contract Crowdsale is BaseContract {
 
         uint256 weiAmount = msg.value;
 
-        BonusForAffiliate affiliate = BonusForAffiliate(affiliateAddr);
+        BonusForAffiliateInterface affiliate = BonusForAffiliateInterface(affiliateAddr);
         address _referral = affiliate.getReferralAddress(beneficiary);
 
         if (_referral != address(0)) {
@@ -48,7 +49,7 @@ contract Crowdsale is BaseContract {
         saleAgentContract.addTokensMinted(msg.sender, tokens);
         // increment tokensMinted
 
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
+        RefundVaultInterface vaultContract = RefundVaultInterface(refundVaultAddr);
 
         vaultContract.deposit.value(weiAmount)(beneficiary);
         // transfer ETH to refund contract
@@ -144,21 +145,21 @@ contract Crowdsale is BaseContract {
     //************* Control ETH *****************//
     //@dev close refunds and send coins to wallet
     function closeRefunds() public onlyOwner {
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
+        RefundVaultInterface vaultContract = RefundVaultInterface(refundVaultAddr);
         vaultContract.close();
         // close vault contract and send ETH to Wallet
     }
 
     // @dev Refund coins in investors
     function enableRefunds() public onlyOwner {
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
+        RefundVaultInterface vaultContract = RefundVaultInterface(refundVaultAddr);
         vaultContract.enableRefunds();
     }
 
     // @dev withdraw cash on wallet
     function withdraw(uint256 _amount) public onlyOwner {
         require(_amount > 0);
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
+        RefundVaultInterface vaultContract = RefundVaultInterface(refundVaultAddr);
         vaultContract.withdraw(_amount * 1 ether);
     }
 
