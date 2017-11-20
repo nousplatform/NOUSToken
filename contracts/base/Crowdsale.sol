@@ -73,16 +73,16 @@ contract Crowdsale is BaseContract {
 
     /// @dev Validate state contract
     function validateStateSaleContract(address _salesAgent) public constant returns (bool) {
-        return ( saleAgentContract.salesAgents[_salesAgent].isFinalized == false && // No minting if the sale contract has finalised
-            now > saleAgentContract.salesAgents[_salesAgent].startTime &&
-            now < saleAgentContract.salesAgents[_salesAgent].endTime
+        return ( saleAgentContract.getSaleContractIsFinalised(_salesAgent) == false && // No minting if the sale contract has finalised
+            now > saleAgentContract.getSaleContractStartTime(_salesAgent) &&
+            now < saleAgentContract.getSaleContractEndTime(_salesAgent)
         );
     }
 
     /// @dev Validate Mined tokens
     function validPurchase(address _agent, uint _tokens) public returns (bool) {
         return ( _tokens > 0  &&
-            saleAgentContract.salesAgents[_agent].tokensLimit >= saleAgentContract.salesAgents[_agent].tokensMinted.add(_tokens) && // within Tokens mined
+            saleAgentContract.getSaleContractTokensLimit(_agent) >= saleAgentContract.getSaleContractTokensMinted(_agent).add(_tokens) && // within Tokens mined
             totalSupplyCap >= tokenContract.totalSupply().add(_tokens)
         );
     }
@@ -93,19 +93,19 @@ contract Crowdsale is BaseContract {
     // @return A boolean that indicates if the operation was successful.
     function validateContribution(uint256 _value) isSalesContract(msg.sender) returns (bool) {
         return (_value > 0 && // value
-            _value >= saleAgentContract.salesAgents[msg.sender].minDeposit && // Is it above the min deposit amount?
-            _value <= saleAgentContract.salesAgents[msg.sender].maxDeposit &&
+            _value >= saleAgentContract.getSaleContractMinDeposit(msg.sender) && // Is it above the min deposit amount?
+            _value <= saleAgentContract.getSaleContractMaxDeposit(msg.sender) &&
             weiRaised.add(_value) <= targetEthMax
         );
     }
 
     /// @return true if crowdsale event has ended and call super.hasEnded
     function hasEnded(address _salesAgent) public constant returns (bool) {
-        return saleAgentContract.salesAgents[_salesAgent].exists == true && (
-             saleAgentContract.salesAgents[_salesAgent].tokensMinted >= saleAgentContract.salesAgents[_salesAgent].tokensLimit ||
+        return saleAgentContract.getSaleContractExists(_salesAgent) == true && (
+             saleAgentContract.getSaleContractTokensMinted(_salesAgent) >= saleAgentContract.getSaleContractTokensLimit(_salesAgent) ||
              weiRaised >= targetEthMax ||
              totalSupplyCap <= tokenContract.totalSupply() ||
-             now > saleAgentContract.salesAgents[_salesAgent].endTime
+             now > saleAgentContract.getSaleContractEndTime(_salesAgent)
         );
     }
 
@@ -113,11 +113,11 @@ contract Crowdsale is BaseContract {
     /// @dev Sets the contract sale agent process as completed, that sales agent is now retired
     /// oweride if ne logic and coll super finalize
     function finalizeSaleContract(address _salesAgent) public onlyOwner() returns (bool) {
-        require(!saleAgentContract.salesAgents[_salesAgent].isFinalized);
+        require(!saleAgentContract.getSaleContractIsFinalised(_salesAgent));
         require(hasEnded(_salesAgent));
 
-        saleAgentContract.salesAgents[_salesAgent].isFinalized = true;
-        SaleFinalised(_salesAgent, msg.sender, saleAgentContract.salesAgents[_salesAgent].tokensMinted);
+        saleAgentContract.setFinalize(_salesAgent);
+        SaleFinalised(_salesAgent, msg.sender, saleAgentContract.getSaleContractTokensMinted(_salesAgent));
         return true;
     }
 
@@ -125,9 +125,9 @@ contract Crowdsale is BaseContract {
     /// end pay bonuses
     function finalizeICO(address _salesAgent) public onlyOwner() returns (bool) {
         //require(!isGlobalFinalized);
-        require(saleAgentContract.salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
+        require(saleAgentContract.getSaleContractContractType(msg.sender) == Data.SaleContractType.ReserveFunds);
         require(saleState != SaleState.Ended);
-        require(saleAgentContract.salesAgents[_salesAgent].isFinalized == false);
+        require(saleAgentContract.getSaleContractIsFinalised(_salesAgent) == false);
 
         reserveBonuses();
         // reserve bonuses
@@ -193,7 +193,7 @@ contract Crowdsale is BaseContract {
         require(validPurchase(_salesAgent, _tokens));
 
         tokenContract.mint(_accountHolder, _tokens);
-        saleAgentContract.salesAgents[msg.sender].tokensMinted = saleAgentContract.salesAgents[msg.sender].tokensMinted.add(_tokens);
+        saleAgentContract.addTokensMinted(msg.sender, _tokens);
 
         TokenPurchase(
             msg.sender,
@@ -209,13 +209,13 @@ contract Crowdsale is BaseContract {
     // @dev start only minet close payout after delay
     // @dev and contract reserve funds
     function payDelayBonuses() public isSalesContract(msg.sender) {
-        require(saleAgentContract.salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
+        require(saleAgentContract.getSaleContractContractType(msg.sender) == Data.SaleContractType.ReserveFunds);
         require(saleState == SaleState.Ended);
 
         uint256 delayNextTime = 0;
 
         for (uint256 i = 0; i < bountyPayment.length; i++) {
-            uint256 dateDelay = saleAgentContract.salesAgents[msg.sender].startTime;
+            uint256 dateDelay = saleAgentContract.getSaleContractStartTime(msg.sender);
 
             // todo WARNING  For test sets minutes
             // calculate date delay  1 month = 30 dey

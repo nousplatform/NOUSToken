@@ -41,7 +41,7 @@ contract SalesAgentProvider is Ownable {
 
         // Do some common contribution validation, will throw if an error occurs - address calling this should match the deposit address
         if (nousTokenSale.finalizeSaleContract(this)) {
-            uint256 tokenMinted = nousTokenSale.getSaleContractTokensMinted(this);
+            uint256 tokenMinted = saleAgentDb.getSaleContractTokensMinted(this);
             FinaliseSale(this, msg.sender, tokenMinted);
         }
     }

@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 
 library Data {
 
+    enum SaleContractType {Preorder, Presale, Crowdsale, ReserveFunds}
 
     struct Bounty {
         address wallet; // wallet address for transfer

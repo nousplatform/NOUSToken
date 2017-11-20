@@ -79,7 +79,7 @@ contract NOUSCrowdsale is SalesAgentProvider {
     /// @dev get period rates
     function getBonusRate() internal returns (uint256) {
         for (uint256 i = 0; i < bonusRates.length; i++) {
-            uint256 toPeriod = nousTokenSale.getSaleContractStartTime(this);
+            uint256 toPeriod = saleAgentDb.getSaleContractStartTime(this);
             for (uint256 w = 0; w < bonusRates[i].period; w++) {
                 toPeriod = toPeriod + (1 weeks);
                 //toPeriod = toPeriod + (5 minutes);
@@ -90,7 +90,7 @@ contract NOUSCrowdsale is SalesAgentProvider {
             }
         }
 
-        return nousTokenSale.getSaleContractTokensRate(this);
+        return saleAgentDb.getSaleContractTokensRate(this);
         // return default rate if not config
     }
 

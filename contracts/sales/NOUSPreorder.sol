@@ -27,7 +27,7 @@ contract NOUSPreorder is SalesAgentProvider {
 
         uint256 weiAmount = msg.value;
 
-        uint256 rate = nousTokenSale.getSaleContractTokensRate(this);
+        uint256 rate = saleAgentDb.getSaleContractTokensRate(this);
         // calculate tokens - get bonus rate
         uint256 tokens = weiAmount.mul(rate);
 

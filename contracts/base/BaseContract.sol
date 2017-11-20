@@ -54,7 +54,7 @@ contract BaseContract is Ownable {
     /**** Modifier ***********/
     /// @dev Only allow access from the latest version of a sales contract
     modifier isSalesContract(address _sender) {
-        assert(saleAgentContract.salesAgents[_sender].exists == true); // Is this an authorised sale contract?
+        assert(saleAgentContract.getSaleContractExists(_sender) == true); // Is this an authorised sale contract?
         _;
     }
 

@@ -1,15 +1,22 @@
 pragma solidity ^0.4.0;
 
+
 import "../base/Ownable.sol";
+import "../lib/SafeMath.sol";
+import "../lib/Data.sol";
+
+
 
 contract SaleAgent is Ownable {
 
-    enum SaleContractType {Preorder, Presale, Crowdsale, ReserveFunds}
+    using SafeMath for uint256;
 
     mapping (address => SalesAgent) private salesAgents; // Our contract addresses of our sales contracts
     address[] internal salesAgentsAddresses; // Keep an array of all our sales agent addresses for iteration
 
     uint256 internal constant EXPONENT = 10 ** uint256(18);
+
+    address saleProvider;
 
 
     /// @dev Only allow access from the latest version of a sales contract
@@ -19,15 +26,15 @@ contract SaleAgent is Ownable {
     }
 
     /// @dev Only sale provider
-    modifier onlySaleProvider(address _sender) {
-        assert(onlySaleProvider == msg.sender); // Is this an authorised sale contract?
+    modifier onlySaleProvider() {
+        assert(saleProvider == msg.sender); // Is this an authorised sale contract?
         _;
     }
 
     // These are contract addresses that are authorised to mint tokens
     struct SalesAgent {
         address saleContractAddress; // Address of the contract
-        SaleContractType saleContractType; // Type of the contract ie. presale, crowdsale, reserve_funds
+        Data.SaleContractType saleContractType; // Type of the contract ie. presale, crowdsale, reserve_funds
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
         uint256 tokensMinted; // The current amount of tokens minted by this agent
         uint256 rate; // default rate
@@ -40,8 +47,10 @@ contract SaleAgent is Ownable {
     }
 
 
-    function SaleAgent(){
-
+    function setSaleProvider(address _saleProvider){
+        require(saleProvider == 0x0);
+        require(_saleProvider != 0x0);
+        saleProvider = _saleProvider;
     }
 
     //**** Setters ****//
@@ -57,7 +66,7 @@ contract SaleAgent is Ownable {
     */
     function setSaleAgentContract(
         address _saleAddress,
-        SaleContractType _saleContractType,
+        Data.SaleContractType _saleContractType,
         uint256 _tokensLimit,
         uint256 _minDeposit,
         uint256 _maxDeposit,
@@ -96,14 +105,20 @@ contract SaleAgent is Ownable {
         salesAgentsAddresses.push(_saleAddress);
     }
 
-    function addTokensMinted(address saleAddress, uint256 tokens) onlySaleProvider {
-        salesAgents[saleAddress].tokensMinted = salesAgents[saleAddress].tokensMinted.add(tokens);
+    function addTokensMinted(address _salesAgentAddress, uint256 tokens) isSalesContract(_salesAgentAddress) onlySaleProvider returns (bool) {
+        salesAgents[_salesAgentAddress].tokensMinted = salesAgents[_salesAgentAddress].tokensMinted.add(tokens);
+        return true;
+    }
+
+    function setFinalize(address _salesAgentAddress) isSalesContract(_salesAgentAddress) onlySaleProvider returns (bool) {
+        salesAgents[_salesAgentAddress].isFinalized = true;
+        return true;
     }
 
     /**
     * @dev Find sames type active sales, and diactivate
     */
-    function changeActiveSale(SaleContractType _saleContractType) internal returns (uint256) {
+    function changeActiveSale(Data.SaleContractType _saleContractType) internal returns (uint256) {
         for (uint256 i = 0; i < salesAgentsAddresses.length; i++) {
             if (salesAgents[salesAgentsAddresses[i]].saleContractType == _saleContractType && salesAgents[salesAgentsAddresses[i]].isFinalized == false) {
                 salesAgents[salesAgentsAddresses[i]].isFinalized = true;
@@ -160,6 +175,18 @@ contract SaleAgent is Ownable {
     /// @param _salesAgentAddress The address of the token sale agent contract
     function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
         return salesAgents[_salesAgentAddress].maxDeposit;
+    }
+
+    /// @dev
+    /// @param _salesAgentAddress The address of the token sale agent contract
+    function getSaleContractExists(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (bool) {
+        return salesAgents[_salesAgentAddress].exists;
+    }
+
+    /// @dev
+    /// @param _salesAgentAddress The address of the token sale agent contract
+    function getSaleContractContractType(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (Data.SaleContractType) {
+        return salesAgents[_salesAgentAddress].saleContractType;
     }
 
 
