@@ -1,19 +1,20 @@
 pragma solidity ^0.4.11;
 
 
-import "./SalesAgent.sol";
+import "./SalesAgentProvider.sol";
 import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
 
 
-contract NOUSPreorder is SalesAgent {
+contract NOUSPreorder is SalesAgentProvider {
 
     using SafeMath for uint;
 
     uint256 gasPrice;
 
-    function NOUSPreorder(address _saleContractAddress) {
+    function NOUSPreorder(address _saleContractAddress, address _saleAgent) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        saleAgentDb = SaleAgent(_saleAgent);
     }
 
     function() payable external {

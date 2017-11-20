@@ -1,14 +1,17 @@
 pragma solidity ^0.4.11;
 
 import "../NOUSSale.sol";
+import "../base/SaleAgent.sol";
 import "../base/Ownable.sol";
 
 
-contract SalesAgent is Ownable {
+contract SalesAgentProvider is Ownable {
     //address saleContractAddress;
     // Main contract token address
 
     NOUSSale nousTokenSale; // contract nous sale
+
+    SaleAgent saleAgentDb; //
 
     /**
 	* event for token purchase logging
@@ -42,6 +45,7 @@ contract SalesAgent is Ownable {
             FinaliseSale(this, msg.sender, tokenMinted);
         }
     }
+
 
     /*function setSaleAddress(address _saleContractAddress) onlyOwner {
         nousTokenSale = NOUSSale(_saleContractAddress);

@@ -1,7 +1,7 @@
 pragma solidity ^0.4.11;
 
 
-import "./SalesAgent.sol";
+import "./SalesAgentProvider.sol";
 import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
 
@@ -10,14 +10,15 @@ import "./NOUSReservFund.sol";
 import "./NOUSPreorder.sol";
 
 
-contract NOUSPresale is SalesAgent {
+contract NOUSPresale is SalesAgentProvider {
 
     using SafeMath for uint;
 
     uint256 gasPrice;
 
-    function NOUSPresale(address _saleContractAddress) {
+    function NOUSPresale(address _saleContractAddress, address _saleAgent) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        saleAgentDb = SaleAgent(_saleAgent);
     }
 
     function() payable external {
@@ -30,7 +31,7 @@ contract NOUSPresale is SalesAgent {
 
         uint256 weiAmount = msg.value;
 
-        uint256 rate = nousTokenSale.getSaleContractTokensRate(this);
+        uint256 rate = saleAgentDb.getSaleContractTokensRate(this);
         // calculate tokens - get bonus rate
         uint256 tokens = weiAmount.mul(rate);
 

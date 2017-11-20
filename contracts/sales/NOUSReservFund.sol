@@ -1,17 +1,19 @@
 pragma solidity ^0.4.11;
 
 
-import "./SalesAgent.sol";
+import "./SalesAgentProvider.sol";
 import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
+import "../base/SaleAgent.sol";
 
 
-contract NOUSReservFund is SalesAgent {
+contract NOUSReservFund is SalesAgentProvider {
 
     using SafeMath for uint;
 
-    function NOUSReservFund(address _saleContractAddress) {
+    function NOUSReservFund(address _saleContractAddress, address _saleAgent) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        saleAgentDb = SaleAgent(_saleAgent);
     }
 
     function globalFinalizationStartBonusPayable() onlyOwner {

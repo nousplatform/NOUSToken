@@ -1,12 +1,12 @@
 pragma solidity ^0.4.11;
 
 
-import "./SalesAgent.sol";
+import "./SalesAgentProvider.sol";
 import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
 
 
-contract NOUSCrowdsale is SalesAgent {
+contract NOUSCrowdsale is SalesAgentProvider {
 
     using SafeMath for uint;
 
@@ -18,8 +18,10 @@ contract NOUSCrowdsale is SalesAgent {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function NOUSCrowdsale(address _saleContractAddress) {
+    function NOUSCrowdsale(address _saleContractAddress, address _saleAgent) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        saleAgentDb = SaleAgent(_saleAgent);
+
         addBonusRate(1, 7300);
         // 1 Week = 7300 NOUS
         addBonusRate(2, 7000);
