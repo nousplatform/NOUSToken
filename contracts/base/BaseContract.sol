@@ -4,9 +4,8 @@ pragma solidity ^0.4.11;
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
 import "../lib/Data.sol";
-import "../token/MintableToken.sol";
-import "../NOUSToken.sol";
-import "./RefundVault.sol";
+//import "../token/MintableToken.sol";
+import "../interfaces/NOUSTokenInterface.sol";
 
 
 /**
@@ -21,7 +20,7 @@ contract BaseContract is Ownable {
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
     /**** Variables ****/
-    MintableToken public tokenContract; // The token being sold
+    NOUSTokenInterface public tokenContract; // The token being sold
     //RefundVault public vaultContract; // contract refunded value
 
     //address public mintableTokenAddr; // address BonusForAffiliate contract
@@ -74,7 +73,7 @@ contract BaseContract is Ownable {
         address _affiliate
     ) {
         if (address(tokenContract) == 0x0) {
-            tokenContract = MintableToken(_token);
+            tokenContract = NOUSTokenInterface(_token);
             //mintableTokenAddr = _token;
         }
 
@@ -170,7 +169,7 @@ contract BaseContract is Ownable {
     }
 
     // if crowdsale is unsuccessful, investors can claim refunds here
-    function claimRefund(address beneficiary) isSalesContract(msg.sender) public returns (uint256) {
+    /*function claimRefund(address beneficiary) isSalesContract(msg.sender) public returns (uint256) {
         require(saleState == SaleState.Ended);
         // refund started only closed contract
         require(!goalReached());
@@ -178,7 +177,7 @@ contract BaseContract is Ownable {
         //token. TODO get token
         RefundVault vaultContract = RefundVault(refundVaultAddr);
         return vaultContract.refund(beneficiary);
-    }
+    }*/
 
     /*** Management *******************/
     /**
@@ -209,9 +208,9 @@ contract BaseContract is Ownable {
     /**
     * @dev warning Change owner token contact
     */
-    function changeTokenOwner(address newOwner) onlyOwner {
+    /*function changeTokenOwner(address newOwner) onlyOwner {
         tokenContract.transferOwnership(newOwner);
-    }
+    }*/
 
     /**** Getters ****/
     /// @dev Returns true if this sales contract has finalised

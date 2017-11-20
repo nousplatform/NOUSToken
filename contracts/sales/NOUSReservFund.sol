@@ -29,10 +29,10 @@ contract NOUSReservFund is SalesAgent {
     /**
     * @dev if they ICO did not reach the goal
     */
-    function claimRefund() public {
+    /*function claimRefund() public {
         uint256 _value = nousTokenSale.claimRefund(msg.sender);
         Refund(this, msg.sender, _value);
-    }
+    }*/
 
 
 }

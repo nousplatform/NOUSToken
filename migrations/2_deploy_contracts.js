@@ -27,7 +27,7 @@ module.exports = function(deployer) {
                 console.log("RefundVault:", instances[1].address);
                 console.log("BonusForAffiliate:", instances[2].address);
 
-                return NOUSSale.new(wallet, instances[0].address, instances[1].address)
+                return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address)
                     .then(function (instanceNousSale) {
                         instances[0].transferOwnership(instanceNousSale.address);
                         instances[1].transferOwnership(instanceNousSale.address);
