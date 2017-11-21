@@ -60,10 +60,10 @@
 
 <form id="nous_sale">
     <table border="1"  width="" style="">
-        <!--<tr>
-            <th>Wallet address:</th>
-            <td><input type="text" id="wallet" size="50" ></td>
-        </tr>-->
+        <tr>
+            <th>SaleAgent address:</th>
+            <td><input type="text" id="saleAgent" size="50" ></td>
+        </tr>
         <tr>
             <th>Token address:</th>
             <td><input type="text" id="token" size="50"></td>
@@ -135,10 +135,11 @@
 
     function test2() {
         //var wallet = document.getElementById('wallet').value;
+        var saleAgent = document.getElementById('saleAgent').value;
         var token = document.getElementById('token').value;
         var vault = document.getElementById('vault').value;
         var affiliate = document.getElementById('affiliate').value;
-        var res = '"'+token +'","'+ vault +'","'+ affiliate +'"';
+        var res = '"'+saleAgent +'","'+token +'","'+ vault +'","'+ affiliate +'"';
         document.getElementById("result2").value = res;
     }
 

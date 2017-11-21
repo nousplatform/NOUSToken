@@ -133,14 +133,14 @@ contract BaseContract is Ownable {
     /**
     * @dev Find stop sale
     */
-    function pendingActiveSale() onlyOwner {
+    /*function pendingActiveSale() onlyOwner {
         require(saleState != SaleState.Ended);
         if (saleState == SaleState.Pending) {
             saleState = SaleState.Active;
         } else {
             saleState = SaleState.Pending;
         }
-    }
+    }*/
 
     /**
     * @dev warning Change owner token contact
