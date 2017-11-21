@@ -18,6 +18,8 @@ contract RefundVault is Ownable {
 
     mapping (address => uint256) public deposited;
 
+    address private dugSale; // address Nous Sale contract
+
     address public wallet;
 
     State public state;
@@ -28,13 +30,25 @@ contract RefundVault is Ownable {
 
     event Refunded(address indexed beneficiary, uint256 weiAmount);
 
+    modifier onlySaleAgent() {
+        assert(msg.sender == dugSale);
+        _;
+    }
+
+    function setDugSale( address _dugSale ) external onlyOwner returns (bool) {
+        require(_dugSale != address(0));
+        //require(dugSale == address(0));
+        dugSale = _dugSale;
+        return true;
+    }
+
     function RefundVault(address _wallet) {
         require(_wallet != 0x0);
         wallet = _wallet;
         state = State.Active;
     }
 
-    function deposit(address investor) public onlyOwner payable {
+    function deposit(address investor) public onlySaleAgent payable {
         require(state == State.Active);
         deposited[investor] = deposited[investor].add(msg.value);
     }
