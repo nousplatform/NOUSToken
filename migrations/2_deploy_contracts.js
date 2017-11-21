@@ -45,13 +45,12 @@ module.exports = function(deployer) {
             .then(function (nousSaleSddr) {
                 console.log("NOUSSale:", nousSaleSddr);
                 deployer.deploy([
-                    [NOUSPreorder, nousSaleSddr[0]],
-                    [NOUSPresale, nousSaleSddr[0]],
-                    [NOUSCrowdsale, nousSaleSddr[0]],
-                    [NOUSReservFund, nousSaleSddr[0]]
+                    [NOUSPreorder, nousSaleSddr],
+                    [NOUSPresale, nousSaleSddr],
+                    [NOUSCrowdsale, nousSaleSddr],
+                    [NOUSReservFund, nousSaleSddr]
                 ]);
             })
-
 
     });
 
@@ -159,3 +158,13 @@ NOUSReservFund: 0x329d57de9ee2536deb2287d7d580c424cc6e3ac7
 // NOUSToken: 0x14d31cd5ded4735d6e89c8f376c7940cb15227dc
 // RefundVault: 0x4cd7b59c0084684526b3ae4a0874d98a59c88ebe
 // BonusForAffiliate: 0x5581f2a3f02760e214f4f725e90e736fce715aa4
+
+
+
+// NEW BUILD
+// NOUSToken: 0x5edfcfb2613636c8a4574f61554c44e18c78199f
+// RefundVault: 0xf0523d8bd19313e141ff41e260bd49986d7c72f1
+// BonusForAffiliate: 0x3a12edbb26643250eb01a55bbe846fc8e0085aed
+// PaymentBounty: 0x7db807930fe79ed8402532bafd1ce7c5ed1e6221
+// NOUSSale: 0xd7b34bdbd4821ba90d99eb0d20a6baf942738eea
+
