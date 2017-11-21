@@ -18,8 +18,10 @@ contract NOUSCrowdsale is SalesAgent {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function NOUSCrowdsale(address _saleContractAddress) {
+    function NOUSCrowdsale(address _saleContractAddress, address _tokenAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        tokenAddress = _tokenAddress;
+
         addBonusRate(1, 7300);
         // 1 Week = 7300 NOUS
         addBonusRate(2, 7000);
@@ -31,9 +33,9 @@ contract NOUSCrowdsale is SalesAgent {
     function() payable external {
         // The target ether amount
         require(nousTokenSale.validGasPrice(tx.gasprice));
-        require(nousTokenSale.validateStateSaleContract(this));
+        require(validateStateSaleContract(this));
 
-        require(nousTokenSale.validateContribution(msg.value));
+        require(validateContribution(msg.value));
 
         require(msg.sender != 0x0);
 
@@ -46,7 +48,7 @@ contract NOUSCrowdsale is SalesAgent {
         // calculate tokens - get bonus rate
         uint256 tokens = weiAmount.mul(rate);
 
-        assert(nousTokenSale.validPurchase(this, tokens));
+        assert(validPurchase(this, tokens));
         // require tokens
 
         bool success = nousTokenSale.buyTokens.value(msg.value)(msg.sender, tokens);

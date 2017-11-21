@@ -10,8 +10,9 @@ contract NOUSReservFund is SalesAgent {
 
     using SafeMath for uint;
 
-    function NOUSReservFund(address _saleContractAddress) {
+    function NOUSReservFund(address _saleContractAddress, address _tokenAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        tokenAddress = _tokenAddress;
     }
 
     function globalFinalizationStartBonusPayable() onlyOwner {

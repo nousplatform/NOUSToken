@@ -6,6 +6,7 @@ import "../interfaces/SalesAgentInterface.sol";
 //import "./BonusForAffiliate.sol";
 import "../interfaces/BonusForAffiliateInterface.sol";
 import "../interfaces/RefundVaultInterface.sol";
+
 //import "../interfaces/NOUSTokenInterface.sol";
 
 
@@ -105,8 +106,9 @@ contract Crowdsale is BaseContract {
         require(saleState != SaleState.Ended);
         require(salesAgents[_salesAgent].isFinalized == false);
 
-        reserveBonuses();
-        // reserve bonuses
+        // reserve bonuses and write all tokens on paymentbounty contract
+        uint256 totalReserved = paymentBounty.reserveBonuses(tokenContract.totalSupply());
+        tokenContract.mint(address(paymentBounty), totalReserved);
 
         tokenContract.finishMinting();
         // stop mining tokens
@@ -117,30 +119,13 @@ contract Crowdsale is BaseContract {
         return true;
     }
 
-    //************* Control ETH *****************//
-    //@dev close refunds and send coins to wallet
-    /*function closeRefunds() public onlyOwner {
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
-        vaultContract.close();
-        // close vault contract and send ETH to Wallet
+    function payDelayBonuses() public isSalesContract(msg.sender) {
+        require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
+        require(saleState == SaleState.Ended);
+
+        paymentBounty.payDelayBonuses(salesAgents[msg.sender].startTime);
     }
 
-    // @dev Refund coins in investors
-    function enableRefunds() public onlyOwner {
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
-        vaultContract.enableRefunds();
-    }
-
-    // @dev withdraw cash on wallet
-    function withdraw(uint256 _amount) public onlyOwner {
-        require(_amount > 0);
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
-        vaultContract.withdraw(_amount * 1 ether);
-    }*/
-
-
-
-    //**************Bonuses*****************//
     // @dev start only minet close payout after delay
     // @dev and contract reserve funds
     /*function payDelayBonuses() public isSalesContract(msg.sender) {
@@ -180,7 +165,7 @@ contract Crowdsale is BaseContract {
     }*/
 
     // @dev reserve all bounty on this NOUSSale address contract
-    function reserveBonuses() internal {
+    /*function reserveBonuses() internal {
 
         uint256 totalSupply = tokenContract.totalSupply();
 
@@ -191,7 +176,7 @@ contract Crowdsale is BaseContract {
                 tokenContract.mint(this, bountyPayment[i].amountReserve);
             }
         }
-    }
+    }*/
 
 
 }

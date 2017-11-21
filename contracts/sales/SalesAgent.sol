@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 import "../NOUSSale.sol";
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
+import "../interfaces/NOUSTokenInterface.sol";
 
 
 contract SalesAgent is Ownable {
@@ -13,6 +14,8 @@ contract SalesAgent is Ownable {
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
     NOUSSale nousTokenSale; // contract nous sale
+
+    address tokenAddress;
 
     /**
 	* event for token purchase logging
@@ -38,10 +41,6 @@ contract SalesAgent is Ownable {
 
     event ReserveBonuses(address _agent, address _sender, uint256 _totalReserve);
 
-    function SalesAgent(address _nousTokenSale){
-        nousTokenSale = NOUSSale(_nousTokenSale);
-    }
-
     function finaliseFunding() onlyOwner {
 
         // Do some common contribution validation, will throw if an error occurs - address calling this should match the deposit address
@@ -59,7 +58,7 @@ contract SalesAgent is Ownable {
         return (_value > 0 && // value
         _value >= nousTokenSale.getSaleContractMinDeposit(msg.sender) && // Is it above the min deposit amount?
         _value <= nousTokenSale.getSaleContractMaxDeposit(msg.sender) &&
-        nousTokenSale.weiRaised().add(_value) <= nousTokenSale.getTargetEtherMaxSale()
+        nousTokenSale.weiRaised().add(_value) <= nousTokenSale.targetEthMax()
         );
     }
 
@@ -74,19 +73,8 @@ contract SalesAgent is Ownable {
     function validPurchase(address _agent, uint _tokens) internal returns (bool) {
         return ( _tokens > 0  &&
         nousTokenSale.getSaleContractTokensLimit(_agent) >= nousTokenSale.getSaleContractTokensMinted(_agent) && // within Tokens mined
-        nousTokenSale.totalSupplyCap() >= nousTokenSale.tokenContract.totalSupply().add(_tokens)
+        nousTokenSale.totalSupplyCap() >= NOUSTokenInterface(tokenAddress).totalSupply().add(_tokens)
         );
-    }
-
-    function deliverPresaleTokens(address _salesAgent, address[] _batchOfAddresses, uint256[] _amountOf)
-    external onlyOwner returns (bool success)
-    {
-        require(_batchOfAddresses.length == _amountOf.length);
-
-        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverTokenToClient(_salesAgent, _batchOfAddresses[i], _amountOf[i]);
-        }
-        return true;
     }
 
     // Deliver

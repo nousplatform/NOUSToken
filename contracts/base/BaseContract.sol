@@ -4,8 +4,9 @@ pragma solidity ^0.4.11;
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
 import "../lib/Data.sol";
-//import "../token/MintableToken.sol";
 import "../interfaces/NOUSTokenInterface.sol";
+import "../interfaces/PaymentBountyInterface.sol";
+//import "./PaymentBounty.sol";
 
 
 /**
@@ -21,11 +22,11 @@ contract BaseContract is Ownable {
 
     /**** Variables ****/
     NOUSTokenInterface public tokenContract; // The token being sold
-    //RefundVault public vaultContract; // contract refunded value
+    PaymentBountyInterface public paymentBounty; // The token being sold
 
-    //address public mintableTokenAddr; // address BonusForAffiliate contract
     address public refundVaultAddr; // address BonusForAffiliate contract
     address public affiliateAddr; // address BonusForAffiliate contract
+    address public bountyAddr; // address PaymentBounty contract
 
     /**** Properties ****/
     uint256 public totalSupplyCap; // 777 Million tokens Capitalize max count NOUS tokens
@@ -46,7 +47,7 @@ contract BaseContract is Ownable {
     /**** Data ****/
     enum SaleState {Active, Pending, Ended}
     SaleState public saleState;
-    Data.Bounty[] public bountyPayment; // array bonuses
+
     mapping (address => Data.SalesAgent) internal salesAgents; // Our contract addresses of our sales contracts
     address[] internal salesAgentsAddresses; // Keep an array of all our sales agent addresses for iteration
 
@@ -58,39 +59,31 @@ contract BaseContract is Ownable {
         _;
     }
 
-    /*modifier ownerOrSale() {
-        assert(salesAgents[msg.sender].exists == true || msg.sender == owner);
-        _;
-    }*/
-
-    /*function isActiveSalesAgent(address _sender) external returns (bool) {
-        return salesAgents[_sender].exists == true &&
-            salesAgents[_sender].isFinalized == false;
-    }*/
-
     //**** Constructors ******************//
     /// @dev constructor
     function BaseContract(
         address _token,
         address _vault,
-        address _affiliate
+        address _affiliate,
+        address _bounty
     ) {
         if (address(tokenContract) == 0x0) {
             tokenContract = NOUSTokenInterface(_token);
-            //mintableTokenAddr = _token;
         }
 
         if (refundVaultAddr == 0x0) {
-            //vaultContract = RefundVault(_vault);
             refundVaultAddr = _vault;
         }
 
         if (affiliateAddr == 0x0) {
             affiliateAddr = _affiliate;
         }
+
+        if (bountyAddr == 0x0) {
+            paymentBounty = PaymentBountyInterface(bountyAddr);
+        }
     }
 
-    //**** Setters ****//
     /**
     * @dev Set the address of a new crowdsale/presale contract agent if needed, usefull for upgrading
     * @dev Only the owner can register a new sale agent
@@ -142,47 +135,11 @@ contract BaseContract is Ownable {
         salesAgentsAddresses.push(_saleAddress);
     }
 
-    /// @dev add bounty initial state
-    function setPaymentBounty(
-        address _walletAddress,
-        bytes32 _name,
-        uint256 _percent,
-        uint256 _delay,
-        uint256 _periodPathOfPay
-    )
-    internal
-    {
-        assert(_walletAddress != 0x0);
-        Data.Bounty memory newBounty;
-        newBounty.wallet = _walletAddress;
-        newBounty.name = _name;
-        newBounty.percent = _percent;
-        newBounty.delay = _delay;
-        newBounty.periodPathOfPay = _periodPathOfPay;
-        newBounty.amountReserve = 0;
-        newBounty.totalPayout = 0;
-        bountyPayment.push(newBounty);
-    }
-
-    //****************Refund*******************//
-
     // validate goal
     function goalReached() public constant returns (bool) {
         return weiRaised > targetEthMin;
     }
 
-    // if crowdsale is unsuccessful, investors can claim refunds here
-    /*function claimRefund(address beneficiary) isSalesContract(msg.sender) public returns (uint256) {
-        require(saleState == SaleState.Ended);
-        // refund started only closed contract
-        require(!goalReached());
-
-        //token. TODO get token
-        RefundVault vaultContract = RefundVault(refundVaultAddr);
-        return vaultContract.refund(beneficiary);
-    }*/
-
-    /*** Management *******************/
     /**
     * @dev Find stop sale
     */
@@ -207,13 +164,6 @@ contract BaseContract is Ownable {
         }
         return 0;
     }
-
-    /**
-    * @dev warning Change owner token contact
-    */
-    /*function changeTokenOwner(address newOwner) onlyOwner {
-        tokenContract.transferOwnership(newOwner);
-    }*/
 
     /**** Getters ****/
     /// @dev Returns true if this sales contract has finalised
@@ -263,6 +213,12 @@ contract BaseContract is Ownable {
     function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
         return salesAgents[_salesAgentAddress].maxDeposit;
     }
+
+    /// @dev Returns the token total currently minted by the sale agent
+    /// @param _salesAgentAddress The address of the token sale agent contract
+    /*function getSaleContractType(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
+        return salesAgents[_salesAgentAddress].saleContractType;
+    }*/
 
     /// @dev Returns the min target amount of ether the contract wants to raise
     /*function getTargetEtherMin() constant isSalesContract(_salesAgentAddress) public returns(uint256) {

@@ -16,8 +16,9 @@ contract NOUSPresale is SalesAgent {
 
     uint256 gasPrice;
 
-    function NOUSPresale(address _saleContractAddress) {
+    function NOUSPresale(address _saleContractAddress, address _tokenAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
+        tokenAddress = _tokenAddress;
     }
 
     function() payable external {

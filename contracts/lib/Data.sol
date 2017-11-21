@@ -20,7 +20,7 @@ library Data {
         bool exists; // Check to see if the mapping exists
     }
 
-    struct Bounty {
+    /*struct Bounty {
         address wallet; // wallet address for transfer
         bytes32 name; // name bonus
         uint256 delay; // delay to payment in month
@@ -29,5 +29,5 @@ library Data {
         uint256 amountReserve; // amount acured
         uint256 totalPayout; // how is payed
         uint256 timeLastPayout; // how is payed
-    }
+    }*/
 }

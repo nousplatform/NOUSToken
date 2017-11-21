@@ -9,8 +9,8 @@ contract NOUSSale is Crowdsale {
 
     //wallet = 0xdd870fa1b7c4700f2bd7f44238821c26f7392148; // todo add address wallet amount
 
-    function NOUSSale(address _token, address _vault, address _affiliate)
-    BaseContract(_token, _vault, _affiliate)
+    function NOUSSale(address _token, address _vault, address _affiliate, address _bonuses)
+    BaseContract(_token, _vault, _affiliate, _bonuses)
     {
         //777 Million tokens
         totalSupplyCap = 777 * (10 ** 6) * EXPONENT;
@@ -32,15 +32,15 @@ contract NOUSSale is Crowdsale {
         // 20% Will Be Retained by Nousplatform
         // Nousplatform retained tokens are locked for the first 4 months, and will be vested over a period of 20 months total,
         // 5% every month. The total vesting period is 24 months.
-        setPaymentBounty(0xe594004148C30B1762A108F017999F081aDa8143, "TeamBonus", 20, 4, 5);
+        paymentBounty.setPaymentBounty(0xe594004148C30B1762A108F017999F081aDa8143, "TeamBonus", 20, 4, 5);
         // test account 4
 
         // 5% Advisors, Grants, Partnerships  Advisors tokens are locked for 2 months and distributed fully.
-        setPaymentBounty(0x4043BF02966Fa198fa24489Ca76DE1Be669f6e33, "AdvisorsBonus", 5, 2, 1);
+        paymentBounty.setPaymentBounty(0x4043BF02966Fa198fa24489Ca76DE1Be669f6e33, "AdvisorsBonus", 5, 2, 1);
         // test account 5
 
         // 3% Community, 2% Will Be Used To Cover Token Sale
-        setPaymentBounty(0x96473fFE81913158a113bA5683B050DD264d2a9C, "GrantsBonus", 5, 0, 1);
+        paymentBounty.setPaymentBounty(0x96473fFE81913158a113bA5683B050DD264d2a9C, "GrantsBonus", 5, 0, 1);
         // test account 6
 
         // @dev bonus from affiliate
