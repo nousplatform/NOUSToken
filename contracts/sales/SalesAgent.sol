@@ -2,11 +2,15 @@ pragma solidity ^0.4.11;
 
 import "../NOUSSale.sol";
 import "../base/Ownable.sol";
+import "../lib/SafeMath.sol";
 
 
 contract SalesAgent is Ownable {
     //address saleContractAddress;
     // Main contract token address
+    using SafeMath for uint256;
+
+    uint256 internal constant EXPONENT = 10 ** uint256(18);
 
     NOUSSale nousTokenSale; // contract nous sale
 
@@ -34,6 +38,10 @@ contract SalesAgent is Ownable {
 
     event ReserveBonuses(address _agent, address _sender, uint256 _totalReserve);
 
+    function SalesAgent(address _nousTokenSale){
+        nousTokenSale = NOUSSale(_nousTokenSale);
+    }
+
     function finaliseFunding() onlyOwner {
 
         // Do some common contribution validation, will throw if an error occurs - address calling this should match the deposit address
@@ -41,6 +49,84 @@ contract SalesAgent is Ownable {
             uint256 tokenMinted = nousTokenSale.getSaleContractTokensMinted(this);
             FinaliseSale(this, msg.sender, tokenMinted);
         }
+    }
+
+    // @dev General validation for a sales agent contract receiving a contribution,
+    // @dev additional validation can be done in the sale contract if required
+    // @param _value The value of the contribution in wei
+    // @return A boolean that indicates if the operation was successful.
+    function validateContribution(uint256 _value) internal returns (bool) {
+        return (_value > 0 && // value
+        _value >= nousTokenSale.getSaleContractMinDeposit(msg.sender) && // Is it above the min deposit amount?
+        _value <= nousTokenSale.getSaleContractMaxDeposit(msg.sender) &&
+        nousTokenSale.weiRaised().add(_value) <= nousTokenSale.getTargetEtherMaxSale()
+        );
+    }
+
+    // @dev Validate state contract
+    function validateStateSaleContract(address _salesAgent) internal returns (bool) {
+        return ( nousTokenSale.getSaleContractIsFinalised(_salesAgent) == false && // No minting if the sale contract has finalised
+        now > nousTokenSale.getSaleContractStartTime(_salesAgent) &&
+        now < nousTokenSale.getSaleContractEndTime(_salesAgent)
+        );
+    }
+
+    function validPurchase(address _agent, uint _tokens) internal returns (bool) {
+        return ( _tokens > 0  &&
+        nousTokenSale.getSaleContractTokensLimit(_agent) >= nousTokenSale.getSaleContractTokensMinted(_agent) && // within Tokens mined
+        nousTokenSale.totalSupplyCap() >= nousTokenSale.tokenContract.totalSupply().add(_tokens)
+        );
+    }
+
+    function deliverPresaleTokens(address _salesAgent, address[] _batchOfAddresses, uint256[] _amountOf)
+    external onlyOwner returns (bool success)
+    {
+        require(_batchOfAddresses.length == _amountOf.length);
+
+        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
+            deliverTokenToClient(_salesAgent, _batchOfAddresses[i], _amountOf[i]);
+        }
+        return true;
+    }
+
+    // Deliver
+    // @dev Function to send NOUS to presale investors
+    // Can only be called while the presale is not over.
+    // @param _salesAgent addresses sale agent
+    // @param _batchOfAddresses list of addresses
+    // @param _amountOf matching list of address balances
+    function deliverPresaleTokens(address _salesAgent, address[] _batchOfAddresses, uint256[] _amountOf)
+        external onlyOwner returns (bool success)
+    {
+        require(_batchOfAddresses.length == _amountOf.length);
+
+        for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
+            deliverTokenToClient(_salesAgent, _batchOfAddresses[i], _amountOf[i]);
+        }
+        return true;
+    }
+
+    // @dev Logic to transfer presale tokens
+    // Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from
+    // the same address will be aggregated.
+    // @param _accountHolder user address
+    // @param _amountOf balance to send out
+    function deliverTokenToClient(address _salesAgent, address _accountHolder, uint256 _amountOf)
+    public onlyOwner returns (bool) {
+        require(_accountHolder != 0x0);
+        uint256 _tokens = _amountOf.mul(EXPONENT);
+        require(validPurchase(_salesAgent, _tokens));
+
+        nousTokenSale.tokenMint(_accountHolder, _tokens);
+
+        TokenPurchase(
+        msg.sender,
+        _accountHolder,
+        0,
+        _tokens
+        );
+
+        return true;
     }
 
     /*function setSaleAddress(address _saleContractAddress) onlyOwner {

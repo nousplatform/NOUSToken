@@ -40,6 +40,8 @@ contract BaseContract is Ownable {
     event SaleFinalised(address _agent, address _address, uint256 _amountMint);
     event TotalOutBounty(address _agent, address _wallet, bytes32 _name, uint256 _totalPayout); // all payed to bonus
     event PayBounty(address _agent, address _wallet, bytes32 _name, uint256 _amount);
+    event TokenMinted(address indexed _agent, address indexed beneficiary, uint256 amount);
+    event TranslateEther(address indexed _agent, address indexed beneficiary, uint256 value);
 
     /**** Data ****/
     enum SaleState {Active, Pending, Ended}
@@ -52,13 +54,14 @@ contract BaseContract is Ownable {
     /// @dev Only allow access from the latest version of a sales contract
     modifier isSalesContract(address _sender) {
         assert(salesAgents[_sender].exists == true); // Is this an authorised sale contract?
+        //assert(salesAgents[_sender].isFinalized == false);
         _;
     }
 
-    modifier ownerOrSale() {
+    /*modifier ownerOrSale() {
         assert(salesAgents[msg.sender].exists == true || msg.sender == owner);
         _;
-    }
+    }*/
 
     /*function isActiveSalesAgent(address _sender) external returns (bool) {
         return salesAgents[_sender].exists == true &&

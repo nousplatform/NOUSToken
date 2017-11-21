@@ -32,7 +32,9 @@ contract NOUSCrowdsale is SalesAgent {
         // The target ether amount
         require(nousTokenSale.validGasPrice(tx.gasprice));
         require(nousTokenSale.validateStateSaleContract(this));
+
         require(nousTokenSale.validateContribution(msg.value));
+
         require(msg.sender != 0x0);
 
         uint256 weiAmount = msg.value;
