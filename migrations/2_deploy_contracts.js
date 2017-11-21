@@ -6,6 +6,7 @@ var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
 var NOUSPresale = artifacts.require("./NOUSPresale.sol");
 var NOUSCrowdsale = artifacts.require("./NOUSCrowdsale.sol");
 var NOUSReservFund = artifacts.require("./NOUSReservFund.sol");
+var PaymentBounty = artifacts.require("./PaymentBounty.sol");
 
 
 module.exports = function(deployer) {
@@ -19,25 +20,35 @@ module.exports = function(deployer) {
                     NOUSToken.new(),
                     RefundVault.new(wallet),
                     BonusForAffiliate.new(),
+
                 ]
             )
             .then(function(instances) {
+                return PaymentBounty.new(instances[0].address)
+                    .then(function (bountyInst) {
 
-                console.log("NOUSToken:", instances[0].address);
-                console.log("RefundVault:", instances[1].address);
-                console.log("BonusForAffiliate:", instances[2].address);
+                        console.log("NOUSToken:", instances[0].address);
+                        console.log("RefundVault:", instances[1].address);
+                        console.log("BonusForAffiliate:", instances[2].address);
+                        console.log("PaymentBounty:", bountyInst.address);
 
-                return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address)
-                    .then(function (instanceNousSale) {
-                        instances[0].transferOwnership(instanceNousSale.address);
-                        instances[1].transferOwnership(instanceNousSale.address);
-                        instances[2].setDugSale(instanceNousSale.address);
-                        return instanceNousSale.address
+                        return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address, bountyInst.address)
+                            .then(function (instanceNousSale) {
+                                instances[0].transferOwnership(instanceNousSale.address);
+                                instances[1].transferOwnership(instanceNousSale.address);
+                                instances[2].setDugSale(instanceNousSale.address);
+                                bountyInst.transferOwnership(instanceNousSale.address);
+                                return [instanceNousSale.address, instances[0].address]
+                    })
+
                 });
             })
             .then(function (nousSaleSddr) {
                 console.log("NOUSSale:", nousSaleSddr);
-                deployer.deploy([[NOUSPresale, nousSaleSddr], [NOUSCrowdsale, nousSaleSddr], [NOUSReservFund, nousSaleSddr]]);
+                deployer.deploy([[NOUSPreorder, nousSaleSddr[0], nousSaleSddr[1] ],
+                    [NOUSPresale, nousSaleSddr[0], nousSaleSddr[1] ],
+                    [NOUSCrowdsale, nousSaleSddr[0], nousSaleSddr[1] ],
+                    [NOUSReservFund, nousSaleSddr[0], nousSaleSddr[1] ]]);
             })
 
 

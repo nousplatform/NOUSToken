@@ -69,8 +69,6 @@ contract PaymentBounty is Ownable {
     // @dev start only minet close payout after delay
     // @dev and contract reserve funds
     function payDelayBonuses(uint256 _startTime) public onlyOwner {
-        //require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
-        //require(saleState == SaleState.Ended);
 
         uint256 delayNextTime = 0;
 

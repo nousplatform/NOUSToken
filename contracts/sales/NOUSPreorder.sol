@@ -6,7 +6,7 @@ import "../lib/SafeMath.sol";
 import "../NOUSSale.sol";
 
 
-contract NOUSPreorder is SalesAgent {
+    contract NOUSPreorder is SalesAgent {
 
     using SafeMath for uint;
 
