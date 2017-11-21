@@ -5,7 +5,7 @@ import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
 import "../lib/Data.sol";
 import "../interfaces/NOUSTokenInterface.sol";
-import "../interfaces/PaymentBountyInterface.sol";
+
 //import "./PaymentBounty.sol";
 
 
@@ -22,7 +22,7 @@ contract BaseContract is Ownable {
 
     /**** Variables ****/
     NOUSTokenInterface public tokenContract; // The token being sold
-    PaymentBountyInterface public paymentBounty; // The token being sold
+    //PaymentBountyInterface public paymentBounty; // The token being sold
 
     address public refundVaultAddr; // address BonusForAffiliate contract
     address public affiliateAddr; // address BonusForAffiliate contract
@@ -80,7 +80,7 @@ contract BaseContract is Ownable {
         }
 
         if (bountyAddr == 0x0) {
-            paymentBounty = PaymentBountyInterface(bountyAddr);
+            bountyAddr = _bounty;
         }
     }
 
@@ -214,21 +214,8 @@ contract BaseContract is Ownable {
         return salesAgents[_salesAgentAddress].maxDeposit;
     }
 
-    /// @dev Returns the token total currently minted by the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    /*function getSaleContractType(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].saleContractType;
-    }*/
-
-    /// @dev Returns the min target amount of ether the contract wants to raise
-    /*function getTargetEtherMin() constant isSalesContract(_salesAgentAddress) public returns(uint256) {
-        return targetEthMin;
-    }*/
-
-    /// @dev Returns the max target amount of ether the contract can raise
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    /*function getTargetEtherMax(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns(uint256) {
-        return targetEthMax;
-    }*/
+    function getTokenTotalSupply() returns (uint256) {
+        return tokenContract.totalSupply();
+    }
 
 }

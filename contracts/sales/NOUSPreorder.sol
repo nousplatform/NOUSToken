@@ -12,9 +12,8 @@ import "../NOUSSale.sol";
 
     uint256 gasPrice;
 
-    function NOUSPreorder(address _saleContractAddress, address _tokenAddress) {
+    function NOUSPreorder(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
-        tokenAddress = _tokenAddress;
     }
 
     function() payable external {

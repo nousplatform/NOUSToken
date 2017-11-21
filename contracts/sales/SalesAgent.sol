@@ -3,7 +3,6 @@ pragma solidity ^0.4.11;
 import "../NOUSSale.sol";
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
-import "../interfaces/NOUSTokenInterface.sol";
 
 
 contract SalesAgent is Ownable {
@@ -15,8 +14,6 @@ contract SalesAgent is Ownable {
 
     NOUSSale nousTokenSale; // contract nous sale
 
-    address tokenAddress;
-
     /**
 	* event for token purchase logging
 	* @param beneficiary who got the tokens
@@ -27,7 +24,6 @@ contract SalesAgent is Ownable {
 
     // refund token if not valid;
     event TokenValidateRefund(address _agent, address indexed beneficiary, uint256 value);
-
 
     event Contribute(address _agent, address _sender, uint256 _value);
 
@@ -73,7 +69,7 @@ contract SalesAgent is Ownable {
     function validPurchase(address _agent, uint _tokens) internal returns (bool) {
         return ( _tokens > 0  &&
         nousTokenSale.getSaleContractTokensLimit(_agent) >= nousTokenSale.getSaleContractTokensMinted(_agent) && // within Tokens mined
-        nousTokenSale.totalSupplyCap() >= NOUSTokenInterface(tokenAddress).totalSupply().add(_tokens)
+        nousTokenSale.totalSupplyCap() >= nousTokenSale.getTokenTotalSupply().add(_tokens)
         );
     }
 

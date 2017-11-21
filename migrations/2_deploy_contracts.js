@@ -20,7 +20,6 @@ module.exports = function(deployer) {
                     NOUSToken.new(),
                     RefundVault.new(wallet),
                     BonusForAffiliate.new(),
-
                 ]
             )
             .then(function(instances) {
@@ -38,17 +37,19 @@ module.exports = function(deployer) {
                                 instances[1].transferOwnership(instanceNousSale.address);
                                 instances[2].setDugSale(instanceNousSale.address);
                                 bountyInst.transferOwnership(instanceNousSale.address);
-                                return [instanceNousSale.address, instances[0].address]
+                                return instanceNousSale.address;
                     })
 
                 });
             })
             .then(function (nousSaleSddr) {
                 console.log("NOUSSale:", nousSaleSddr);
-                deployer.deploy([[NOUSPreorder, nousSaleSddr[0], nousSaleSddr[1] ],
-                    [NOUSPresale, nousSaleSddr[0], nousSaleSddr[1] ],
-                    [NOUSCrowdsale, nousSaleSddr[0], nousSaleSddr[1] ],
-                    [NOUSReservFund, nousSaleSddr[0], nousSaleSddr[1] ]]);
+                deployer.deploy([
+                    [NOUSPreorder, nousSaleSddr[0]],
+                    [NOUSPresale, nousSaleSddr[0]],
+                    [NOUSCrowdsale, nousSaleSddr[0]],
+                    [NOUSReservFund, nousSaleSddr[0]]
+                ]);
             })
 
 

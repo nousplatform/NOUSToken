@@ -60,10 +60,6 @@
 
 <form id="nous_sale">
     <table border="1"  width="" style="">
-        <!--<tr>
-            <th>Wallet address:</th>
-            <td><input type="text" id="wallet" size="50" ></td>
-        </tr>-->
         <tr>
             <th>Token address:</th>
             <td><input type="text" id="token" size="50"></td>
@@ -75,6 +71,10 @@
         <tr>
             <th>Affiliate address:</th>
             <td><input type="text" id="affiliate" size="50"></td>
+        </tr>
+        <tr>
+            <th>Bounty Payment:</th>
+            <td><input type="text" id="bounty" size="50" ></td>
         </tr>
     </table>
 </form>
@@ -138,7 +138,8 @@
         var token = document.getElementById('token').value;
         var vault = document.getElementById('vault').value;
         var affiliate = document.getElementById('affiliate').value;
-        var res = '"'+token +'","'+ vault +'","'+ affiliate +'"';
+        var bounty = document.getElementById('bounty').value;
+        var res = '"'+token +'","'+ vault +'","'+ affiliate +'","'+ bounty +'"';
         document.getElementById("result2").value = res;
     }
 

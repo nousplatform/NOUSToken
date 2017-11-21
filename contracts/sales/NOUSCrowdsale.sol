@@ -18,9 +18,8 @@ contract NOUSCrowdsale is SalesAgent {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function NOUSCrowdsale(address _saleContractAddress, address _tokenAddress) {
+    function NOUSCrowdsale(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
-        tokenAddress = _tokenAddress;
 
         addBonusRate(1, 7300);
         // 1 Week = 7300 NOUS

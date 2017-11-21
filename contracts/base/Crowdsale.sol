@@ -6,6 +6,7 @@ import "../interfaces/SalesAgentInterface.sol";
 //import "./BonusForAffiliate.sol";
 import "../interfaces/BonusForAffiliateInterface.sol";
 import "../interfaces/RefundVaultInterface.sol";
+import "../interfaces/PaymentBountyInterface.sol";
 
 //import "../interfaces/NOUSTokenInterface.sol";
 
@@ -44,9 +45,7 @@ contract Crowdsale is BaseContract {
 
         tokenMint(beneficiary, tokens);
 
-        RefundVaultInterface vaultContract = RefundVaultInterface(refundVaultAddr);
-
-        vaultContract.deposit.value(weiAmount)(beneficiary);
+        RefundVaultInterface(refundVaultAddr).deposit.value(weiAmount)(beneficiary);
         // transfer ETH to refund contract
         weiRaised = weiRaised.add(weiAmount);
         // increment wei Raised
@@ -107,8 +106,8 @@ contract Crowdsale is BaseContract {
         require(salesAgents[_salesAgent].isFinalized == false);
 
         // reserve bonuses and write all tokens on paymentbounty contract
-        uint256 totalReserved = paymentBounty.reserveBonuses(tokenContract.totalSupply());
-        tokenContract.mint(address(paymentBounty), totalReserved);
+        uint256 totalReserved = PaymentBountyInterface(bountyAddr).reserveBonuses(tokenContract.totalSupply());
+        tokenContract.mint(bountyAddr, totalReserved);
 
         tokenContract.finishMinting();
         // stop mining tokens
@@ -119,11 +118,32 @@ contract Crowdsale is BaseContract {
         return true;
     }
 
+    // @dev TODO If need manualy
+    function setPaymentBounty(/*address wallet, byte32 type, uint256 percent, uint256 payedPeriod, uint256 payedPath*/) public onlyOwner returns (bool) {
+        //require(wallet != 0x0);
+        //require(percent > 0);
+
+        PaymentBountyInterface paymentBounty = PaymentBountyInterface(bountyAddr);
+        // 20% Will Be Retained by Nousplatform
+        // Nousplatform retained tokens are locked for the first 4 months, and will be vested over a period of 20 months total,
+        // 5% every month. The total vesting period is 24 months.
+        paymentBounty.setPaymentBounty(0xe594004148C30B1762A108F017999F081aDa8143, "TeamBonus", 20, 4, 5);
+        // test account 4
+
+        // 5% Advisors, Grants, Partnerships  Advisors tokens are locked for 2 months and distributed fully.
+        paymentBounty.setPaymentBounty(0x4043BF02966Fa198fa24489Ca76DE1Be669f6e33, "AdvisorsBonus", 5, 2, 1);
+        // test account 5
+
+        // 3% Community, 2% Will Be Used To Cover Token Sale
+        paymentBounty.setPaymentBounty(0x96473fFE81913158a113bA5683B050DD264d2a9C, "GrantsBonus", 5, 0, 1);
+        // test account 6
+    }
+
     function payDelayBonuses() public isSalesContract(msg.sender) {
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState == SaleState.Ended);
 
-        paymentBounty.payDelayBonuses(salesAgents[msg.sender].startTime);
+        PaymentBountyInterface(bountyAddr).payDelayBonuses(salesAgents[msg.sender].startTime);
     }
 
 }
