@@ -75,9 +75,14 @@ contract RefundVault is Ownable {
         return depositedValue;
     }
 
+    function balance() external returns (uint256){
+        return this.balance / 1 ether;
+    }
+
     function withdraw(uint256 _amount) public onlyOwner {
         require(_amount > 0);
-        require(this.balance > _amount);
-        wallet.transfer(_amount);
+        uint256 amount = _amount * 1 ether;
+        require(this.balance > amount);
+        wallet.transfer(amount);
     }
 }
