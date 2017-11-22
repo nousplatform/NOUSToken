@@ -3,6 +3,7 @@ var NOUSSale = artifacts.require("./NOUSSale.sol");
 var RefundVault = artifacts.require("./RefundVault.sol");
 var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
 
+var NOUSPreorder = artifacts.require("./NOUSPreorder.sol");
 var NOUSPresale = artifacts.require("./NOUSPresale.sol");
 var NOUSCrowdsale = artifacts.require("./NOUSCrowdsale.sol");
 var NOUSReservFund = artifacts.require("./NOUSReservFund.sol");
@@ -34,13 +35,13 @@ module.exports = function(deployer) {
                         return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address, bountyInst.address)
                             .then(function (instanceNousSale) {
                                 instances[0].transferOwnership(instanceNousSale.address);
-                                instances[1].transferOwnership(instanceNousSale.address);
+                                instances[1].setDugSale(instanceNousSale.address);
                                 instances[2].setDugSale(instanceNousSale.address);
                                 bountyInst.transferOwnership(instanceNousSale.address);
                                 return instanceNousSale.address;
-                    })
+                        })
 
-                });
+                    });
             })
             .then(function (nousSaleSddr) {
                 console.log("NOUSSale:", nousSaleSddr);
@@ -59,6 +60,29 @@ module.exports = function(deployer) {
 
 function toJson(obj) { return JSON.stringify(obj.abi); }
 function unloc(i) { return personal.unlockAccount(eth.accounts[i]) }
+
+
+
+/*
+NOUSToken: 0xbf6f3e41fc45362863e9a88727af8cbbdf66f92d
+RefundVault: 0x9ac18156857005b44bd378f4d38a395bce28892e
+BonusForAffiliate: 0x2c76b1f7712f42ab9dee5ff6ae54b3af415f6d81
+PaymentBounty: 0xd4b78cc659f99b7c2948a710420d0dc16a977422
+
+NOUSSale: 0x55a287ad556601faac54a1c5d1b6b79400209158
+
+NOUSPreorder: 0xeaf9d9f3a76d5798c3ed10258c996148e403d065
+NOUSReservFund: 0xef9742e849655fbcd29be7b8ae097760179b5bb0
+NOUSCrowdsale: 0x62c0bd7dc03ae28f4ba027d523bdbb74fad56008
+NOUSPresale: 0x011c4eb6895b71b8497fd467536b5625d43a3d0c
+*/
+
+
+
+
+
+
+
 
 /*
 NOUSToken: 0x860134d046fd08406fad30217ea3a21c32dd7fab
@@ -161,10 +185,17 @@ NOUSReservFund: 0x329d57de9ee2536deb2287d7d580c424cc6e3ac7
 
 
 
-// NEW BUILD
-// NOUSToken: 0x5edfcfb2613636c8a4574f61554c44e18c78199f
-// RefundVault: 0xf0523d8bd19313e141ff41e260bd49986d7c72f1
-// BonusForAffiliate: 0x3a12edbb26643250eb01a55bbe846fc8e0085aed
-// PaymentBounty: 0x7db807930fe79ed8402532bafd1ce7c5ed1e6221
-// NOUSSale: 0xd7b34bdbd4821ba90d99eb0d20a6baf942738eea
+
+// NOUSToken: 0x2c86360bb46fbb44f7826615fb79073a3c200ef1
+// RefundVault: 0x5b1227b0d67c86efca6e9b4110f44945dde181e5
+// BonusForAffiliate: 0xcc6ae619069d2d73ae96a38973081a063ce01bee
+// PaymentBounty: 0xce422470f63bc9dc303f370938410a0d0ac7b253
+// NOUSSale: 0x778271da121c49656654783fcd0cccf479e79edc
+// NOUSReservFund: 0xcb066540e6bcba536d180b3a0b1066eceae7048f
+// NOUSCrowdsale: 0xd661524ae7ee1a8145c089109f4b9115b8646a74
+// NOUSPreorder: 0x81d915d04d2b9aebd2f22c71bf6a6e572b3cdad8
+// NOUSPresale: 0x098d14884021f7c036fff1feda6fb41d567bbc4e
+
+
+
 

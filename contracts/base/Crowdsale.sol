@@ -118,27 +118,6 @@ contract Crowdsale is BaseContract {
         return true;
     }
 
-    // @dev TODO If need manualy
-    function setPaymentBounty(/*address wallet, byte32 type, uint256 percent, uint256 payedPeriod, uint256 payedPath*/) public onlyOwner returns (bool) {
-        //require(wallet != 0x0);
-        //require(percent > 0);
-
-        PaymentBountyInterface paymentBounty = PaymentBountyInterface(bountyAddr);
-        // 20% Will Be Retained by Nousplatform
-        // Nousplatform retained tokens are locked for the first 4 months, and will be vested over a period of 20 months total,
-        // 5% every month. The total vesting period is 24 months.
-        paymentBounty.setPaymentBounty(0xe594004148C30B1762A108F017999F081aDa8143, "TeamBonus", 20, 4, 5);
-        // test account 4
-
-        // 5% Advisors, Grants, Partnerships  Advisors tokens are locked for 2 months and distributed fully.
-        paymentBounty.setPaymentBounty(0x4043BF02966Fa198fa24489Ca76DE1Be669f6e33, "AdvisorsBonus", 5, 2, 1);
-        // test account 5
-
-        // 3% Community, 2% Will Be Used To Cover Token Sale
-        paymentBounty.setPaymentBounty(0x96473fFE81913158a113bA5683B050DD264d2a9C, "GrantsBonus", 5, 0, 1);
-        // test account 6
-    }
-
     function payDelayBonuses() public isSalesContract(msg.sender) {
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState == SaleState.Ended);

@@ -78,16 +78,16 @@ contract PaymentBounty is Ownable {
             // todo WARNING  For test sets minutes
             // calculate date delay  1 month = 30 dey
             for (uint256 p = 0; p < bountyPayment[i].delay; p++) {
-                dateDelay = dateDelay + (30 days);
-                //dateDelay = dateDelay + (5 minutes);
+                //dateDelay = dateDelay + (30 days);
+                dateDelay = dateDelay + (5 minutes);
             }
 
             // set last date payaout
             if (bountyPayment[i].timeLastPayout == 0) {
                 delayNextTime = dateDelay;
             } else {
-                delayNextTime = bountyPayment[i].timeLastPayout + (30 days); // todo minutes
-                //delayNextTime = bountyPayment[i].timeLastPayout + (2 minutes);
+                //delayNextTime = bountyPayment[i].timeLastPayout + (30 days); // todo minutes
+                delayNextTime = bountyPayment[i].timeLastPayout + (4 minutes);
             }
 
             // delay bonuses

@@ -24,7 +24,7 @@ contract NOUSPresale is SalesAgent {
         // The target ether amount
         gasPrice = tx.gasprice;
         require(nousTokenSale.validGasPrice(tx.gasprice));
-        require(validateStateSaleContract(this));
+        require(validateStateSaleContract());
 
         require(validateContribution(msg.value));
 

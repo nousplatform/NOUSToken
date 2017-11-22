@@ -20,7 +20,7 @@ import "../NOUSSale.sol";
         // The target ether amount
         gasPrice = tx.gasprice;
         require(nousTokenSale.validGasPrice(tx.gasprice));
-        require(validateStateSaleContract(this));
+        require(validateStateSaleContract());
         require(validateContribution(msg.value));
         require(msg.sender != 0x0);
 

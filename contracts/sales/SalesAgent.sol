@@ -12,6 +12,14 @@ contract SalesAgent is Ownable {
 
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
+//    uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
+//    uint256 tokensMinted; // The current amount of tokens minted by this agent
+//    uint256 rate; // default rate
+//    uint256 minDeposit; // The minimum deposit amount allowed
+//    uint256 maxDeposit; // The maximum deposit amount allowed
+//    uint256 startTime; // The start time (unix format) when allowed to mint tokens
+//    uint256 endTime; // The end time from unix format when to finish minting tokens
+
     NOUSSale nousTokenSale; // contract nous sale
 
     /**
@@ -36,6 +44,25 @@ contract SalesAgent is Ownable {
     event TransferToDepositAddress(address _agent, address _sender, uint256 _value);
 
     event ReserveBonuses(address _agent, address _sender, uint256 _totalReserve);
+
+    /*function setParams(
+        uint256 _tokensLimit,
+        uint256 _tokensMinted,
+        uint256 _rate,
+        uint256 _minDeposit,
+        uint256 maxDeposit,
+        uint256 startTime,
+        uint256 endTime
+    ) {
+        require(msg.sender == address(nousTokenSale));
+        tokensLimit = _tokensLimit;
+        tokensMinted = _tokensMinted;
+        rate = _rate;
+        minDeposit = _minDeposit;
+        maxDeposit = _maxDeposit;
+        startTime = _startTime;
+        endTime = endTime;
+    }*/
 
     function finaliseFunding() onlyOwner {
 
