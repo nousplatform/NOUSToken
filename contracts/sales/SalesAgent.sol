@@ -52,17 +52,17 @@ contract SalesAgent is Ownable {
     // @return A boolean that indicates if the operation was successful.
     function validateContribution(uint256 _value) internal returns (bool) {
         return (_value > 0 && // value
-        _value >= nousTokenSale.getSaleContractMinDeposit(msg.sender) && // Is it above the min deposit amount?
-        _value <= nousTokenSale.getSaleContractMaxDeposit(msg.sender) &&
+        _value >= nousTokenSale.getSaleContractMinDeposit(this) && // Is it above the min deposit amount?
+        _value <= nousTokenSale.getSaleContractMaxDeposit(this) &&
         nousTokenSale.weiRaised().add(_value) <= nousTokenSale.targetEthMax()
         );
     }
 
     // @dev Validate state contract
-    function validateStateSaleContract(address _salesAgent) internal returns (bool) {
-        return ( nousTokenSale.getSaleContractIsFinalised(_salesAgent) == false && // No minting if the sale contract has finalised
-        now > nousTokenSale.getSaleContractStartTime(_salesAgent) &&
-        now < nousTokenSale.getSaleContractEndTime(_salesAgent)
+    function validateStateSaleContract() internal returns (bool) {
+        return ( nousTokenSale.getSaleContractIsFinalised(this) == false && // No minting if the sale contract has finalised
+        now > nousTokenSale.getSaleContractStartTime(this) &&
+        now < nousTokenSale.getSaleContractEndTime(this)
         );
     }
 
@@ -79,13 +79,13 @@ contract SalesAgent is Ownable {
     // @param _salesAgent addresses sale agent
     // @param _batchOfAddresses list of addresses
     // @param _amountOf matching list of address balances
-    function deliverPresaleTokens(address _salesAgent, address[] _batchOfAddresses, uint256[] _amountOf)
+    function deliverPresaleTokens(address[] _batchOfAddresses, uint256[] _amountOf)
         external onlyOwner returns (bool success)
     {
         require(_batchOfAddresses.length == _amountOf.length);
 
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
-            deliverTokenToClient(_salesAgent, _batchOfAddresses[i], _amountOf[i]);
+            deliverTokenToClient(_batchOfAddresses[i], _amountOf[i]);
         }
         return true;
     }
@@ -95,19 +95,19 @@ contract SalesAgent is Ownable {
     // the same address will be aggregated.
     // @param _accountHolder user address
     // @param _amountOf balance to send out
-    function deliverTokenToClient(address _salesAgent, address _accountHolder, uint256 _amountOf)
+    function deliverTokenToClient(address _accountHolder, uint256 _amountOf)
     public onlyOwner returns (bool) {
         require(_accountHolder != 0x0);
         uint256 _tokens = _amountOf.mul(EXPONENT);
-        require(validPurchase(_salesAgent, _tokens));
+        require(validPurchase(this, _tokens));
 
         nousTokenSale.tokenMint(_accountHolder, _tokens);
 
         TokenPurchase(
-        msg.sender,
-        _accountHolder,
-        0,
-        _tokens
+            msg.sender,
+            _accountHolder,
+            0,
+            _tokens
         );
 
         return true;
