@@ -35,7 +35,7 @@ contract BonusForAffiliate is Ownable {
 
     address[] private partnerIndexes; // index for bonuses map
 
-    address private dugSale; // address Nous Sale contract
+    address public dugSale; // address Nous Sale contract
 
     // Events
     event PayedBonus(address indexed beneficiary, uint256 weiAmount);
@@ -53,7 +53,7 @@ contract BonusForAffiliate is Ownable {
     * @dev return referral address
     * @param _backer Address backer
     */
-    function getReferralAddress(address _backer) external returns (address) {
+    function getReferralAddress(address _backer) external constants returns (address) {
         return referral[_backer];
     }
 
@@ -83,7 +83,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Block partner
     * @param _partnerWalletAddress Address partner wallet
     */
-    function lockUnlockPartner(address _partnerWalletAddress) public onlyOwner {
+    function lockUnlockPartner(address _partnerWalletAddress) external onlyOwner {
         require(isPartner(_partnerWalletAddress));
         partners[_partnerWalletAddress].blocked = !partners[_partnerWalletAddress].blocked;
     }
@@ -92,7 +92,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Frozen bonus
     * @param _partnerWalletAddress Address partner wallet
     */
-    function frozenBonus(address _partnerWalletAddress, uint256 index, bool status) public onlyOwner {
+    function frozenBonus(address _partnerWalletAddress, uint256 index, bool status) external onlyOwner {
         require(isPartner(_partnerWalletAddress));
         partners[_partnerWalletAddress].bonuses[index].frozen = status;
     }
@@ -102,7 +102,7 @@ contract BonusForAffiliate is Ownable {
     * @param _partnerWalletAddress Address partner wallet
     * @param _backerAddress Address backer account
     */
-    function addBonus(address _backerAddress, address _partnerWalletAddress) public onlySaleAgent payable {
+    function addBonus(address _backerAddress, address _partnerWalletAddress) external onlySaleAgent payable {
         require(_partnerWalletAddress != address(0));
         require(referral[_backerAddress] == _partnerWalletAddress);
         require(msg.value > 0);

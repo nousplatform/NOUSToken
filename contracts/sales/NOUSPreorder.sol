@@ -10,7 +10,7 @@ import "../NOUSSale.sol";
 
     using SafeMath for uint;
 
-    uint256 gasPrice;
+    //uint256 public gasPrice;
 
     function NOUSPreorder(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
@@ -18,8 +18,8 @@ import "../NOUSSale.sol";
 
     function() payable external {
         // The target ether amount
-        gasPrice = tx.gasprice;
-        require(nousTokenSale.validGasPrice(tx.gasprice));
+        //gasPrice = tx.gasprice;
+        //require(nousTokenSale.validGasPrice(tx.gasprice));
         require(nousTokenSale.validateStateSaleContract(this));
 
         uint256 weiAmount = msg.value;

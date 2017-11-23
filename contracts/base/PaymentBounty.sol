@@ -9,7 +9,7 @@ contract PaymentBounty is Ownable {
 
     using SafeMath for uint256;
 
-    address tokenAddress;
+    address public tokenAddress;
 
     struct Bounty {
         address wallet; // wallet address for transfer

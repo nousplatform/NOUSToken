@@ -12,7 +12,7 @@ var PaymentBounty = artifacts.require("./PaymentBounty.sol");
 
 module.exports = function(deployer) {
 
-    var wallet = "0x078C2f53f41f14aFa8fD2ee84b107E91E081A9Bc";
+    var wallet = "0x68617F24d480a3A2b0056baD44cC1726f0644EF1";
 
     deployer
         .then(function() {
@@ -62,20 +62,35 @@ function toJson(obj) { return JSON.stringify(obj.abi); }
 function unloc(i) { return personal.unlockAccount(eth.accounts[i]) }
 
 
+// NOUSToken: 0x67b7d61247588065d23c8ed93aaaeb4e69ceea0c
+// RefundVault: 0x5fedda3ef38f4444b706370798578f26bb19a3bf
+// BonusForAffiliate: 0xadb6da18e0a015f79d2afb6154cc9edfa9701822
+// PaymentBounty: 0x7f8e49b6c66ad77b8649566b09e706a652d76176
+
+// NOUSSale: 0x403a8808ce1cd06eadc2ffcea3d7d3c3444eb7bf
+
+// NOUSPreorder: 0xae985feb48d94ac179d040b69b4f4f3eee646dc8
+// NOUSPresale: 0x303b2ee7683b779d3554dbba3b8407da8896896d
+// NOUSCrowdsale: 0x2e7ef08451992727d9eee90565d9460c7bd70517
+// NOUSReservFund: 0x7ac8430283f329836c6a186732ada3dc7f105480
+
+
+
 
 /*
-NOUSToken: 0xbf6f3e41fc45362863e9a88727af8cbbdf66f92d
-RefundVault: 0x9ac18156857005b44bd378f4d38a395bce28892e
-BonusForAffiliate: 0x2c76b1f7712f42ab9dee5ff6ae54b3af415f6d81
-PaymentBounty: 0xd4b78cc659f99b7c2948a710420d0dc16a977422
+NOUSToken: 0x2eee4ce641839d4ed0299e6228f36d04e8479e1d
+RefundVault: 0xc9ed4516e63dcabeee592f2db7ec932647fda409
+BonusForAffiliate: 0x3f5a4905bd18f924e4d42d83dd3dfaa98926f2e3
+PaymentBounty: 0x0e4c3a69726167867e2a11b629066cc11c17cb40
 
-NOUSSale: 0x55a287ad556601faac54a1c5d1b6b79400209158
+NOUSSale: 0xaab5634656868d2aa87aa0c41cc0f8ec37550dec
 
-NOUSPreorder: 0xeaf9d9f3a76d5798c3ed10258c996148e403d065
-NOUSReservFund: 0xef9742e849655fbcd29be7b8ae097760179b5bb0
-NOUSCrowdsale: 0x62c0bd7dc03ae28f4ba027d523bdbb74fad56008
-NOUSPresale: 0x011c4eb6895b71b8497fd467536b5625d43a3d0c
+  NOUSPreorder: 0x2f84ef9a2ef239f404813c2ba961f2db8d07df9a
+  NOUSPresale: 0x2a9b8200eaa5fa8fee6180405a919b5cdff216b2
+  NOUSReservFund: 0x4c8efc924024affa26ae30afaa6c68b79f16150e
+  NOUSCrowdsale: 0xfd22317ba8484721f2c0ebde6336f13ab64f5b34
 */
+
 
 
 

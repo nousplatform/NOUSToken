@@ -74,7 +74,7 @@ contract Crowdsale is BaseContract {
         return true;
     }
 
-    function validateStateSaleContract(address saleAddress) public isSalesContract(saleAddress) public constant returns (bool) {
+    function validateStateSaleContract(address saleAddress) public isSalesContract(saleAddress) constant returns (bool) {
         return salesAgents[saleAddress].isFinalized == false &&
             now > salesAgents[saleAddress].startTime &&
             now < salesAgents[saleAddress].endTime;
@@ -98,7 +98,7 @@ contract Crowdsale is BaseContract {
     //***Finalize 
     /// @dev Sets the contract sale agent process as completed, that sales agent is now retired
     /// oweride if ne logic and coll super finalize
-    function finalizeSaleContract(address _salesAgent) public onlyOwner() returns (bool) {
+    function finalizeSaleContract(address _salesAgent) public isSalesContract(msg.sender) returns (bool) {
         require(!salesAgents[_salesAgent].isFinalized);
         require(hasEnded(_salesAgent));
 
@@ -109,11 +109,11 @@ contract Crowdsale is BaseContract {
 
     /// @dev global finalization is activate this function all sales wos stoped.
     /// end pay bonuses
-    function finalizeICO(address _salesAgent) public onlyOwner() returns (bool) {
+    function finalizeICO() public isSalesContract(msg.sender) returns (bool) {
         //require(!isGlobalFinalized);
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState != SaleState.Ended);
-        require(salesAgents[_salesAgent].isFinalized == false);
+        require(salesAgents[msg.sender].isFinalized == false);
 
         // reserve bonuses and write all tokens on paymentbounty contract
         uint256 totalReserved = PaymentBountyInterface(bountyAddr).reserveBonuses(tokenContract.totalSupply());

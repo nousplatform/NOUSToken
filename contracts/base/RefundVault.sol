@@ -18,7 +18,7 @@ contract RefundVault is Ownable {
 
     mapping (address => uint256) public deposited;
 
-    address private dugSale; // address Nous Sale contract
+    address public dugSale; // address Nous Sale contract
 
     address public wallet;
 

@@ -12,7 +12,7 @@ contract SalesAgent is Ownable {
 
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
-    NOUSSale nousTokenSale; // contract nous sale
+    NOUSSale public nousTokenSale; // contract nous sale
 
     /**
 	* event for token purchase logging
