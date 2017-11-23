@@ -75,7 +75,7 @@ contract RefundVault is Ownable {
         return depositedValue;
     }
 
-    function getBalance() external returns (uint256) {
+    function getBalance() external constant returns (uint256) {
         return this.balance / 1 ether;
     }
 

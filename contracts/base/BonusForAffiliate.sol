@@ -83,9 +83,9 @@ contract BonusForAffiliate is Ownable {
     * @dev Block partner
     * @param _partnerWalletAddress Address partner wallet
     */
-    function lockUnlockPartner(address _partnerWalletAddress, bool status) public onlyOwner {
+    function lockUnlockPartner(address _partnerWalletAddress) public onlyOwner {
         require(isPartner(_partnerWalletAddress));
-        partners[_partnerWalletAddress].blocked = status;
+        partners[_partnerWalletAddress].blocked = !partners[_partnerWalletAddress].blocked;
     }
 
     /**
@@ -258,11 +258,13 @@ contract BonusForAffiliate is Ownable {
         return partnerIndexes[partners[_partnerWalletAddress].index] == _partnerWalletAddress;
     }
 
+    // ToDo FOR TEST 3 Minutes
     /**
     * @dev Retuns status bonus
     */
     function validateBonusStatusForPay(address _partnerWalletAddress, uint256 index) internal returns (bool) {
-        return partners[_partnerWalletAddress].bonuses[index].frozen == false && partners[_partnerWalletAddress].bonuses[index].payed == false && partners[_partnerWalletAddress].bonuses[index].time + (3 minutes) < now;
+        return partners[_partnerWalletAddress].bonuses[index].frozen == false && partners[_partnerWalletAddress].bonuses[index].payed == false &&
+        partners[_partnerWalletAddress].bonuses[index].time + (3 minutes) < now;
     }
 
 }

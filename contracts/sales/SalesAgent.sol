@@ -12,14 +12,6 @@ contract SalesAgent is Ownable {
 
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
-//    uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
-//    uint256 tokensMinted; // The current amount of tokens minted by this agent
-//    uint256 rate; // default rate
-//    uint256 minDeposit; // The minimum deposit amount allowed
-//    uint256 maxDeposit; // The maximum deposit amount allowed
-//    uint256 startTime; // The start time (unix format) when allowed to mint tokens
-//    uint256 endTime; // The end time from unix format when to finish minting tokens
-
     NOUSSale nousTokenSale; // contract nous sale
 
     /**
@@ -45,25 +37,6 @@ contract SalesAgent is Ownable {
 
     event ReserveBonuses(address _agent, address _sender, uint256 _totalReserve);
 
-    /*function setParams(
-        uint256 _tokensLimit,
-        uint256 _tokensMinted,
-        uint256 _rate,
-        uint256 _minDeposit,
-        uint256 maxDeposit,
-        uint256 startTime,
-        uint256 endTime
-    ) {
-        require(msg.sender == address(nousTokenSale));
-        tokensLimit = _tokensLimit;
-        tokensMinted = _tokensMinted;
-        rate = _rate;
-        minDeposit = _minDeposit;
-        maxDeposit = _maxDeposit;
-        startTime = _startTime;
-        endTime = endTime;
-    }*/
-
     function finaliseFunding() onlyOwner {
 
         // Do some common contribution validation, will throw if an error occurs - address calling this should match the deposit address
@@ -71,33 +44,6 @@ contract SalesAgent is Ownable {
             uint256 tokenMinted = nousTokenSale.getSaleContractTokensMinted(this);
             FinaliseSale(this, msg.sender, tokenMinted);
         }
-    }
-
-    // @dev General validation for a sales agent contract receiving a contribution,
-    // @dev additional validation can be done in the sale contract if required
-    // @param _value The value of the contribution in wei
-    // @return A boolean that indicates if the operation was successful.
-    function validateContribution(uint256 _value) internal returns (bool) {
-        return (_value > 0 && // value
-        _value >= nousTokenSale.getSaleContractMinDeposit(this) && // Is it above the min deposit amount?
-        _value <= nousTokenSale.getSaleContractMaxDeposit(this) &&
-        nousTokenSale.weiRaised().add(_value) <= nousTokenSale.targetEthMax()
-        );
-    }
-
-    // @dev Validate state contract
-    function validateStateSaleContract() internal returns (bool) {
-        return ( nousTokenSale.getSaleContractIsFinalised(this) == false && // No minting if the sale contract has finalised
-        now > nousTokenSale.getSaleContractStartTime(this) &&
-        now < nousTokenSale.getSaleContractEndTime(this)
-        );
-    }
-
-    function validPurchase(address _agent, uint _tokens) internal returns (bool) {
-        return ( _tokens > 0  &&
-        nousTokenSale.getSaleContractTokensLimit(_agent) >= nousTokenSale.getSaleContractTokensMinted(_agent) && // within Tokens mined
-        nousTokenSale.totalSupplyCap() >= nousTokenSale.getTokenTotalSupply().add(_tokens)
-        );
     }
 
     // Deliver
@@ -126,7 +72,6 @@ contract SalesAgent is Ownable {
     public onlyOwner returns (bool) {
         require(_accountHolder != 0x0);
         uint256 _tokens = _amountOf.mul(EXPONENT);
-        require(validPurchase(this, _tokens));
 
         nousTokenSale.tokenMint(_accountHolder, _tokens);
 
@@ -139,10 +84,5 @@ contract SalesAgent is Ownable {
 
         return true;
     }
-
-    /*function setSaleAddress(address _saleContractAddress) onlyOwner {
-        nousTokenSale = NOUSSale(_saleContractAddress);
-    }*/
-
 
 }

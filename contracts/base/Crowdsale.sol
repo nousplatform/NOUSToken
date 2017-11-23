@@ -31,6 +31,9 @@ contract Crowdsale is BaseContract {
         require(saleState == SaleState.Active);
         require(beneficiary != 0x0);
         require(msg.value > 0);
+        require(msg.value >= salesAgents[msg.sender].minDeposit);
+        require(msg.value <= salesAgents[msg.sender].maxDeposit);
+        require(weiRaised.add(weiAmount) <= targetEthMax);
 
         uint256 weiAmount = msg.value;
 
@@ -62,6 +65,8 @@ contract Crowdsale is BaseContract {
         require(saleState == SaleState.Active);
         require(beneficiary != 0x0);
         require(tokens > 0);
+        require(salesAgents[msg.sender].tokensLimit >= salesAgents[msg.sender].tokensMinted.add(tokens));
+        require(totalSupplyCap >= tokenContract.totalSupply().add(tokens));
 
         tokenContract.mint(beneficiary, tokens);
         salesAgents[msg.sender].tokensMinted = salesAgents[msg.sender].tokensMinted.add(tokens);
@@ -69,7 +74,12 @@ contract Crowdsale is BaseContract {
         return true;
     }
 
-    //**************Validates*****************//
+    function validateStateSaleContract(address saleAddress) public isSalesContract(saleAddress) public constant returns (bool) {
+        return salesAgents[saleAddress].isFinalized == false &&
+            now > salesAgents[saleAddress].startTime &&
+            now < salesAgents[saleAddress].endTime;
+    }
+
     // verifies that the gas price is lower than 50 gwei
     function validGasPrice(uint256 _gasPrice) external constant returns (bool) {
         return _gasPrice <= maxGasPrice;
