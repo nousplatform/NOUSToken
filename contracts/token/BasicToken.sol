@@ -15,11 +15,13 @@ contract BasicToken is ERC20Basic {
     mapping (address => uint256) public balances;
 
     bool public endICO = false;
+    uint256 public dateEndIco;
 
     event TransferStart();
 
     modifier canTransfer() {
         require(endICO);
+        require(dateEndIco + (3 weeks) > now);
         _;
     }
 
@@ -47,8 +49,9 @@ contract BasicToken is ERC20Basic {
         return balances[_owner];
     }
 
-    function finishICO() public returns (bool) {
+    function finishICO() internal returns (bool) {
         endICO = true;
+        dateEndIco = now;
         TransferStart();
         return true;
     }

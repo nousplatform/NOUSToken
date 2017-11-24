@@ -53,7 +53,7 @@ contract BonusForAffiliate is Ownable {
     * @dev return referral address
     * @param _backer Address backer
     */
-    function getReferralAddress(address _backer) external constants returns (address) {
+    function getReferralAddress(address _backer) external constant returns (address) {
         return referral[_backer];
     }
 

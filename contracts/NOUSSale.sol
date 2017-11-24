@@ -24,8 +24,8 @@ contract NOUSSale is Crowdsale {
         maxGasPrice = 300000 wei;
 
         // minimum amount of funds to be raised in weis
-        //targetEthMin = 5500  * (1 ether); // todo For test uncoment
-        targetEthMin = 4 * (1 ether);
+        targetEthMin = 5500  * (1 ether); // todo For test uncoment
+        //targetEthMin = 4 * (1 ether);
 
         // @dev bonus from affiliate
         percentBonusForAffiliate = 10;

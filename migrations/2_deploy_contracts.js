@@ -61,6 +61,35 @@ module.exports = function(deployer) {
 function toJson(obj) { return JSON.stringify(obj.abi); }
 function unloc(i) { return personal.unlockAccount(eth.accounts[i]) }
 
+// NOUSToken: 0x9c5b2f71ba6e403ccda71f0d70e4ec95638075fe
+// RefundVault: 0xa8aef92d96854b345e10cbfa32d85b81216482f7
+// BonusForAffiliate: 0x5da285649e6e4718a4bddab280935691e3927464
+// PaymentBounty: 0x5fed265f952463e826709baa140bd580f9deeef6
+//
+// NOUSSale: 0x7851573b1a90b84a9565aeb9b8be897bcb3ce93c
+//
+// NOUSPreorder: 0x4b3320c85c961c07fbd6c7b8370705ac20393b5f
+// NOUSPresale: 0x8a08eae84cb9a8cfedd343a49b6b37d25fff902f
+// NOUSCrowdsale: 0x0a2fcd2569302166bc4bd45ad48d4c0433756276
+// NOUSReservFund: 0x81e68bcf17922c9280bda883cfd3a4e0be13707c
+
+
+
+
+// NOUSToken: 0x953ff0d8709e5145b1aa8136acfec79039e36280
+// RefundVault: 0x93ef9e1d0b3d6df35feed9947a1284454033547e
+// BonusForAffiliate: 0xfddb435b5e83881489194b0653defb7c6d6a51ce
+// PaymentBounty: 0x23e3e33dea9b74e97574c34d0d26bda3044f1bd4
+//
+// NOUSSale: 0x872f8e5face2d746a9c493550426bb319cb5f55d
+//
+// NOUSPreorder: 0xe92780393a9fdc3a70e8b488a4b7b87a93301178
+// NOUSPresale: 0x9dc5331c293b8a29c0a8f94061b520051fc6bca0
+// NOUSReservFund: 0x4f468370f41ce9a260c7b4b4dbbff1310ecfd745
+// NOUSCrowdsale: 0xd6d41e181c46a083629e21d6f5fbaafd5f2d52c5
+
+//"0x9dc5331c293b8a29c0a8f94061b520051fc6bca0",1,225000,0,10,1511733600,1511949600,8000
+
 
 // NOUSToken: 0x67b7d61247588065d23c8ed93aaaeb4e69ceea0c
 // RefundVault: 0x5fedda3ef38f4444b706370798578f26bb19a3bf
