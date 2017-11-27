@@ -14,15 +14,13 @@ contract NOUSPresale is SalesAgent {
 
     using SafeMath for uint;
 
-    uint256 public gasPrice;
-
     function NOUSPresale(address _saleContractAddress) {
         nousTokenSale = NOUSSale(_saleContractAddress);
     }
 
     function() payable external {
-        //gasPrice = tx.gasprice;
-        //require(nousTokenSale.validGasPrice(tx.gasprice));
+        gasPrice = tx.gasprice;
+        require(tx.gasprice <= maxGasPrice);
         require(nousTokenSale.validateStateSaleContract(this));
 
         uint256 weiAmount = msg.value;

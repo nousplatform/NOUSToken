@@ -14,6 +14,10 @@ contract SalesAgent is Ownable {
 
     NOUSSale public nousTokenSale; // contract nous sale
 
+    uint256 public gasPrice;
+
+    uint256 public maxGasPrice = 300000 wei;
+
     /**
 	* event for token purchase logging
 	* @param beneficiary who got the tokens
@@ -44,6 +48,10 @@ contract SalesAgent is Ownable {
             uint256 tokenMinted = nousTokenSale.getSaleContractTokensMinted(this);
             FinaliseSale(this, msg.sender, tokenMinted);
         }
+    }
+
+    function setGasPrice(uint256 _gasPrice) {
+        maxGasPrice = _gasPrice;
     }
 
     // Deliver

@@ -31,7 +31,8 @@ contract NOUSCrowdsale is SalesAgent {
 
     function() payable external {
         // The target ether amount
-        //require(nousTokenSale.validGasPrice(tx.gasprice));
+        gasPrice = tx.gasprice;
+        require(tx.gasprice <= maxGasPrice);
         require(msg.value > 0);
         require(nousTokenSale.validateStateSaleContract(this));
 
