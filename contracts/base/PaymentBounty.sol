@@ -11,6 +11,8 @@ contract PaymentBounty is Ownable {
 
     address public tokenAddress;
 
+    event PayBonuses(address wallet, uint256 tokens);
+
     struct Bounty {
         address wallet; // wallet address for transfer
         bytes32 name; // name bonus
@@ -51,7 +53,7 @@ contract PaymentBounty is Ownable {
     }
 
     // @dev reserve all bounty on this NOUSSale address contract
-    function reserveBonuses(uint256 _totalSupply) public onlyOwner returns (uint256){
+    function reserveBonuses(uint256 _totalSupply) public onlyOwner returns (uint256) {
 
         uint256 totalReserved = 0;
 
@@ -59,7 +61,6 @@ contract PaymentBounty is Ownable {
             if (bountyPayment[i].amountReserve == 0) {
                 bountyPayment[i].amountReserve = _totalSupply.mul(bountyPayment[i].percent).div(100);
                 // reserve fonds on this contract
-
                 totalReserved = totalReserved + bountyPayment[i].amountReserve;
             }
         }
@@ -75,19 +76,16 @@ contract PaymentBounty is Ownable {
         for (uint256 i = 0; i < bountyPayment.length; i++) {
             uint256 dateDelay = _startTime;
 
-            // todo WARNING  For test sets minutes
             // calculate date delay  1 month = 30 dey
             for (uint256 p = 0; p < bountyPayment[i].delay; p++) {
-                //dateDelay = dateDelay + (30 days);
-                dateDelay = dateDelay + (5 minutes);
+                dateDelay = dateDelay + (30 days);
             }
 
             // set last date payaout
             if (bountyPayment[i].timeLastPayout == 0) {
                 delayNextTime = dateDelay;
             } else {
-                //delayNextTime = bountyPayment[i].timeLastPayout + (30 days); // todo minutes
-                delayNextTime = bountyPayment[i].timeLastPayout + (4 minutes);
+                delayNextTime = bountyPayment[i].timeLastPayout + (30 days);
             }
 
             // delay bonuses
@@ -95,6 +93,7 @@ contract PaymentBounty is Ownable {
               now >= delayNextTime) {
                 uint256 payout = bountyPayment[i].amountReserve.div(bountyPayment[i].periodPathOfPay);
                 NOUSTokenInterface(tokenAddress).transfer(bountyPayment[i].wallet, payout);
+                PayBonuses(bountyPayment[i].wallet, payout);
                 // transfer bonuses
                 bountyPayment[i].totalPayout = bountyPayment[i].totalPayout.add(payout);
                 bountyPayment[i].timeLastPayout = delayNextTime;

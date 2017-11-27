@@ -32,6 +32,7 @@ contract NOUSCrowdsale is SalesAgent {
     function() payable external {
         // The target ether amount
         //require(nousTokenSale.validGasPrice(tx.gasprice));
+        require(msg.value > 0);
         require(nousTokenSale.validateStateSaleContract(this));
 
         uint256 weiAmount = msg.value;
@@ -73,9 +74,7 @@ contract NOUSCrowdsale is SalesAgent {
         for (uint256 i = 0; i < bonusRates.length; i++) {
             uint256 toPeriod = startTime;
             for (uint256 w = 0; w < bonusRates[i].period; w++) {
-                //toPeriod = toPeriod + (1 weeks);
-                toPeriod = toPeriod + (5 minutes);
-                // TODO FOR TESTING (1 weeks)
+                toPeriod = toPeriod + (1 weeks);
             }
             if (now < toPeriod) {
                 return bonusRates[i].rate;
@@ -83,10 +82,6 @@ contract NOUSCrowdsale is SalesAgent {
         }
 
         return nousTokenSale.getSaleContractTokensRate(this);
-        // return default rate if not config
     }
 
-    function finaliseFunding() onlyOwner {
-        super.finaliseFunding();
-    }
 }

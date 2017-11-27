@@ -38,7 +38,7 @@ contract BaseContract is Ownable {
     uint256 public percentBonusForAffiliate; // percent for bonus
 
     /**** Events ****/
-    event SaleFinalised(address _agent, address _address, uint256 _amountMint);
+    event SaleFinalised(address _agent, uint256 _amountMint, uint256 _weiAmount);
     event TotalOutBounty(address _agent, address _wallet, bytes32 _name, uint256 _totalPayout); // all payed to bonus
     event PayBounty(address _agent, address _wallet, bytes32 _name, uint256 _amount);
     event TokenMinted(address indexed _agent, address indexed beneficiary, uint256 amount);

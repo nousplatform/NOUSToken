@@ -98,12 +98,12 @@ contract Crowdsale is BaseContract {
     //***Finalize 
     /// @dev Sets the contract sale agent process as completed, that sales agent is now retired
     /// oweride if ne logic and coll super finalize
-    function finalizeSaleContract(address _salesAgent) public isSalesContract(msg.sender) returns (bool) {
-        require(!salesAgents[_salesAgent].isFinalized);
-        require(hasEnded(_salesAgent));
+    function finalizeSale() public isSalesContract(msg.sender) returns (bool) {
+        require(!salesAgents[msg.sender].isFinalized);
+        require(hasEnded(msg.sender));
 
-        salesAgents[_salesAgent].isFinalized = true;
-        SaleFinalised(_salesAgent, msg.sender, salesAgents[_salesAgent].tokensMinted);
+        salesAgents[msg.sender].isFinalized = true;
+        SaleFinalised(msg.sender, salesAgents[msg.sender].tokensMinted, salesAgents[msg.sender].weiRaised);
         return true;
     }
 

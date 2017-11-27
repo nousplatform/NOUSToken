@@ -11,6 +11,7 @@ library Data {
         SaleContractType saleContractType; // Type of the contract ie. presale, crowdsale, reserve_funds
         uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
         uint256 tokensMinted; // The current amount of tokens minted by this agent
+        uint256 weiRaised; // The current amount of tokens minted by this agent
         uint256 rate; // default rate
         uint256 minDeposit; // The minimum deposit amount allowed
         uint256 maxDeposit; // The maximum deposit amount allowed

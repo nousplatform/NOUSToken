@@ -37,10 +37,10 @@ contract SalesAgent is Ownable {
 
     event ReserveBonuses(address _agent, address _sender, uint256 _totalReserve);
 
-    function finaliseFunding() onlyOwner {
+    function finalise() onlyOwner {
 
         // Do some common contribution validation, will throw if an error occurs - address calling this should match the deposit address
-        if (nousTokenSale.finalizeSaleContract(this)) {
+        if (nousTokenSale.finalizeSale()) {
             uint256 tokenMinted = nousTokenSale.getSaleContractTokensMinted(this);
             FinaliseSale(this, msg.sender, tokenMinted);
         }
