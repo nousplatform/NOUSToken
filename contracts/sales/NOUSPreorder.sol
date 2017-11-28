@@ -3,7 +3,7 @@ pragma solidity ^0.4.11;
 
 import "./SalesAgent.sol";
 import "../lib/SafeMath.sol";
-import "../NOUSSale.sol";
+import "../NousplatformCrowdSale.sol";
 
 
     contract NOUSPreorder is SalesAgent {
@@ -11,13 +11,12 @@ import "../NOUSSale.sol";
     using SafeMath for uint;
 
     function NOUSPreorder(address _saleContractAddress) {
-        nousTokenSale = NOUSSale(_saleContractAddress);
+        nousTokenSale = NousplatformCrowdSale(_saleContractAddress);
     }
 
     function() payable external {
         // The target ether amount
-        gasPrice = tx.gasprice;
-        require(tx.gasprice <= maxGasPrice);
+        require(msg.value > 0);
         require(nousTokenSale.validateStateSaleContract(this));
 
         uint256 weiAmount = msg.value;

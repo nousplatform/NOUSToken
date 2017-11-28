@@ -3,7 +3,7 @@ pragma solidity ^0.4.11;
 
 import "./SalesAgent.sol";
 import "../lib/SafeMath.sol";
-import "../NOUSSale.sol";
+import "../NousplatformCrowdSale.sol";
 
 
 contract NOUSReservFund is SalesAgent {
@@ -11,7 +11,7 @@ contract NOUSReservFund is SalesAgent {
     using SafeMath for uint;
 
     function NOUSReservFund(address _saleContractAddress) {
-        nousTokenSale = NOUSSale(_saleContractAddress);
+        nousTokenSale = NousplatformCrowdSale(_saleContractAddress);
     }
 
     function globalFinalizationStartBonusPayable() onlyOwner {

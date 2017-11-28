@@ -30,7 +30,7 @@ contract BaseContract is Ownable {
 
     /**** Properties ****/
     uint256 public totalSupplyCap; // 777 Million tokens Capitalize max count NOUS tokens
-    uint256 public availablePurchase; // 543 900 000 tokens  Available for purchase
+    uint256 public availablePurchase; // tokens  Available for purchase
     uint256 public targetEthMax; // The max amount of ether the agent is allowed raise
     uint256 public targetEthMin; // minimum amount of funds to be raised in weis
     uint256 public weiRaised; // amount of raised money in wei

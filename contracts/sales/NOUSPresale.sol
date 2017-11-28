@@ -3,7 +3,7 @@ pragma solidity ^0.4.11;
 
 import "./SalesAgent.sol";
 import "../lib/SafeMath.sol";
-import "../NOUSSale.sol";
+import "../NousplatformCrowdSale.sol";
 
 import "./NOUSCrowdsale.sol";
 import "./NOUSReservFund.sol";
@@ -15,12 +15,11 @@ contract NOUSPresale is SalesAgent {
     using SafeMath for uint;
 
     function NOUSPresale(address _saleContractAddress) {
-        nousTokenSale = NOUSSale(_saleContractAddress);
+        nousTokenSale = NousplatformCrowdSale(_saleContractAddress);
     }
 
     function() payable external {
-        gasPrice = tx.gasprice;
-        require(tx.gasprice <= maxGasPrice);
+        require(msg.value > 0);
         require(nousTokenSale.validateStateSaleContract(this));
 
         uint256 weiAmount = msg.value;

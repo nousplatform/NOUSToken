@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-import "../NOUSSale.sol";
+import "../NousplatformCrowdSale.sol";
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
 
@@ -12,11 +12,7 @@ contract SalesAgent is Ownable {
 
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
-    NOUSSale public nousTokenSale; // contract nous sale
-
-    uint256 public gasPrice;
-
-    uint256 public maxGasPrice = 300000 wei;
+    NousplatformCrowdSale public nousTokenSale; // contract nous sale
 
     /**
 	* event for token purchase logging
@@ -48,10 +44,6 @@ contract SalesAgent is Ownable {
             uint256 tokenMinted = nousTokenSale.getSaleContractTokensMinted(this);
             FinaliseSale(this, msg.sender, tokenMinted);
         }
-    }
-
-    function setGasPrice(uint256 _gasPrice) {
-        maxGasPrice = _gasPrice;
     }
 
     // Deliver

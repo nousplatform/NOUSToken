@@ -3,7 +3,7 @@ pragma solidity ^0.4.11;
 
 import "./SalesAgent.sol";
 import "../lib/SafeMath.sol";
-import "../NOUSSale.sol";
+import "../NousplatformCrowdSale.sol";
 
 
 contract NOUSCrowdsale is SalesAgent {
@@ -19,7 +19,7 @@ contract NOUSCrowdsale is SalesAgent {
 
     /// @dev constructor
     function NOUSCrowdsale(address _saleContractAddress) {
-        nousTokenSale = NOUSSale(_saleContractAddress);
+        nousTokenSale = NousplatformCrowdSale(_saleContractAddress);
 
         addBonusRate(1, 7300);
         // 1 Week = 7300 NOUS
@@ -31,8 +31,6 @@ contract NOUSCrowdsale is SalesAgent {
 
     function() payable external {
         // The target ether amount
-        gasPrice = tx.gasprice;
-        require(tx.gasprice <= maxGasPrice);
         require(msg.value > 0);
         require(nousTokenSale.validateStateSaleContract(this));
 

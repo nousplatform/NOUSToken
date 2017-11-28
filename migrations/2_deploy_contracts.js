@@ -1,5 +1,5 @@
 var NOUSToken = artifacts.require("./NOUSToken.sol");
-var NOUSSale = artifacts.require("./NOUSSale.sol");
+var NOUSSale = artifacts.require("./NousplatformCrowdSale.sol");
 var RefundVault = artifacts.require("./RefundVault.sol");
 var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
 

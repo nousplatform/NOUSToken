@@ -52,7 +52,7 @@ contract PaymentBounty is Ownable {
         bountyPayment.push(newBounty);
     }
 
-    // @dev reserve all bounty on this NOUSSale address contract
+    // @dev reserve all bounty on this NousplatformCrowdSale address contract
     function reserveBonuses(uint256 _totalSupply) public onlyOwner returns (uint256) {
 
         uint256 totalReserved = 0;
