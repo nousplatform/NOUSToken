@@ -11,20 +11,20 @@ contract NOUSSale is Crowdsale {
     function NOUSSale(address _token, address _vault, address _affiliate, address _bonuses)
     BaseContract(_token, _vault, _affiliate, _bonuses)
     {
-        //777 Million tokens
-        totalSupplyCap = 777 * (10 ** 6) * EXPONENT;
+        //544 Million tokens
+        totalSupplyCap = 544 * (10 ** 6) * EXPONENT;
 
         //543 900 000 tokens  Available for purchase
         availablePurchase = 543900000 * EXPONENT;
 
         // minimum amount of funds to be raised in weis
-        targetEthMax = 85000 * (1 ether);
+        targetEthMax = 54000 * (1 ether);
+
+        // minimum amount of funds to be raised in weis
+        targetEthMin = 4500  * (1 ether);
 
         // maximum gas price for contribution transactions
         maxGasPrice = 300000 wei;
-
-        // minimum amount of funds to be raised in weis
-        targetEthMin = 5500  * (1 ether);
 
         // @dev bonus from affiliate
         percentBonusForAffiliate = 10;

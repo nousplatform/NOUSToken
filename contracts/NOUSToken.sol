@@ -11,9 +11,9 @@ import "./token/MintableToken.sol";
  */
 contract NOUSToken is MintableToken {
 
-    string public constant name = "Nous token";
+    string public constant name = "NOUSTOKEN";
 
-    string public constant symbol = "NOUS";
+    string public constant symbol = "NST";
 
     uint32 public constant decimals = 18;
 
