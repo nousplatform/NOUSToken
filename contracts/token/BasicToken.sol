@@ -46,9 +46,5 @@ contract BasicToken is ERC20Basic {
         return balances[_owner];
     }
 
-    function lockUnlock() public onlyOwner {
-        lock = !lock;
-    }
-
 
 }

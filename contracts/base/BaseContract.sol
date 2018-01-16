@@ -60,7 +60,17 @@ contract BaseContract is Ownable {
     }
 
     //**** Constructors ******************//
-    function setBaseContracts(
+    /// @dev constructor
+    function BaseContract(
+        address _token,
+        address _vault,
+        address _affiliate,
+        address _bounty
+    ) {
+        setContracts(_token, _vault, _affiliate, _bounty);
+    }
+
+    function setContracts(
         address _token,
         address _vault,
         address _affiliate,
@@ -105,7 +115,6 @@ contract BaseContract is Ownable {
         require(_tokensLimit > 0 && _tokensLimit <= totalSupplyCap); // Must have some available tokens
         require(_minDeposit <= _maxDeposit); // Make sure the min deposit is less than or equal to the max
         require(_endTime > _startTime);
-        //require(_startTime >= now);
 
         // Add the new sales contract
         Data.SalesAgent memory newSalesAgent;
