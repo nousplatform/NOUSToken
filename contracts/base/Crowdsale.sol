@@ -119,7 +119,8 @@ contract Crowdsale is BaseContract {
         uint256 totalReserved = PaymentBountyInterface(bountyAddr).reserveBonuses(tokenContract.totalSupply());
         tokenContract.mint(bountyAddr, totalReserved);
 
-        tokenContract.finishMinting();
+        //tokenContract.finishMinting();
+
         // stop mining tokens
         saleState = SaleState.Ended;
         // close all sale

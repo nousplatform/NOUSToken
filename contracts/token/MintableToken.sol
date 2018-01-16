@@ -17,10 +17,17 @@ contract MintableToken is StandardToken, Ownable {
 
     event MintFinished();
 
+    address public dugSale; // address Nous Sale contract
+
     bool public mintingFinished = false;
 
     modifier canMint() {
         require(!mintingFinished);
+        _;
+    }
+
+    modifier onlySaleAgent() {
+        assert(msg.sender == dugSale);
         _;
     }
 
@@ -30,7 +37,7 @@ contract MintableToken is StandardToken, Ownable {
      * @param _amount The amount of tokens to mint.
      * @return A boolean that indicates if the operation was successful.
      */
-    function mint(address _to, uint256 _amount) public onlyOwner canMint returns (bool) {
+    function mint(address _to, uint256 _amount) public onlySaleAgent canMint returns (bool) {
         totalSupply = totalSupply.add(_amount);
         balances[_to] = balances[_to].add(_amount);
         Mint(_to, _amount);
@@ -46,6 +53,12 @@ contract MintableToken is StandardToken, Ownable {
         mintingFinished = true;
         finishICO();
         MintFinished();
+        return true;
+    }
+
+    function setDugSale( address _dugSale ) external onlyOwner returns (bool) {
+        require(_dugSale != address(0));
+        dugSale = _dugSale;
         return true;
     }
 

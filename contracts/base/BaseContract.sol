@@ -60,28 +60,21 @@ contract BaseContract is Ownable {
     }
 
     //**** Constructors ******************//
-    /// @dev constructor
-    function BaseContract(
+    function setBaseContracts(
         address _token,
         address _vault,
         address _affiliate,
         address _bounty
-    ) {
-        if (address(tokenContract) == 0x0) {
-            tokenContract = NOUSTokenInterface(_token);
-        }
+    ) public onlyOwner {
+        require(_token != 0x0);
+        require(_vault != 0x0);
+        require(_affiliate != 0x0);
+        require(_bounty != 0x0);
 
-        if (refundVaultAddr == 0x0) {
-            refundVaultAddr = _vault;
-        }
-
-        if (affiliateAddr == 0x0) {
-            affiliateAddr = _affiliate;
-        }
-
-        if (bountyAddr == 0x0) {
-            bountyAddr = _bounty;
-        }
+        tokenContract = NOUSTokenInterface(_token);
+        refundVaultAddr = _vault;
+        affiliateAddr = _affiliate;
+        bountyAddr = _bounty;
     }
 
     /**
@@ -144,7 +137,7 @@ contract BaseContract is Ownable {
     * @dev Find stop sale
     */
     function pendingActiveSale() onlyOwner {
-        require(saleState != SaleState.Ended);
+        //require(saleState != SaleState.Ended);
         if (saleState == SaleState.Pending) {
             saleState = SaleState.Active;
         } else {

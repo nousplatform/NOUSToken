@@ -81,6 +81,18 @@
 <button style="margin:15px " id="" onclick="document.getElementById('nous_sale').reset();">Reset</button>
 <button style="margin:15px " id="compile2" onclick="test2()">Compile</button>
 <input type="text" style="margin:15px " id="result2" size="100" >
+
+<div id="page-wrapper">
+    <div>
+        Select a text file:
+        <input type="file" id="fileInput" />
+    </div>
+    <pre id="fileDisplayArea"></pre>
+    <pre id="csvData"></pre>
+    <button onClick="test3()">Show Text</button>
+    <form id="datafile" size="50"></form>
+</div>
+
     <script>
 
     var date = new Date();
@@ -112,6 +124,11 @@
     endDate.value = today;
     endTime.value = minutes;
 
+    Date.prototype.addHours= function(h){
+      this.setHours(this.getHours()+h);
+      return this;
+    }
+
     function test() {
         var saleAddr = document.getElementById("SaleAddress").value;
         var el = document.getElementById("SaleContractType");
@@ -125,8 +142,11 @@
         //var MaxDeposit = document.getElementById("MaxDeposit").value;
         var rate = document.getElementById("rate").value;
 
-        var date_start = new Date(startDate.value+" "+startTime.value).getTime() / 1000;
-        var date_end = new Date(endDate.value+" "+endTime.value).getTime() / 1000;
+
+
+        var date_start = new Date(startDate.value+" "+startTime.value).addHours(2).getTime() / 1000;
+        var date_end = new Date(endDate.value+" "+endTime.value).addHours(2).getTime() / 1000;
+
 
         var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+MaxDeposit+","+date_start+","+date_end+","+rate;
 
@@ -141,6 +161,71 @@
         var bounty = document.getElementById('bounty').value;
         var res = '"'+token +'","'+ vault +'","'+ affiliate +'","'+ bounty +'"';
         document.getElementById("result2").value = res;
+    }
+
+    //var csv is the CSV file with headers
+    // Create an array of arrays
+    // Remove first line
+    // Split by ","
+    function process(dataString) {
+      var delimeter = 50;
+      var totalArr = [];
+      var totalArrIdex = 0;
+
+      var lines = dataString
+        .split(/\n/)                     // Convert to one string per line
+        .map(function(lineStr) {
+          return lineStr.split(",");   // Convert each line to array (,)
+        })
+        .slice(0);
+
+      console.log("lines.length", lines.length);
+
+      // Discard header line
+      var myform = $("#datafile");
+
+      lines.forEach(function (currentValue, index) {
+
+        if (index == 0 || index % delimeter == 0) {
+          totalArr[++totalArrIdex] = [];
+          totalArr[totalArrIdex][0] = [];
+          totalArr[totalArrIdex][1] = [];
+        }
+
+        if (index % delimeter === 0 && index != 0) {
+          $('<div>', {
+            style: "padding:2px"
+          }).append(
+              $('<input/>', {
+                id: 'myinput-'+totalArrIdex,
+                size: '150',
+                val:  JSON.stringify(totalArr[totalArrIdex-1][0]) + "," + JSON.stringify(totalArr[totalArrIdex-1][1])
+              })
+          ).appendTo(myform);
+        }
+
+        totalArr[totalArrIdex][0].push(currentValue[0]);
+        totalArr[totalArrIdex][1].push(+currentValue[1]);
+      });
+    }
+
+    function test3() {
+      var file = fileInput.files[0];
+      var textType = /text.*/;
+      var csvType = 'text/csv';
+      if (file.type.match(csvType)) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+          process(reader.result);
+
+          //document.getElementById("arrayData").value = process(reader.result);
+          //document.getElementById("csvData").innerText = process(reader.result);
+        }
+
+        reader.readAsText(file);
+      } else {
+        fileDisplayArea.innerText = "File not supported!";
+      }
     }
 
 
