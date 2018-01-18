@@ -107,7 +107,7 @@ contract Crowdsale is BaseContract {
 
     /// @dev global finalization is activate this function all sales wos stoped.
     /// end pay bonuses
-    function finalizeICO() public isSalesContract(msg.sender) returns (bool) {
+    function finalizeICO() public isSalesContract(msg.sender) {
         //require(!isGlobalFinalized);
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState != SaleState.Ended);
@@ -117,14 +117,8 @@ contract Crowdsale is BaseContract {
         uint256 totalReserved = PaymentBountyInterface(bountyAddr).reserveBonuses(tokenContract.totalSupply());
         tokenContract.mint(bountyAddr, totalReserved);
 
-        //tokenContract.finishMinting();
-
         // stop mining tokens
         saleState = SaleState.Ended;
-        // close all sale
-
-        //isGlobalFinalized = true;
-        return true;
     }
 
     function payDelayBonuses() public isSalesContract(msg.sender) {
