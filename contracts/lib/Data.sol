@@ -14,7 +14,7 @@ library Data {
         uint256 weiRaised; // The current amount of tokens minted by this agent
         uint256 rate; // default rate
         uint256 minDeposit; // The minimum deposit amount allowed
-        uint256 maxDeposit; // The maximum deposit amount allowed
+        //uint256 maxDeposit; // The maximum deposit amount allowed
         uint256 startTime; // The start time (unix format) when allowed to mint tokens
         uint256 endTime; // The end time from unix format when to finish minting tokens
         bool isFinalized; // Has this sales contract been completed and the ether sent to the deposit address?

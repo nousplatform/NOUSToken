@@ -30,7 +30,7 @@ contract Crowdsale is BaseContract {
         require(beneficiary != 0x0);
         require(msg.value > 0);
         require(msg.value >= salesAgents[msg.sender].minDeposit);
-        require(msg.value <= salesAgents[msg.sender].maxDeposit);
+        //require(msg.value <= salesAgents[msg.sender].maxDeposit);
         require(weiRaised.add(weiAmount) <= targetEthMax);
 
         uint256 weiAmount = msg.value;
@@ -79,9 +79,9 @@ contract Crowdsale is BaseContract {
     }
 
     // verifies that the gas price is lower than 50 gwei
-    function validGasPrice(uint256 _gasPrice) external constant returns (bool) {
+    /*function validGasPrice(uint256 _gasPrice) external constant returns (bool) {
         return _gasPrice <= maxGasPrice;
-    }
+    }*/
 
     /// @return true if crowdsale event has ended and call super.hasEnded
     function hasEnded(address _salesAgent) public constant returns (bool) {

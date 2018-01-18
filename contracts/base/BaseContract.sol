@@ -34,7 +34,7 @@ contract BaseContract is Ownable {
     uint256 public targetEthMax; // The max amount of ether the agent is allowed raise
     uint256 public targetEthMin; // minimum amount of funds to be raised in weis
     uint256 public weiRaised; // amount of raised money in wei
-    uint256 public maxGasPrice; // amount of raised money in wei
+    //uint256 public maxGasPrice; // amount of raised money in wei
     uint256 public percentBonusForAffiliate; // percent for bonus
 
     /**** Events ****/
@@ -105,7 +105,7 @@ contract BaseContract is Ownable {
         Data.SaleContractType _saleContractType,
         uint256 _tokensLimit,
         uint256 _minDeposit,
-        uint256 _maxDeposit,
+        //uint256 _maxDeposit,
         uint256 _startTime,
         uint256 _endTime,
         uint256 _rate
@@ -116,7 +116,7 @@ contract BaseContract is Ownable {
         require(saleState != SaleState.Ended); // if Sale state closed do not add sale config
         require(_saleAddress != 0x0); // Valid addresses
         require(_tokensLimit > 0 && _tokensLimit <= totalSupplyCap); // Must have some available tokens
-        require(_minDeposit <= _maxDeposit); // Make sure the min deposit is less than or equal to the max
+        //require(_minDeposit <= _maxDeposit); // Make sure the min deposit is less than or equal to the max
         require(_endTime > _startTime);
 
         // Add the new sales contract
@@ -126,7 +126,7 @@ contract BaseContract is Ownable {
         newSalesAgent.tokensLimit = _tokensLimit * EXPONENT;
         newSalesAgent.tokensMinted = 0;
         newSalesAgent.minDeposit = _minDeposit * 1 ether;
-        newSalesAgent.maxDeposit = _maxDeposit * 1 ether;
+        //newSalesAgent.maxDeposit = _maxDeposit * 1 ether;
         newSalesAgent.startTime = _startTime;
         newSalesAgent.endTime = _endTime;
         newSalesAgent.rate = _rate;
@@ -215,8 +215,8 @@ contract BaseContract is Ownable {
 
     /// @dev Returns the token total currently minted by the sale agent
     /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
+    /*function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
         return salesAgents[_salesAgentAddress].maxDeposit;
-    }
+    }*/
 
 }

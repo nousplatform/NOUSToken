@@ -24,7 +24,7 @@ contract NousplatformCrowdSale is Crowdsale {
         targetEthMin = 3500  * (1 ether);
 
         // maximum gas price for contribution transactions
-        maxGasPrice = 300000 wei;
+        //maxGasPrice = 300000 wei;
 
         // @dev bonus from affiliate
         percentBonusForAffiliate = 10;
