@@ -55,14 +55,15 @@ contract MintableToken is StandardToken, Ownable {
         return true;
     }
 
-    function setDugSale(address _dugSale) external onlyOwner returns (bool) {
+    function lockUnlock() public onlyOwner {
+        lock = !lock;
+    }
+
+    function setDugSale(address _dugSale) public onlyOwner returns(bool){
         require(_dugSale != 0x0);
         dugSale = _dugSale;
         return true;
     }
 
-    function lockUnlock() public onlyOwner {
-        lock = !lock;
-    }
 
 }

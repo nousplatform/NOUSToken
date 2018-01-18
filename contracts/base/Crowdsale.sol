@@ -8,8 +8,6 @@ import "../interfaces/BonusForAffiliateInterface.sol";
 import "../interfaces/RefundVaultInterface.sol";
 import "../interfaces/PaymentBountyInterface.sol";
 
-//import "../interfaces/NOUSTokenInterface.sol";
-
 
 /**
  * @title Crowdsale

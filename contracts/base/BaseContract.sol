@@ -70,6 +70,9 @@ contract BaseContract is Ownable {
         setContracts(_token, _vault, _affiliate, _bounty);
     }
 
+    /**
+    *
+    */
     function setContracts(
         address _token,
         address _vault,
@@ -214,10 +217,6 @@ contract BaseContract is Ownable {
     /// @param _salesAgentAddress The address of the token sale agent contract
     function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
         return salesAgents[_salesAgentAddress].maxDeposit;
-    }
-
-    function getTokenTotalSupply() returns (uint256) {
-        return tokenContract.totalSupply();
     }
 
 }

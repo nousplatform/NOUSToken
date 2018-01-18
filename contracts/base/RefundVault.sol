@@ -35,11 +35,9 @@ contract RefundVault is Ownable {
         _;
     }
 
-    function setDugSale( address _dugSale ) external onlyOwner returns (bool) {
-        require(_dugSale != address(0));
-        //require(dugSale == address(0));
+    function setDugSale(address _dugSale) public onlyOwner {
+        require(_dugSale != 0x0);
         dugSale = _dugSale;
-        return true;
     }
 
     function RefundVault(address _wallet) {
