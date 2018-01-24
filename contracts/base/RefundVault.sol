@@ -46,7 +46,17 @@ contract RefundVault is Ownable {
         state = State.Active;
     }
 
+    function setWallet(address _wallet) public onlyOwner {
+        require(_wallet != 0x0);
+        wallet = _wallet;
+    }
+
+    function setState(State _state) public onlyOwner {
+        state = _state;
+    }
+
     function deposit(address investor) public onlySaleAgent payable {
+        require(msg.value > 0);
         require(state == State.Active);
         deposited[investor] = deposited[investor].add(msg.value);
     }
@@ -64,7 +74,7 @@ contract RefundVault is Ownable {
         RefundsEnabled();
     }
 
-    function refund(address investor) public returns (uint256) {
+    function refundSaleAgent(address investor) public onlySaleAgent returns (uint256) {
         require(state == State.Refunding);
         uint256 depositedValue = deposited[investor];
         deposited[investor] = 0;
@@ -74,13 +84,17 @@ contract RefundVault is Ownable {
     }
 
     function getBalance() external constant returns (uint256) {
-        return this.balance / 1 ether;
+        return this.balance;
     }
 
-    function withdraw(uint256 _amount) public onlyOwner {
+    function withdrawOnly(uint256 _amount) public onlyOwner {
         require(_amount > 0);
         uint256 amount = _amount * 1 ether;
         require(this.balance > amount);
         wallet.transfer(amount);
+    }
+
+    function kill() public onlyOwner {
+        selfdestruct(owner);
     }
 }

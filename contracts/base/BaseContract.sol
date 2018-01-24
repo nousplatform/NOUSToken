@@ -55,8 +55,7 @@ contract BaseContract is Ownable {
     /**** Modifier ***********/
     /// @dev Only allow access from the latest version of a sales contract
     modifier isSalesContract(address _sender) {
-        assert(salesAgents[_sender].exists == true); // Is this an authorised sale contract?
-        //assert(salesAgents[_sender].isFinalized == false);
+        require(salesAgents[_sender].exists == true);
         _;
     }
 
@@ -125,7 +124,6 @@ contract BaseContract is Ownable {
         newSalesAgent.saleContractAddress = _saleAddress;
         newSalesAgent.saleContractType = _saleContractType;
         newSalesAgent.tokensLimit = _tokensLimit * EXPONENT;
-        newSalesAgent.tokensMinted = 0;
         newSalesAgent.minDeposit = _minDeposit * 1 ether;
         //newSalesAgent.maxDeposit = _maxDeposit * 1 ether;
         newSalesAgent.startTime = _startTime;
@@ -149,13 +147,8 @@ contract BaseContract is Ownable {
     /**
     * @dev Find stop sale
     */
-    function pendingActiveSale() onlyOwner {
-        //require(saleState != SaleState.Ended);
-        if (saleState == SaleState.Pending) {
-            saleState = SaleState.Active;
-        } else {
-            saleState = SaleState.Pending;
-        }
+    function setSaleState(SaleState _state) public onlyOwner {
+        saleState = _state;
     }
 
     /**
@@ -171,53 +164,29 @@ contract BaseContract is Ownable {
         return 0;
     }
 
-    /**** Getters ****/
-    /// @dev Returns true if this sales contract has finalised
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractIsFinalised(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (bool) {
-        return salesAgents[_salesAgentAddress].isFinalized;
-    }
+    /**
+    * @dev Returns all information on sale contract
+    */
+    function getSaleContract(address _saleAgentAddress) public constant
+    returns(
+        bool memory finalize,
+        uint256 memory startTime,
+        uint256 memory endTime,
+        uint256 memory tokensLimit,
+        uint256 memory tokensMinted,
+        uint256 memory rate,
+        Data.SaleContractType memory contractType
+    ) {
+        finalize = salesAgents[_salesAgentAddress].isFinalized;
+        startTime = salesAgents[_salesAgentAddress].startTime;
+        endTime = salesAgents[_salesAgentAddress].endTime;
+        tokensLimit = salesAgents[_salesAgentAddress].tokensLimit;
+        tokensMinted = salesAgents[_salesAgentAddress].tokensMinted;
+        rate = salesAgents[_salesAgentAddress].rate;
+        minDeposit = salesAgents[_salesAgentAddress].minDeposit;
+        contractType = salesAgents[_salesAgentAddress].contractType;
 
-    /// @dev Returns the start block for the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractStartTime(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].startTime;
+        return (finalize, startTime, endTime, tokensLimit, tokensMinted, rate, minDeposit);
     }
-
-    /// @dev Returns the start block for the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractEndTime(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].endTime;
-    }
-
-    /// @dev Returns the max tokens for the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractTokensLimit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].tokensLimit;
-    }
-
-    /// @dev Returns the token total currently minted by the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractTokensMinted(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].tokensMinted;
-    }
-
-    /// @dev Returns the token total currently minted by the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractTokensRate(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].rate;
-    }
-
-    /// @dev Returns the token total currently minted by the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    function getSaleContractMinDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].minDeposit;
-    }
-
-    /// @dev Returns the token total currently minted by the sale agent
-    /// @param _salesAgentAddress The address of the token sale agent contract
-    /*function getSaleContractMaxDeposit(address _salesAgentAddress) constant isSalesContract(_salesAgentAddress) public returns (uint256) {
-        return salesAgents[_salesAgentAddress].maxDeposit;
-    }*/
 
 }

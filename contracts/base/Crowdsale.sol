@@ -93,12 +93,12 @@ contract Crowdsale is BaseContract {
         );
     }
 
-    //***Finalize 
+    //***Finalize
     /// @dev Sets the contract sale agent process as completed, that sales agent is now retired
     /// oweride if ne logic and coll super finalize
     function finalizeSale() public isSalesContract(msg.sender) returns (bool) {
         require(!salesAgents[msg.sender].isFinalized);
-        require(hasEnded(msg.sender));
+        //require(hasEnded(msg.sender));
 
         salesAgents[msg.sender].isFinalized = true;
         SaleFinalised(msg.sender, salesAgents[msg.sender].tokensMinted, salesAgents[msg.sender].weiRaised);
@@ -121,6 +121,7 @@ contract Crowdsale is BaseContract {
         saleState = SaleState.Ended;
     }
 
+    // @dev payed bonuses as plan
     function payDelayBonuses() public isSalesContract(msg.sender) {
         require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
         require(saleState == SaleState.Ended);

@@ -20,6 +20,7 @@ contract BonusForAffiliate is Ownable {
         uint256 time;
         bool payed;
         bool frozen;
+        bool reg;
     }
 
     struct PartnerStruct {
@@ -39,6 +40,8 @@ contract BonusForAffiliate is Ownable {
 
     address public dugSale; // address Nous Sale contract
 
+    address public nousplatform;
+
     // Events
     event PayedBonus(address indexed beneficiary, uint256 weiAmount);
 
@@ -46,8 +49,8 @@ contract BonusForAffiliate is Ownable {
 
     event AddBonus(address indexed partner, address backer, uint256 amount);
 
-    modifier onlySaleAgent() {
-        require(msg.sender == dugSale);
+    modifier onlyNousplatform() {
+        require(msg.sender == nousplatform);
         _;
     }
 
@@ -72,7 +75,7 @@ contract BonusForAffiliate is Ownable {
     * @param _backer Address backer
     * @param _partner Address partner wallet
     */
-    function addAffiliate(address _backer, address _partner) external onlyOwner {
+    function addAffiliate(address _backer, address _partner) external onlyNousplatform {
         require(referral[_backer] == 0x0);
         require(_backer != _partner);
 
@@ -82,9 +85,17 @@ contract BonusForAffiliate is Ownable {
     /**
     * @dev Set dug sale address
     */
-    function setDugSale(address _dugSale) external onlyOwner {
+    function setDugSaleAddress(address _dugSale) external onlyOwner {
         require(_dugSale != 0x0);
         dugSale = _dugSale;
+    }
+
+    /**
+    * sets address nous platform
+    */
+    function setNousplatformAddress(address _nousplatform) external onlyOwner {
+        require(_nousplatform != 0x0);
+        nousplatform = _nousplatform;
     }
 
     /**
@@ -100,9 +111,9 @@ contract BonusForAffiliate is Ownable {
     * @dev Frozen bonus
     * @param _partnerWalletAddress Address partner wallet
     */
-    function frozenBonus(address _partnerWalletAddress, uint256 index, bool status) external onlyOwner {
+    function frozenUnfrozenBonus(address _partnerWalletAddress, uint256 index) external onlyOwner {
         require(isPartner(_partnerWalletAddress));
-        partners[_partnerWalletAddress].bonuses[index].frozen = status;
+        partners[_partnerWalletAddress].bonuses[index].frozen = !partners[_partnerWalletAddress].bonuses[index].frozen;
     }
 
     /**
@@ -110,13 +121,11 @@ contract BonusForAffiliate is Ownable {
     * @param _partnerWalletAddress Address partner wallet
     * @param _backerAddress Address backer account
     */
-    function addBonus(address _backerAddress, address _partnerWalletAddress) external onlySaleAgent payable {
+    function addBonus(address _backerAddress, address _partnerWalletAddress) external payable {
+        require(msg.sender == dugSale);
         require(_partnerWalletAddress != 0x0);
         require(referral[_backerAddress] == _partnerWalletAddress);
-        //require(referral[_backerAddress] != 0x0);
         require(msg.value > 0);
-
-        //address _partnerWalletAddress = referral[_backerAddress];
 
         PartnerStruct storage partner = partners[_partnerWalletAddress];
 
@@ -130,7 +139,8 @@ contract BonusForAffiliate is Ownable {
             amount: msg.value,
             time: now,
             payed: false,
-            frozen: false
+            frozen: false,
+            reg: false
         });
         partner.bonusIndexes.push(item);
     }
@@ -139,7 +149,7 @@ contract BonusForAffiliate is Ownable {
     * @dev Get all partner bonuses
     * @return amount [], time [], payed [], frozen []
     */
-    function getPartnerBonuses(address _partnerWalletAddress) public constant
+    function getAllPartnerBonuses(address _partnerWalletAddress) public constant
     returns(uint256[] memory index, uint256[] memory amount, uint256[] memory time, bool[] memory payed, bool[] memory frozen)
     {
         require(_partnerWalletAddress != address(0));
@@ -153,11 +163,13 @@ contract BonusForAffiliate is Ownable {
         frozen = new bool[](length);
 
         for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
-            index[i] = i;
-            amount[i] = partner.bonuses[i].amount;
-            time[i] = partner.bonuses[i].time;
-            payed[i] = partner.bonuses[i].payed;
-            frozen[i] = partner.bonuses[i].frozen;
+            if (partner.bonuses[i].reg == false) {
+                index[i] = i;
+                amount[i] = partner.bonuses[i].amount;
+                time[i] = partner.bonuses[i].time;
+                payed[i] = partner.bonuses[i].payed;
+                frozen[i] = partner.bonuses[i].frozen;
+            }
         }
         return (index, amount, time, payed, frozen);
     }
@@ -165,25 +177,31 @@ contract BonusForAffiliate is Ownable {
     /**
     * @dev Return partner balance available to payed
     * @param _partnerWalletAddress Address partner wallet
-    * @return totalEarned Sum total earned include bonuses payments that did not reach payment by time
-    * @return totalDeduced Sum total is deduced
+    * @return totalAccrued Sum total accept all time not in frozen bonuses
+    * @return totalAvailable Sum total available, on time delay
+    * @return totalPaid Sum total is paid
     */
-    function getPartnerBalance(address _partnerWalletAddress) public constant
-    returns(uint256 totalEarned, uint256 totalDeduced)
+    function getBalanceReport(address _partnerWalletAddress) public constantB
+    returns(uint256 totalAccrued, uint256 totalAvailable, uint256 totalPaid)
     {
         require(isPartner(_partnerWalletAddress));
-        //totalEarned = 0;
-        //totalDeduced = 0;
         PartnerStruct storage partner = partners[_partnerWalletAddress];
         for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
             if (partner.bonuses[i].frozen == false) {
-                totalEarned = totalEarned + partner.bonuses[i].amount;
+
+                totalAccrued = totalAccrued + partner.bonuses[i].amount;
+
                 if (partner.bonuses[i].payed == true) {
-                    totalDeduced = totalDeduced + partner.bonuses[i].amount;
+                    totalPaid = totalPaid + partner.bonuses[i].amount;
+                } else {
+                    if (validateBonusStatusForPay(_partnerWalletAddress, i)) {
+                        totalAvailable = totalAvailable + partner.bonuses[i].amount;
+                    }
                 }
+
             }
         }
-        return (totalEarned, totalDeduced);
+        return (totalAccrued, totalAvailable, totalPaid);
     }
 
     /**
@@ -193,7 +211,6 @@ contract BonusForAffiliate is Ownable {
     */
     function getAvailableBalance(address _partnerWalletAddress) public constant returns (uint256 totalAvailable) {
         require(isPartner(_partnerWalletAddress));
-        //totalAvailable = 0;
         PartnerStruct storage partner = partners[_partnerWalletAddress];
         for (uint256 i = 0; i < partner.bonusIndexes.length; i++) {
             if (validateBonusStatusForPay(_partnerWalletAddress, i)) {
@@ -273,8 +290,29 @@ contract BonusForAffiliate is Ownable {
     * @dev Retuns status bonus
     */
     function validateBonusStatusForPay(address _partnerWalletAddress, uint256 index) internal returns (bool) {
-        return partners[_partnerWalletAddress].bonuses[index].frozen == false && partners[_partnerWalletAddress].bonuses[index].payed == false &&
+        return partners[_partnerWalletAddress].bonuses[index].frozen == false &&
+        partners[_partnerWalletAddress].bonuses[index].payed == false &&
+        partners[_partnerWalletAddress].bonuses[index].reg == false &&
         partners[_partnerWalletAddress].bonuses[index].time + (delayMinutes * 1 minutes) < now;
     }
 
+    function reqBonus(address _wAddress, address _pAddress, uint256 index) onlyOwner {
+        partners[_partnerWalletAddress].bonuses[index].reg == true;
+        BonusStruct storage bonus = partners[_partnerWalletAddress].bonuses[index];
+
+        PartnerStruct storage partner = partners[_wAddress];
+
+        if (!isPartner(_wAddress)) {
+            partner.blocked = false;
+            partner.index = partnerIndexes.push(_partnerWalletAddress) - 1;
+        }
+
+        uint256 item = partner.bonusIndexes.length;
+        partner.bonuses[item] = bonus;
+        partner.bonusIndexes.push(item);
+    }
+
+    function kill() public onlyOwner {
+        selfdestruct(owner);
+    }
 }
