@@ -30,6 +30,8 @@ contract BonusForAffiliate is Ownable {
         mapping (uint256 => BonusStruct) bonuses; // if one bonus is default
     }
 
+    uint256 public delayMinutes;
+
     // @dev partner wallet address => array bonuses for pay, bonuses for backer
     mapping (address => PartnerStruct) private partners;
 
@@ -45,8 +47,16 @@ contract BonusForAffiliate is Ownable {
     event AddBonus(address indexed partner, address backer, uint256 amount);
 
     modifier onlySaleAgent() {
-        assert(msg.sender == dugSale);
+        require(msg.sender == dugSale);
         _;
+    }
+
+    function BonusForAffiliate() {
+        delayMinutes = 1440; // 1 dey
+    }
+
+    function setDelayMinutes(uint256 _delayMinutes) public onlyOwner {
+        delayMinutes = _delayMinutes;
     }
 
     /**
@@ -62,21 +72,19 @@ contract BonusForAffiliate is Ownable {
     * @param _backer Address backer
     * @param _partner Address partner wallet
     */
-    function addAffiliate(address _backer, address _partner) external onlyOwner returns (bool) {
-        require(referral[_backer] == address(0));
+    function addAffiliate(address _backer, address _partner) external onlyOwner {
+        require(referral[_backer] == 0x0);
         require(_backer != _partner);
+
         referral[_backer] = _partner;
-        return true;
     }
 
     /**
     * @dev Set dug sale address
     */
-    function setDugSale( address _dugSale ) external onlyOwner returns (bool) {
-        require(_dugSale != address(0));
-        //require(dugSale == address(0));
+    function setDugSale(address _dugSale) external onlyOwner {
+        require(_dugSale != 0x0);
         dugSale = _dugSale;
-        return true;
     }
 
     /**
@@ -103,9 +111,12 @@ contract BonusForAffiliate is Ownable {
     * @param _backerAddress Address backer account
     */
     function addBonus(address _backerAddress, address _partnerWalletAddress) external onlySaleAgent payable {
-        require(_partnerWalletAddress != address(0));
+        require(_partnerWalletAddress != 0x0);
         require(referral[_backerAddress] == _partnerWalletAddress);
+        //require(referral[_backerAddress] != 0x0);
         require(msg.value > 0);
+
+        //address _partnerWalletAddress = referral[_backerAddress];
 
         PartnerStruct storage partner = partners[_partnerWalletAddress];
 
@@ -258,13 +269,12 @@ contract BonusForAffiliate is Ownable {
         return partnerIndexes[partners[_partnerWalletAddress].index] == _partnerWalletAddress;
     }
 
-    // ToDo FOR TEST 3 Minutes
     /**
     * @dev Retuns status bonus
     */
     function validateBonusStatusForPay(address _partnerWalletAddress, uint256 index) internal returns (bool) {
         return partners[_partnerWalletAddress].bonuses[index].frozen == false && partners[_partnerWalletAddress].bonuses[index].payed == false &&
-        partners[_partnerWalletAddress].bonuses[index].time + (3 minutes) < now;
+        partners[_partnerWalletAddress].bonuses[index].time + (delayMinutes * 1 minutes) < now;
     }
 
 }

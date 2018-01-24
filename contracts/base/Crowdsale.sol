@@ -38,7 +38,7 @@ contract Crowdsale is BaseContract {
         BonusForAffiliateInterface affiliate = BonusForAffiliateInterface(affiliateAddr);
         address _referral = affiliate.getReferralAddress(beneficiary);
 
-        if (_referral != address(0)) {
+        if (_referral != 0x0) {
             uint256 bonus = weiAmount.mul(percentBonusForAffiliate).div(100);
             weiAmount = weiAmount.sub(bonus);
             affiliate.addBonus.value(bonus)(beneficiary, _referral);

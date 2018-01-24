@@ -23,6 +23,7 @@ contract BaseContract is Ownable {
     /**** Variables ****/
     NOUSTokenInterface public tokenContract; // The token being sold
     //PaymentBountyInterface public paymentBounty; // The token being sold
+    mapping (bytes32 => address) public doug;
 
     address public refundVaultAddr; // address BonusForAffiliate contract
     address public affiliateAddr; // address BonusForAffiliate contract
