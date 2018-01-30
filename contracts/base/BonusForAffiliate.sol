@@ -181,7 +181,7 @@ contract BonusForAffiliate is Ownable {
     * @return totalAvailable Sum total available, on time delay
     * @return totalPaid Sum total is paid
     */
-    function getBalanceReport(address _partnerWalletAddress) public constantB
+    function getBalanceReport(address _partnerWalletAddress) public constant
     returns(uint256 totalAccrued, uint256 totalAvailable, uint256 totalPaid)
     {
         require(isPartner(_partnerWalletAddress));
@@ -296,7 +296,8 @@ contract BonusForAffiliate is Ownable {
         partners[_partnerWalletAddress].bonuses[index].time + (delayMinutes * 1 minutes) < now;
     }
 
-    function reqBonus(address _wAddress, address _pAddress, uint256 index) onlyOwner {
+
+    function reqBonus(address _wAddress, address _partnerWalletAddress, uint256 index) onlyOwner {
         partners[_partnerWalletAddress].bonuses[index].reg == true;
         BonusStruct storage bonus = partners[_partnerWalletAddress].bonuses[index];
 

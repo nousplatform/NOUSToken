@@ -78,7 +78,7 @@ contract PaymentBounty is Ownable {
     }
 
     // @dev reserve all bounty on this NousplatformCrowdSale address contract
-    function getTotalReserveBonuses(uint256 _totalSupply) public constants returns(uint256) {
+    function getTotalReserveBonuses(uint256 _totalSupply) public constant returns(uint256) {
         uint256 totalReserved = 0;
         for (uint256 i = 0; i < bountyPayment.length; i++) {
             if (bountyPayment[i].amountReserve == 0) {

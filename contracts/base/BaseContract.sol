@@ -167,15 +167,16 @@ contract BaseContract is Ownable {
     /**
     * @dev Returns all information on sale contract
     */
-    function getSaleContract(address _saleAgentAddress) public constant
+    function getSaleContract(address _salesAgentAddress) public constant
     returns(
-        bool memory finalize,
-        uint256 memory startTime,
-        uint256 memory endTime,
-        uint256 memory tokensLimit,
-        uint256 memory tokensMinted,
-        uint256 memory rate,
-        Data.SaleContractType memory contractType
+        bool finalize,
+        uint256 startTime,
+        uint256 endTime,
+        uint256 tokensLimit,
+        uint256 tokensMinted,
+        uint256 rate,
+        uint256 minDeposit,
+        Data.SaleContractType contractType
     ) {
         finalize = salesAgents[_salesAgentAddress].isFinalized;
         startTime = salesAgents[_salesAgentAddress].startTime;
