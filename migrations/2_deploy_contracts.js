@@ -1,13 +1,13 @@
 var NOUSToken = artifacts.require("./NOUSToken.sol");
-var NOUSSale = artifacts.require("./NousplatformCrowdSale.sol");
-var RefundVault = artifacts.require("./RefundVault.sol");
-var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
-
-var NOUSPreorder = artifacts.require("./NOUSPreorder.sol");
-var NOUSPresale = artifacts.require("./NOUSPresale.sol");
-var NOUSCrowdsale = artifacts.require("./NOUSCrowdsale.sol");
-var NOUSReservFund = artifacts.require("./NOUSReservFund.sol");
-var PaymentBounty = artifacts.require("./PaymentBounty.sol");
+// var NOUSSale = artifacts.require("./NousplatformCrowdSale.sol");
+// var RefundVault = artifacts.require("./RefundVault.sol");
+// var BonusForAffiliate = artifacts.require("./BonusForAffiliate.sol");
+//
+// var NOUSPreorder = artifacts.require("./NOUSPreorder.sol");
+// var NOUSPresale = artifacts.require("./NOUSPresale.sol");
+// var NOUSCrowdsale = artifacts.require("./NOUSCrowdsale.sol");
+// var NOUSReservFund = artifacts.require("./NOUSReservFund.sol");
+// var PaymentBounty = artifacts.require("./PaymentBounty.sol");
 
 
 module.exports = function(deployer) {
@@ -15,46 +15,52 @@ module.exports = function(deployer) {
     var wallet = "0x37debdf452a2e9c95c7ed85955ffd6e812a66062";
 
     deployer
-        .then(function() {
-            Promise.all(
-                [
-                    NOUSToken.new(),
-                    RefundVault.new(wallet),
-                    BonusForAffiliate.new(),
-                ]
-            )
-            .then(function(instances) {
-                return PaymentBounty.new(instances[0].address)
-                    .then(function (bountyInst) {
+        .then( async () => {
+            let NousTkn = await deployer.deploy(NOUSToken);
+        });
 
-                        console.log("NOUSToken:", instances[0].address);
-                        console.log("RefundVault:", instances[1].address);
-                        console.log("BonusForAffiliate:", instances[2].address);
-                        console.log("PaymentBounty:", bountyInst.address);
 
-                        return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address, bountyInst.address)
-                            .then(function (instanceNousSale) {
-                                let nousSaleAddress = instanceNousSale.address;
-                                instances[0].setDugSale(nousSaleAddress);
-                                instances[1].setDugSale(nousSaleAddress);
-                                instances[2].setDugSale(nousSaleAddress);
-                                bountyInst.transferOwnership(nousSaleAddress);
-                                return nousSaleAddress;
-                        })
-
-                    });
-            })
-            .then(function (nousSaleSddr) {
-                console.log("NOUSSale:", nousSaleSddr);
-                deployer.deploy([
-                    [NOUSPreorder, nousSaleSddr],
-                    [NOUSPresale, nousSaleSddr],
-                    [NOUSCrowdsale, nousSaleSddr],
-                    [NOUSReservFund, nousSaleSddr]
-                ]);
-            })
-
-    });
+    // deployer
+    //     .then(function() {
+    //         Promise.all(
+    //             [
+    //                 NOUSToken.new(),
+    //                 RefundVault.new(wallet),
+    //                 BonusForAffiliate.new(),
+    //             ]
+    //         )
+    //         .then(function(instances) {
+    //             return PaymentBounty.new(instances[0].address)
+    //                 .then(function (bountyInst) {
+    //
+    //                     console.log("NOUSToken:", instances[0].address);
+    //                     console.log("RefundVault:", instances[1].address);
+    //                     console.log("BonusForAffiliate:", instances[2].address);
+    //                     console.log("PaymentBounty:", bountyInst.address);
+    //
+    //                     return NOUSSale.new(instances[0].address, instances[1].address, instances[2].address, bountyInst.address)
+    //                         .then(function (instanceNousSale) {
+    //                             let nousSaleAddress = instanceNousSale.address;
+    //                             instances[0].setDugSale(nousSaleAddress);
+    //                             instances[1].setDugSale(nousSaleAddress);
+    //                             instances[2].setDugSale(nousSaleAddress);
+    //                             bountyInst.transferOwnership(nousSaleAddress);
+    //                             return nousSaleAddress;
+    //                     })
+    //
+    //                 });
+    //         })
+    //         .then(function (nousSaleSddr) {
+    //             console.log("NOUSSale:", nousSaleSddr);
+    //             deployer.deploy([
+    //                 [NOUSPreorder, nousSaleSddr],
+    //                 [NOUSPresale, nousSaleSddr],
+    //                 [NOUSCrowdsale, nousSaleSddr],
+    //                 [NOUSReservFund, nousSaleSddr]
+    //             ]);
+    //         })
+    //
+    // });
 
 };
 

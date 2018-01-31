@@ -15,21 +15,13 @@ contract MintableToken is StandardToken, Ownable {
 
     event Mint(address indexed to, uint256 amount);
 
-    event MintFinished();
+    event MintFinished(uint256);
 
-    address public dugSale; // address Nous Sale contract
+    //@dev address Nous Sale contract
+    address dugSale;
 
-    bool public mintingFinished = false;
-
-    modifier canMint() {
-        require(!mintingFinished);
-        _;
-    }
-
-    modifier onlySaleAgent() {
-        assert(msg.sender == dugSale);
-        _;
-    }
+    //@dev The variable determines permission to mintable tokens
+    bool mining = true;
 
     /**
      * @dev Function to mint tokens
@@ -37,7 +29,9 @@ contract MintableToken is StandardToken, Ownable {
      * @param _amount The amount of tokens to mint.
      * @return A boolean that indicates if the operation was successful.
      */
-    function mint(address _to, uint256 _amount) public onlySaleAgent canMint returns (bool) {
+    function mint(address _to, uint256 _amount) public returns (bool) {
+        require(msg.sender == dugSale);
+        require(mining);
         totalSupply = totalSupply.add(_amount);
         balances[_to] = balances[_to].add(_amount);
         Mint(_to, _amount);
@@ -46,24 +40,41 @@ contract MintableToken is StandardToken, Ownable {
     }
 
     /**
+    * @notice Stop mining add event MintFinished saved date stop mining
     * @dev Function to stop minting new tokens.
-    * @return True if the operation was successful.
     */
-    function finishMinting() public onlyOwner returns (bool) {
-        mintingFinished = true;
-        MintFinished();
-        return true;
+    function finishMinting() public onlyOwner {
+        mining = false;
+        MintFinished(now);
     }
 
-    function lockUnlock() public onlyOwner {
+    /**
+    * @notice Lock unlock transfer between accounts
+    */
+    function lockUnlockTransfer() public onlyOwner {
         lock = !lock;
     }
 
-    function setDugSale(address _dugSale) public onlyOwner returns(bool){
+    /**
+    * @notice Set doug sale agent
+    */
+    function setDugSale(address _dugSale) public onlyOwner {
         require(_dugSale != 0x0);
         dugSale = _dugSale;
-        return true;
     }
 
+    /**
+    * @notice Returned active dug sale address
+    */
+    function getDugSaleAddress() public constant returns (address) {
+        return dugSale;
+    }
+
+    /**
+    * @notice Returned active dug sale address
+    */
+    function canMints() public constant returns(bool) {
+        return mining;
+    }
 
 }

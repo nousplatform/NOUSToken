@@ -9,8 +9,8 @@ contract NOUSTokenInterface {
 
     function mint(address _to, uint256 _amount) public returns (bool);
 
-    function finishMinting() public returns (bool);
-
     function transfer(address to, uint256 value) public returns (bool);
+
+    function balanceOf(address _owner) public constant returns (uint256 balance);
 
 }

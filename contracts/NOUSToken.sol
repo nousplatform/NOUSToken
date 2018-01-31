@@ -5,7 +5,7 @@ import "./token/MintableToken.sol";
 
 
 /**
- * @title SampleCrowdsaleToken
+ * @title Contract Nous token
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
