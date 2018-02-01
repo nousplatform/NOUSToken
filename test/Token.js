@@ -4,43 +4,46 @@ var NOUSToken = artifacts.require("NOUSToken");
 
 
 contract('NOUSToken', function (accounts) {
-    console.log("accounts", accounts);
+    //console.log("accounts", accounts);
 
     let NOUSTokenInstance;
+    let owner = accounts[0];
+    let dugSaleAddress = accounts[9];
 
-    it("Set dug sale address", async function () {
+    let account_one = accounts[1];
+    let account_two = accounts[2];
+    let account_three = accounts[3];
+
+    it("Set dug sale address", async () => {
         NOUSTokenInstance = await NOUSToken.deployed();
-        let nous = await NOUSTokenInstance.setDugSale(accounts[0], {from: accounts[0]});
-        let dougSaleAddress = await NOUSTokenInstance.getDugSaleAddress.call({from: accounts[0]});
-        console.log("dougSaleAddress", dougSaleAddress);
-
-       /* return NOUSTokenInstance.canMints()
-            .then((res)=>{
-                assert.equal(res, accounts[0]);
-            })*/
-        //console.log("await NOUSTokenInstance.canMints()", await  NOUSTokenInstance.canMints());
-
-
-        //let dugSaleAddress = await NOUSTokenInstance.canMints();
-
-
-
-        /*return NOUSTokenInstance.setDugSale.call(accounts[0])
-            .then((res) => {
-                console.log("res", res);
-
-                return NOUSTokenInstance.getDugSaleAddress.call()
-                    .then((res) => {
-                        console.log("res", res);
-                        return assert.equal(res, accounts[0]);
-                    });
-            });*/
-
-
-        //console.log("await NOUSTokenInstance.getDugSaleAddress.call()", await NOUSTokenInstance.getDugSaleAddress.call());
-
-        //assert.equal(await NOUSTokenInstance.getDugSaleAddress.call(), accounts[0]);
+        await NOUSTokenInstance.setDugSale(dugSaleAddress);
+        assert.equal(await NOUSTokenInstance.getDugSaleAddress({from: accounts[0]}), dugSaleAddress);
     });
+
+    it("Mint Token", async () => {
+        await NOUSTokenInstance.mint(account_one, 10000, {from: dugSaleAddress});
+        await NOUSTokenInstance.mint(account_two, 20000, {from: dugSaleAddress});
+        await NOUSTokenInstance.mint(account_two, 1500, {from: dugSaleAddress});
+        await NOUSTokenInstance.mint(account_three, 30000, {from: dugSaleAddress});
+
+        assert.equal(await NOUSTokenInstance.balanceOf(account_one), 10000);
+        assert.equal(await NOUSTokenInstance.balanceOf(account_two), 21500);
+        assert.equal(await NOUSTokenInstance.balanceOf(account_three), 30000);
+    });
+
+    it("Finish mining and transfer token", async () => {
+        await NOUSTokenInstance.finishMinting({from: owner});
+        assert.equal(await NOUSTokenInstance.canMints(), false);
+        try {
+            await NOUSTokenInstance.mint(account_one, 10000, {from: dugSaleAddress});
+            assert(false, "Maning not stopping.");
+        } catch(e) {
+            console.log('catch');
+            assert(true, "Current Maning stopping.");
+        }
+    });
+
+
 
 
 });
