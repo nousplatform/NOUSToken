@@ -78,11 +78,6 @@ contract Crowdsale is BaseContract {
             now < salesAgents[saleAddress].endTime;
     }
 
-    // verifies that the gas price is lower than 50 gwei
-    /*function validGasPrice(uint256 _gasPrice) external constant returns (bool) {
-        return _gasPrice <= maxGasPrice;
-    }*/
-
     /// @return true if crowdsale event has ended and call super.hasEnded
     function hasEnded(address _salesAgent) public constant returns (bool) {
         return salesAgents[_salesAgent].exists == true && (

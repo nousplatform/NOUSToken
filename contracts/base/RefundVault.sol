@@ -18,8 +18,6 @@ contract RefundVault is Ownable {
 
     mapping (address => uint256) public deposited;
 
-    address public dugSale; // address Nous Sale contract
-
     address public wallet;
 
     State public state;
@@ -30,26 +28,17 @@ contract RefundVault is Ownable {
 
     event Refunded(address indexed beneficiary, uint256 weiAmount);
 
-    modifier onlySaleAgent() {
-        assert(msg.sender == dugSale);
-        _;
-    }
-
-    function setDugSale(address _dugSale) public onlyOwner {
-        require(_dugSale != 0x0);
-        dugSale = _dugSale;
-    }
-
     function RefundVault(address _wallet) {
         require(_wallet != 0x0);
         wallet = _wallet;
         state = State.Active;
     }
 
-    function setWallet(address _wallet) public onlyOwner {
+    //TODO: set wallet is dangerous function
+    /*function setWallet(address _wallet) public onlyOwner {
         require(_wallet != 0x0);
         wallet = _wallet;
-    }
+    }*/
 
     function setState(State _state) public onlyOwner {
         state = _state;
@@ -61,6 +50,7 @@ contract RefundVault is Ownable {
         deposited[investor] = deposited[investor].add(msg.value);
     }
 
+    // @dev stop sale? taransfer ether to wallet
     function close() public onlyOwner {
         require(state == State.Active);
         state = State.Closed;
@@ -83,14 +73,11 @@ contract RefundVault is Ownable {
         return depositedValue;
     }
 
-    function getBalance() external constant returns (uint256) {
-        return this.balance;
-    }
-
+    //TODO: only integer
     function withdrawOnly(uint256 _amount) public onlyOwner {
         require(_amount > 0);
         uint256 amount = _amount * 1 ether;
-        require(this.balance > amount);
+        assert(this.balance > amount);
         wallet.transfer(amount);
     }
 

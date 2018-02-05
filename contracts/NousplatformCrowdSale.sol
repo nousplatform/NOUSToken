@@ -11,21 +11,6 @@ contract NousplatformCrowdSale is Crowdsale {
     function NousplatformCrowdSale(address _token, address _vault, address _affiliate, address _bonuses)
     BaseContract(_token, _vault, _affiliate, _bonuses)
     {
-        //544 Million tokens
-        totalSupplyCap = 777 * (10 ** 6) * EXPONENT;
-
-        //543 900 000 tokens  Available for purchase
-        availablePurchase = 543900000 * EXPONENT; // эта нигде не используется!!
-
-        // minimum amount of funds to be raised in weis
-        targetEthMax = 54000 * (1 ether);
-
-        // minimum amount of funds to be raised in weis
-        targetEthMin = 3500  * (1 ether);
-
-        // maximum gas price for contribution transactions
-        //maxGasPrice = 300000 wei;
-
         // @dev bonus from affiliate
         percentBonusForAffiliate = 10;
     }
