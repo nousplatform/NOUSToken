@@ -38,9 +38,14 @@ contract BaseContract is Ownable {
 
     /**** Data ****/
     enum SaleState {Active, Pending, Ended}
-    SaleState public saleState;
+    SaleState public globalSaleState;
 
-    mapping (address => Data.SalesAgent) internal salesAgents; // Our contract addresses of our sales contracts
+    struct SaleAgent {
+        SaleState state; // state sale contract
+        bool exists; // Check to see if the mapping exists
+    }
+
+    mapping (address => SaleAgent) internal salesAgents; // Our contract addresses of our sales contracts
     address[] internal salesAgentsAddresses; // Keep an array of all our sales agent addresses for iteration
 
     /**** Modifier ***********/
