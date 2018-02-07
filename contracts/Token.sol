@@ -9,7 +9,7 @@ import "./token/MintableToken.sol";
  * @dev Very simple ERC20 Token that can be minted.
  * It is meant to be used in a crowdsale contract.
  */
-contract NOUSToken is MintableToken {
+contract Token is MintableToken {
 
     string public constant name = "NOUSTOKEN";
 

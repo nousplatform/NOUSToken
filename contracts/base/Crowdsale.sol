@@ -2,8 +2,6 @@ pragma solidity ^0.4.11;
 
 
 import "./BaseContract.sol";
-import "../interfaces/SalesAgentInterface.sol";
-//import "./BonusForAffiliate.sol";
 import "../interfaces/BonusForAffiliateInterface.sol";
 import "../interfaces/RefundVaultInterface.sol";
 import "../interfaces/PaymentBountyInterface.sol";
@@ -22,7 +20,7 @@ contract Crowdsale is BaseContract {
     //@dev Payable Function bay tokens, sales go only sale agent contract
     //@param _beneficiary Address of the buyer
     //@param _rate Rate for tokens mint
-    function buyTokens(address _beneficiary, uint256 _rate) public validateSaleAgent(msg.sender) payable {
+    function buyTokens(address _beneficiary, uint256 _rate) external validateSaleAgent(msg.sender) payable {
         require(totalSaleState == saleState.Active);
         require(_beneficiary != 0x0);
         require(_rate > 0);
@@ -84,16 +82,16 @@ contract Crowdsale is BaseContract {
 
         // reserve bonuses and write all tokens on paymentbounty contract
         uint256 _totalReserved = PaymentBountyInterface(Doug["payment_bounty"]).reserveBonuses(NOUSToken.totalSupply());
-        tokenContract.mint(Doug["payment_bounty"], _totalReserved);
+        NOUSToken.mint(Doug["payment_bounty"], _totalReserved);
 
         // stop mining tokens
-        totalSaleState = SaleState.Ended;
+        totalSaleState = saleState.Ended;
     }
 
     // @dev payed bonuses as plan
     function payDelayBonuses() external validateSaleAgent(msg.sender) {
 
-        require(totalSaleState == SaleState.Ended);
+        require(totalSaleState == saleState.Ended);
         if (startTimeBonusPay == 0) {
             startTimeBonusPay = now;
         }

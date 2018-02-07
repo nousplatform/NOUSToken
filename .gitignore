@@ -1,4 +1,16 @@
 
-build/
-.idea/
+/build/
+/.idea/
 #.gitignore
+/package-lock.json
+/scripts/
+/.doxityrc
+/node_modules/
+
+Будет удалено contracts/test.sol
+Будет удалено contracts/toRemix.sol
+Будет удалено docs/
+
+
+Будет удалено testcontracts/
+

@@ -16,6 +16,6 @@ contract PaymentBountyInterface {
 
     function payDelayBonuses(uint256 _startTime) public;
 
-
+    function setDougAddress(address _dougAddr) returns (bool result);
 
 }

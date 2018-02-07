@@ -13,4 +13,6 @@ contract RefundVaultInterface {
 
     function enableRefunds() public;
 
+    function setDougAddress(address _dougAddr) returns (bool result);
+
 }

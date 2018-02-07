@@ -20,8 +20,8 @@ contract NousplatformCrowdSale is Crowdsale {
         require(wallet != 0x0);
         require(percent > 0);
 
-        PaymentBountyInterface paymentBounty = PaymentBountyInterface(bountyAddr);
-        paymentBounty.setPaymentBounty(wallet, typeBounty, percent, payedPeriod, payedPath);
+        PaymentBountyInterface PaymentBounty = PaymentBountyInterface(Doug["payment_bounty"]);
+        PaymentBounty.setPaymentBounty(wallet, typeBounty, percent, payedPeriod, payedPath);
 
         // 20% Will Be Retained by Nousplatform
         // Nousplatform retained tokens are locked for the first 4 months, and will be vested over a period of 20 months total,

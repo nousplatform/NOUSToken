@@ -1,0 +1,28 @@
+{
+  "name": "noustoken",
+  "version": "2.0.0",
+  "description": "Nous tocken ICO ",
+  "main": "truffle-config.js",
+  "directories": {
+    "doc": "docs",
+    "test": "test"
+  },
+  "dependencies": {
+    "truffle": "^4.0.5",
+    "zeppelin-solidity": "^1.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nousplatform/NOUSToken.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nousplatform/NOUSToken/issues"
+  },
+  "homepage": "https://github.com/nousplatform/NOUSToken#readme"
+}

@@ -7,4 +7,6 @@ contract BonusForAffiliateInterface {
 
     function getReferralAddress(address _backer) external returns (address);
 
+    function setDougAddress(address _dougAddr) returns (bool result);
+
 }

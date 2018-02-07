@@ -2,15 +2,18 @@ pragma solidity ^0.4.0;
 
 contract DougSale {
 
-    address public dugSale; // address Nous Sale contract
+    address public dougSale; // address Nous Sale contract
 
     modifier onlySaleAgent() {
-        require(msg.sender == dugSale);
+        require(msg.sender == dougSale);
         _;
     }
 
-    function setDugSale(address _dugSale) public onlyOwner {
-        require(_dugSale != 0x0);
-        dugSale = _dugSale;
+    function setDougAddress(address _dougAddr) public {
+        if(dougSale != 0x0 && msg.sender != dougSale) {
+            return false;
+        }
+        dougSale = _dougAddr;
+        return true;
     }
 }

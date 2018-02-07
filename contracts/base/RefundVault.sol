@@ -3,6 +3,7 @@ pragma solidity ^0.4.11;
 
 import "../lib/SafeMath.sol";
 import "../base/Ownable.sol";
+import "../base/DougSale.sol";
 
 
 /**
@@ -11,7 +12,7 @@ import "../base/Ownable.sol";
  * is in progress. Supports refunding the money if crowdsale fails,
  * and forwarding it if crowdsale is successful.
  */
-contract RefundVault is Ownable {
+contract RefundVault is Ownable, DougSale {
     using SafeMath for uint256;
 
     enum State {Active, Refunding, Closed}

@@ -3,8 +3,10 @@ pragma solidity ^0.4.11;
 
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
-import "../lib/Data.sol";
 import "../interfaces/NOUSTokenInterface.sol";
+import "../interfaces/RefundVaultInterface.sol";
+import "../interfaces/BonusForAffiliateInterface.sol";
+import "../interfaces/PaymentBountyInterface.sol";
 
 
 /**
@@ -75,15 +77,22 @@ contract BaseContract is Ownable {
         require(_bounty != 0x0);
 
         addContract("nous_token", _token);
+        NOUSTokenInterface(_token).setDougAddress(this);
+
         addContract("refund_vault", _vault);
+        RefundVaultInterface(_vault).setDougAddress(this);
+
         addContract("bonus_for_affiliate", _affiliate);
+        BonusForAffiliateInterface(_affiliate).setDougAddress(this);
+
         addContract("payment_bounty", _bounty);
+        PaymentBountyInterface(_bounty).setDougAddress(this);
     }
 
     //@notice Update or add auxiliary contract
     //param _name Name contract ('nous_token', 'refund_vault', 'bonus_for_affiliate', 'payment_bounty')
     //param _address Contract address
-    function addContract(byres32 _name, address _address) public onlyOwner {
+    function addContract(bytes32 _name, address _address) public onlyOwner {
         Doug[_name] = _address;
     }
 

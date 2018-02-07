@@ -1,19 +1,19 @@
-pragma solidity ^0.4.0;
+pragma solidity ^0.4.11;
 
-import "../NousplatformCrowdSale.sol";
+//import "../interface/CrowdSaleInterface.sol";
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
+
 
 contract BaseSaleAgent is Ownable {
 
     event FinaliseSale(uint256 tokensMinted, uint256 weiAmount, uint256 dateFinalize);
-    event TokenPurchase(address indexed beneficiary, uint256 value, uint256 amount);
+    event TokenPurchase(address indexed beneficiary, uint256 value, uint256 tokens);
 
     using SafeMath for uint256;
     uint256 internal constant EXPONENT = 10 ** uint256(18);
-    NousplatformCrowdSale public nousTokenSale; // contract nous sale
 
-    address dougSaleAddress; // Address of the contract
+    address dougSaleAddress; // Address nousplatformCrowdSale of the contract
     uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
     uint256 minDeposit; // The minimum deposit amount allowed
     uint256 maxDeposit; // The maximum deposit amount allowed
@@ -33,6 +33,7 @@ contract BaseSaleAgent is Ownable {
       @param _maxDeposit The maximum deposit amount allowed
       @param _startTime The start time when allowed to mint tokens
       @param _endTime The end time when to finish minting tokens
+      @param _rate tokens rate
     */
     function setParamsSaleAgent(
         address _dougSaleAddress,
@@ -75,8 +76,8 @@ contract BaseSaleAgent is Ownable {
 
     //@dev you may redefined this function, but coll method super
     function finalise() public onlyOwner {
-        require(finalize == false);
-        finalize = true;
+        require(isFinalized == false);
+        isFinalized = true;
         FinaliseSale(tokensMinted, weiRaised, now);
     }
 
@@ -99,7 +100,7 @@ contract BaseSaleAgent is Ownable {
     // @param _accountHolder user address
     // @param _amountOf balance to send out integer
     function deliverTokenToClient(address _accountHolder, uint256 _amountOf) public onlyOwner {
-        require(finalize == false);
+        require(isFinalized == false);
         require(_accountHolder != 0x0);
         uint256 _tokens = _amountOf.mul(EXPONENT);
 
@@ -112,9 +113,11 @@ contract BaseSaleAgent is Ownable {
         );
     }
 
-    function validateStateSaleContract(address saleAddress) public isSalesContract(saleAddress) constant returns (bool) {
-        return salesAgents[saleAddress].isFinalized == false &&
-        now > salesAgents[saleAddress].startTime &&
-        now < salesAgents[saleAddress].endTime;
+    function availabilityCheckPurchase() public constant returns (bool) {
+        return isFinalized == false && now > startTime && now < endTime;
+    }
+
+    function checkValue(uint256 _value) public constant returns (bool) {
+        return _value > 0 && minDeposit > _value && maxDeposit < _value;
     }
 }
