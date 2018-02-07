@@ -28,114 +28,89 @@ contract BaseContract is Ownable {
 
     uint256 public weiRaised; // amount of raised money in wei
     uint256 public percentBonusForAffiliate; // percent for bonus
+    uint256 public startTimeBonusPay;
 
     /**** Events ****/
+    event BuyingTokens(address indexed agent, address indexed beneficiary, uint256 weiAmount);
+    event TokenMinted(address indexed agent, address indexed beneficiary, uint256 tokens);
+
     event SaleFinalised(address _agent, uint256 _tockenMint, uint256 _weiAmount);
     event TotalOutBounty(address _agent, address _wallet, bytes32 _name, uint256 _totalPayout); // all payed to bonus
     event PayBounty(address _agent, address _wallet, bytes32 _name, uint256 _amount);
-    event TokenMinted(address indexed _agent, address indexed beneficiary, uint256 amount);
-    event TranslateEther(address indexed _agent, address indexed beneficiary, uint256 value);
+
 
     /**** Data ****/
-    enum SaleState {Active, Pending, Ended}
-    SaleState public globalSaleState;
+    enum saleState {Active, Pending, Ended}
+    saleState public totalSaleState;
 
     struct SaleAgent {
-        SaleState state; // state sale contract
+        string desc; //name internal name
         bool exists; // Check to see if the mapping exists
     }
 
     mapping (address => SaleAgent) internal salesAgents; // Our contract addresses of our sales contracts
     address[] internal salesAgentsAddresses; // Keep an array of all our sales agent addresses for iteration
 
-    /**** Modifier ***********/
-    /// @dev Only allow access from the latest version of a sales contract
-    modifier isSalesContract(address _sender) {
+    //@dev Validate sale agent contract
+    modifier validateSaleAgent(address _sender) {
         require(salesAgents[_sender].exists == true);
+        require(salesAgents[_sender].state == saleState.Active);
         _;
     }
 
-    //**** Constructors ******************//
-    /// @dev constructor
+    //@dev constructor
+    //@param _token NOUSToken address contract
+    //@param _vault RefundVault address contract
+    //@param _affiliate BonusForAffiliate address contract
+    //@param _bounty PaymentBounty address contract ????????
     function BaseContract(
         address _token,
         address _vault,
         address _affiliate,
         address _bounty
     ) {
-
         require(_token != 0x0);
         require(_vault != 0x0);
         require(_affiliate != 0x0);
         require(_bounty != 0x0);
 
-        setDougContracts('nous_token', _token);
-        setDougContracts('refund_vault', _vault);
-        setDougContracts('bonus_for_affiliate', _affiliate);
-        setDougContracts('payment_bounty', _bounty);
+        addContract("nous_token", _token);
+        addContract("refund_vault", _vault);
+        addContract("bonus_for_affiliate", _affiliate);
+        addContract("payment_bounty", _bounty);
     }
 
-    function setDougContracts(byres32 _name, address _address) public onlyOwner {
+    //@notice Update or add auxiliary contract
+    //param _name Name contract ('nous_token', 'refund_vault', 'bonus_for_affiliate', 'payment_bounty')
+    //param _address Contract address
+    function addContract(byres32 _name, address _address) public onlyOwner {
         Doug[_name] = _address;
     }
 
-    function setPercentBonusForAffiliate(uint256 _newPercent) onlyOwner {
+    //@notice Add sale agent
+    //@param _saleAgent Address sale contract
+    //@param _desc Internal description on sale contract
+    function addSaleAgent(address _saleAgent, string _desc) external onlyOwner {
+        SaleAgent memory _newSalesAgent;
+        _newSalesAgent.desc = _desc;
+        _newSalesAgent.exists = true;
+
+        salesAgents[_saleAgent] = _newSalesAgent;
+        salesAgentsAddresses.push(_saleAgent);
+    }
+
+    //@notice Set percent bonus for affiliate
+    //@param _newPercent Update new percent
+    function changePercentBonusForAffiliate(uint256 _newPercent) external onlyOwner {
         require(_newPercent > 0);
         require(_newPercent < 100);
         percentBonusForAffiliate = _newPercent;
     }
 
-
-
-    // validate goal
-    function goalReached() public constant returns (bool) {
-        return weiRaised > targetEthMin;
-    }
-
-    /**
-    * @dev Find stop sale
-    */
-    function setSaleState(SaleState _state) public onlyOwner {
-        saleState = _state;
-    }
-
-    /**
-    * @dev Find sames type active sales, and diactivate
-    */
-    function changeActiveSale(Data.SaleContractType _saleContractType) internal returns (uint256) {
-        for (uint256 i = 0; i < salesAgentsAddresses.length; i++) {
-            if (salesAgents[salesAgentsAddresses[i]].saleContractType == _saleContractType && salesAgents[salesAgentsAddresses[i]].isFinalized == false) {
-                salesAgents[salesAgentsAddresses[i]].isFinalized = true;
-                return salesAgents[salesAgentsAddresses[i]].tokensMinted;
-            }
-        }
-        return 0;
-    }
-
-    /**
-    * @dev Returns all information on sale contract
-    */
-    function getSaleContract(address _salesAgentAddress) public constant
-    returns(
-        bool finalize,
-        uint256 startTime,
-        uint256 endTime,
-        uint256 tokensLimit,
-        uint256 tokensMinted,
-        uint256 rate,
-        uint256 minDeposit,
-        Data.SaleContractType contractType
-    ) {
-        finalize = salesAgents[_salesAgentAddress].isFinalized;
-        startTime = salesAgents[_salesAgentAddress].startTime;
-        endTime = salesAgents[_salesAgentAddress].endTime;
-        tokensLimit = salesAgents[_salesAgentAddress].tokensLimit;
-        tokensMinted = salesAgents[_salesAgentAddress].tokensMinted;
-        rate = salesAgents[_salesAgentAddress].rate;
-        minDeposit = salesAgents[_salesAgentAddress].minDeposit;
-        contractType = salesAgents[_salesAgentAddress].contractType;
-
-        return (finalize, startTime, endTime, tokensLimit, tokensMinted, rate, minDeposit);
+    //@notice Change sale state {Active, Pending, Ended}
+    //@param _state enum {0 - Active, 1 - Pending, 2- Ended}
+    function changeSaleState(saleState _state) external onlyOwner {
+        totalSaleState = _state;
     }
 
 }

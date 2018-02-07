@@ -15,7 +15,6 @@ contract BasicToken is ERC20Basic {
     mapping (address => uint256) public balances;
 
     bool public lock = false;
-    uint256 public dateEndIco;
 
     modifier canTransfer() {
         require(lock);

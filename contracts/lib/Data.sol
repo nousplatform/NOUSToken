@@ -3,8 +3,6 @@ pragma solidity ^0.4.11;
 
 library Data {
 
-    enum SaleContractType {Preorder, Presale, Crowdsale, ReserveFunds}
-
     // These are contract addresses that are authorised to mint tokens
     struct SalesAgent {
         address saleContractAddress; // Address of the contract

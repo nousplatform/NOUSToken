@@ -19,109 +19,86 @@ import "../interfaces/PaymentBountyInterface.sol";
  */
 contract Crowdsale is BaseContract {
 
-    // event for token purchase logging
-    // @param purchaser who paid for the tokens
-    // @param beneficiary who got the tokens
-    // @param value weis paid for purchase
-    // @param amount amount of tokens purchased
-    // @dev this contact sale not payed/ Payed only forwardFunds
-    function buyTokens(address beneficiary, uint256 tokens) public isSalesContract(msg.sender) payable returns (bool) {
-        require(saleState == SaleState.Active);
-        require(beneficiary != 0x0);
+    //@dev Payable Function bay tokens, sales go only sale agent contract
+    //@param _beneficiary Address of the buyer
+    //@param _rate Rate for tokens mint
+    function buyTokens(address _beneficiary, uint256 _rate) public validateSaleAgent(msg.sender) payable {
+        require(totalSaleState == saleState.Active);
+        require(_beneficiary != 0x0);
+        require(_rate > 0);
         require(msg.value > 0);
-        require(msg.value >= salesAgents[msg.sender].minDeposit);
-        //require(msg.value <= salesAgents[msg.sender].maxDeposit);
-        require(weiRaised.add(weiAmount) <= targetEthMax);
+        require(weiRaised.add(msg.value) <= TARGET_ETH_MAX);
 
-        uint256 weiAmount = msg.value;
+        uint256 _weiAmount = msg.value;
+        uint256 _tokens = _weiAmount.mul(_rate);
 
-        BonusForAffiliateInterface affiliate = BonusForAffiliateInterface(affiliateAddr);
-        address _referral = affiliate.getReferralAddress(beneficiary);
+        BonusForAffiliateInterface BonusForAffiliate = BonusForAffiliateInterface(Doug["bonus_for_affiliate"]);
+        address _referral = BonusForAffiliate.getReferralAddress(_beneficiary);
 
         if (_referral != 0x0) {
-            uint256 bonus = weiAmount.mul(percentBonusForAffiliate).div(100);
-            weiAmount = weiAmount.sub(bonus);
-            affiliate.addBonus.value(bonus)(beneficiary, _referral);
+            uint256 _bonus = _weiAmount.mul(percentBonusForAffiliate).div(100);
+            _weiAmount = _weiAmount.sub(_bonus);
+            BonusForAffiliate.addBonus.value(_bonus)(_beneficiary, _referral);
         }
 
-        tokenMint(beneficiary, tokens);
+        tokenMint(_beneficiary, _tokens);
 
-        RefundVaultInterface(refundVaultAddr).deposit.value(weiAmount)(beneficiary);
+        RefundVaultInterface(Doug["refund_vault"]).deposit.value(_weiAmount)(_beneficiary);
         // transfer ETH to refund contract
-        weiRaised = weiRaised.add(weiAmount);
+        weiRaised = weiRaised.add(_weiAmount);
         // increment wei Raised
-        TranslateEther(
+        BuyingTokens(
             msg.sender,
-            beneficiary,
-            weiAmount
-        );
-
-        return true;
-    }
-
-    function tokenMint(address beneficiary, uint256 tokens) public isSalesContract(msg.sender) returns (bool) {
-        require(saleState == SaleState.Active);
-        require(beneficiary != 0x0);
-        require(tokens > 0);
-        require(salesAgents[msg.sender].tokensLimit >= salesAgents[msg.sender].tokensMinted.add(tokens));
-        require(totalSupplyCap >= tokenContract.totalSupply().add(tokens));
-
-        tokenContract.mint(beneficiary, tokens);
-        salesAgents[msg.sender].tokensMinted = salesAgents[msg.sender].tokensMinted.add(tokens);
-        TokenMinted(msg.sender, beneficiary, tokens);
-        return true;
-    }
-
-    function validateStateSaleContract(address saleAddress) public isSalesContract(saleAddress) constant returns (bool) {
-        return salesAgents[saleAddress].isFinalized == false &&
-            now > salesAgents[saleAddress].startTime &&
-            now < salesAgents[saleAddress].endTime;
-    }
-
-    /// @return true if crowdsale event has ended and call super.hasEnded
-    function hasEnded(address _salesAgent) public constant returns (bool) {
-        return salesAgents[_salesAgent].exists == true && (
-             salesAgents[_salesAgent].tokensMinted >= salesAgents[_salesAgent].tokensLimit ||
-             weiRaised >= targetEthMax ||
-             totalSupplyCap <= tokenContract.totalSupply() ||
-             now > salesAgents[_salesAgent].endTime
+            _beneficiary,
+            _weiAmount
         );
     }
 
-    //***Finalize
-    /// @dev Sets the contract sale agent process as completed, that sales agent is now retired
-    /// oweride if ne logic and coll super finalize
-    function finalizeSale() public isSalesContract(msg.sender) returns (bool) {
-        require(!salesAgents[msg.sender].isFinalized);
-        //require(hasEnded(msg.sender));
+    //Todo FOR TEST
+    function testTotalSuplay() public constant returns(uint256) {
+        NOUSTokenInterface(Doug["nous_token"]).totalSupply();
+    }
 
-        salesAgents[msg.sender].isFinalized = true;
-        SaleFinalised(msg.sender, salesAgents[msg.sender].tokensMinted, salesAgents[msg.sender].weiRaised);
-        return true;
+    //@notice Mintable Tokens
+    //@param _beneficiary address beneficiary tokens
+    //@param _tokens Token amount
+    function tokenMint(address _beneficiary, uint256 _tokens) public validateSaleAgent(msg.sender) {
+        require(_beneficiary != 0x0);
+        require(_tokens > 0);
+
+        NOUSTokenInterface NOUSToken =  NOUSTokenInterface(Doug["nous_token"]);
+        require(TOTAL_SUPPLY_CAP >= NOUSToken.totalSupply().add(_tokens));
+
+        NOUSToken.mint(_beneficiary, _tokens);
+        TokenMinted(msg.sender, _beneficiary, _tokens);
     }
 
     /// @dev global finalization is activate this function all sales wos stoped.
-    /// end pay bonuses
-    function finalizeICO() public isSalesContract(msg.sender) {
-        //require(!isGlobalFinalized);
-        require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
-        require(saleState != SaleState.Ended);
+    /// end reserve percent bonuses
+    function finalizeICO() external validateSaleAgent(msg.sender) {
+
+        require(totalSaleState != saleState.Ended);
         require(salesAgents[msg.sender].isFinalized == false);
 
+        NOUSTokenInterface NOUSToken =  NOUSTokenInterface(Doug["nous_token"]);
+
         // reserve bonuses and write all tokens on paymentbounty contract
-        uint256 totalReserved = PaymentBountyInterface(bountyAddr).reserveBonuses(tokenContract.totalSupply());
-        tokenContract.mint(bountyAddr, totalReserved);
+        uint256 _totalReserved = PaymentBountyInterface(Doug["payment_bounty"]).reserveBonuses(NOUSToken.totalSupply());
+        tokenContract.mint(Doug["payment_bounty"], _totalReserved);
 
         // stop mining tokens
-        saleState = SaleState.Ended;
+        totalSaleState = SaleState.Ended;
     }
 
     // @dev payed bonuses as plan
-    function payDelayBonuses() public isSalesContract(msg.sender) {
-        require(salesAgents[msg.sender].saleContractType == Data.SaleContractType.ReserveFunds);
-        require(saleState == SaleState.Ended);
+    function payDelayBonuses() external validateSaleAgent(msg.sender) {
 
-        PaymentBountyInterface(bountyAddr).payDelayBonuses(salesAgents[msg.sender].startTime);
+        require(totalSaleState == SaleState.Ended);
+        if (startTimeBonusPay == 0) {
+            startTimeBonusPay = now;
+        }
+
+        PaymentBountyInterface(Doug["payment_bounty"]).payDelayBonuses(startTimeBonusPay);
     }
 
 }

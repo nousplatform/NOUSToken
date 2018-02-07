@@ -27,7 +27,7 @@ contract MintableToken is StandardToken, Ownable {
     }
 
     modifier onlySaleAgent() {
-        assert(msg.sender == dugSale);
+        require(msg.sender == dugSale);
         _;
     }
 
@@ -49,10 +49,9 @@ contract MintableToken is StandardToken, Ownable {
     * @dev Function to stop minting new tokens.
     * @return True if the operation was successful.
     */
-    function finishMinting() public onlyOwner returns (bool) {
+    function finishMinting() public onlyOwner {
         mintingFinished = true;
         MintFinished();
-        return true;
     }
 
     function lockUnlock() public onlyOwner {
