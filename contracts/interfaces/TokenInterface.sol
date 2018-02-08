@@ -1,7 +1,7 @@
 pragma solidity ^0.4.0;
 
 
-contract NOUSTokenInterface {
+contract TokenInterface {
 
     uint256 public totalSupply;
 

@@ -1,21 +1,26 @@
 pragma solidity ^0.4.11;
 
 
-import "./SalesAgent.sol";
-import "../lib/SafeMath.sol";
-import "../NousplatformCrowdSale.sol";
+import "./BaseSaleAgent.sol";
+import "../CrowdSale.sol";
 
 
-contract NOUSReservFund is SalesAgent {
+contract ReserveBaunty is BaseSaleAgent {
 
-    using SafeMath for uint;
+    function ReserveBaunty(
+        address _dougSaleAddress,
+        uint256 _tokensLimit,
+        uint256 _minDeposit,
+        uint256 _maxDeposit,
+        uint256 _startTime,
+        uint256 _endTime,
+        uint256 _rate
+    ) SampleSale(_dougSaleAddress, _tokensLimit, _minDeposit, _maxDeposit, _startTime, _endTime, _rate) {
 
-    function NOUSReservFund(address _saleContractAddress) {
-        nousTokenSale = NousplatformCrowdSale(_saleContractAddress);
     }
 
     function globalFinalizationStartBonusPayable() onlyOwner {
-        nousTokenSale.finalizeICO();
+        CrowdSale.finalizeICO();
         FinaliseICO(this, msg.sender);
     }
 

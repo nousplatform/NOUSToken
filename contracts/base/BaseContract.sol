@@ -3,7 +3,7 @@ pragma solidity ^0.4.11;
 
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
-import "../interfaces/NOUSTokenInterface.sol";
+import "../interfaces/TokenInterface.sol";
 import "../interfaces/RefundVaultInterface.sol";
 import "../interfaces/BonusForAffiliateInterface.sol";
 import "../interfaces/PaymentBountyInterface.sol";
@@ -29,7 +29,7 @@ contract BaseContract is Ownable {
     uint256 public constant TARGET_ETH_MIN = 3500  * (1 ether); // minimum amount of funds to be raised in weis
 
     uint256 public weiRaised; // amount of raised money in wei
-    uint256 public percentBonusForAffiliate; // percent for bonus
+    uint256 public percentBonusForAffiliate = 10; // percent for bonus
     uint256 public startTimeBonusPay;
 
     /**** Events ****/

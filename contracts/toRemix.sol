@@ -1,19 +1,17 @@
 pragma solidity ^0.4.4;
 
 
-import "./sales/NOUSPreorder.sol";
 import "./sales/SampleSale.sol";
 import "./sales/StartBonusSale.sol";
-import "./sales/NOUSReservFund.sol";
+import "./sales/ReserveBaunty.sol";
 
 import "./Token.sol";
-import "./NousplatformCrowdSale.sol";
+import "./CrowdSale.sol";
 
 import "./base/RefundVault.sol";
 import "./base/BonusForAffiliate.sol";
 import "./base/PaymentBounty.sol";
 import "./lib/SafeMath.sol";
-
 
 
 contract toRemix {

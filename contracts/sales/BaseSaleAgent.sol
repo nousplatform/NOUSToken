@@ -1,8 +1,8 @@
 pragma solidity ^0.4.11;
 
-//import "../interface/CrowdSaleInterface.sol";
 import "../base/Ownable.sol";
 import "../lib/SafeMath.sol";
+import "../interfaces/CrowdSaleInterface.sol";
 
 
 contract BaseSaleAgent is Ownable {
@@ -13,7 +13,7 @@ contract BaseSaleAgent is Ownable {
     using SafeMath for uint256;
     uint256 internal constant EXPONENT = 10 ** uint256(18);
 
-    address dougSaleAddress; // Address nousplatformCrowdSale of the contract
+    //address dougSaleAddress; // Address nousplatformCrowdSale of the contract
     uint256 tokensLimit; // The maximum amount of tokens this sale contract is allowed to distribute
     uint256 minDeposit; // The minimum deposit amount allowed
     uint256 maxDeposit; // The maximum deposit amount allowed
@@ -24,6 +24,7 @@ contract BaseSaleAgent is Ownable {
     uint256 weiRaised; // The current amount of tokens minted by this agent
     bool isFinalized; // Has this sales contract been completed and the ether sent to the deposit address
 
+    CrowdSaleInterface public CrowdSale;
 
     /**
       @notice Set the address of a new crowdsale/presale contract agent if needed, usefull for upgrading
@@ -51,7 +52,8 @@ contract BaseSaleAgent is Ownable {
         require(_endTime > _startTime);
 
         // Add the new sales contract
-        dougSaleAddress = _dougSaleAddress;
+        CrowdSale = CrowdSaleInterface(_dougSaleAddress);
+
         tokensLimit = _tokensLimit * EXPONENT;
         minDeposit = _minDeposit * 1 ether;
         maxDeposit = _maxDeposit * 1 ether;
@@ -105,7 +107,7 @@ contract BaseSaleAgent is Ownable {
         require(_accountHolder != 0x0);
         uint256 _tokens = _amountOf.mul(EXPONENT);
 
-        nousTokenSale.tokenMint(_accountHolder, _tokens);
+        CrowdSaleInterface(dougSaleAddress).tokenMint(_accountHolder, _tokens);
 
         TokenPurchase(
             _accountHolder,

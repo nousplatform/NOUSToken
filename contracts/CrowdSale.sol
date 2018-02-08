@@ -6,17 +6,16 @@ import "./base/Crowdsale.sol";
 import "./interfaces/PaymentBountyInterface.sol";
 
 
-contract NousplatformCrowdSale is Crowdsale {
+contract CrowdSale is Crowdsale {
 
     function NousplatformCrowdSale(address _token, address _vault, address _affiliate, address _bonuses)
     BaseContract(_token, _vault, _affiliate, _bonuses)
     {
-        // @dev bonus from affiliate
-        percentBonusForAffiliate = 10;
+
     }
 
     // @dev TODO If need manualy
-    function setPaymentBounty(address wallet, bytes32 typeBounty, uint256 percent, uint256 payedPeriod, uint256 payedPath) public onlyOwner returns (bool) {
+    function setPaymentBounty(address wallet, bytes32 typeBounty, uint256 percent, uint256 payedPeriod, uint256 payedPath) public onlyOwner {
         require(wallet != 0x0);
         require(percent > 0);
 

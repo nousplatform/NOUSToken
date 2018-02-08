@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 
 import "./BaseSaleAgent.sol";
-import "../interface/CrowdSaleInterface.sol";
+import "../interfaces/CrowdSaleInterface.sol";
 
 
 contract SampleSale is BaseSaleAgent {
@@ -29,7 +29,7 @@ contract SampleSale is BaseSaleAgent {
 
         uint256 weiAmount = msg.value;
 
-        CrowdSaleInterface(dougSaleAddress).buyTokens.value(msg.value)(msg.sender, rate);
+        CrowdSale.buyTokens.value(msg.value)(msg.sender, rate);
         TokenPurchase(msg.sender, msg.value, tokens);
     }
 

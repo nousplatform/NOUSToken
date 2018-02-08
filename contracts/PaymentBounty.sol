@@ -2,18 +2,18 @@ pragma solidity ^0.4.0;
 
 
 import "../base/Ownable.sol";
-import "../interfaces/NOUSTokenInterface.sol";
+import "../base/DougSale.sol";
+import "../interfaces/TokenInterface.sol";
 import "../lib/SafeMath.sol";
 
-contract PaymentBounty is Ownable {
+
+contract PaymentBounty is Ownable, DougSale {
 
     using SafeMath for uint256;
 
     address public tokenAddress;
 
-    address public dugSale;
-
-    uint256 delay;
+    uint256 delay = 1800; // 1800 hours => 30 dey to period pay
 
     event PayBonuses(address wallet, uint256 tokens);
 
@@ -34,20 +34,11 @@ contract PaymentBounty is Ownable {
     function PaymentBounty(address _tokenAddress) {
         require(_tokenAddress != 0x0);
         tokenAddress = _tokenAddress;
-        delay = 1800; // 1800 hours => 30 dey to period pay
     }
 
     function setTokenAddress(address _tokenAddress) public onlyOwner {
         require(_tokenAddress != 0x0);
         tokenAddress = _tokenAddress;
-    }
-
-    /**
-    * @dev Set dug sale address
-    */
-    function setDugSaleAddress(address _dugSale) public onlyOwner {
-        require(_dugSale != 0x0);
-        dugSale = _dugSale;
     }
 
     function setDelayBonuses(uint256 _delay) public onlyOwner {
@@ -77,6 +68,14 @@ contract PaymentBounty is Ownable {
         bountyPayment.push(newBounty);
     }
 
+    /**
+    * @notice Function reject bonuses
+    * @param _index Bonus index
+    */
+    function rejectBonus(uint256 _index) public  onlyOwner {
+        bountyPayment[_index].reject = true;
+    }
+
     // @dev reserve all bounty on this NousplatformCrowdSale address contract
     function getTotalReserveBonuses(uint256 _totalSupply) public constant returns(uint256) {
         uint256 totalReserved = 0;
@@ -91,7 +90,7 @@ contract PaymentBounty is Ownable {
 
     // @dev start only minet close payout after delay
     // @dev and contract reserve funds
-    function payDelayBonuses(uint256 _startTime) public  {
+    function payDelayBonuses(uint256 _startTime) public {
         require(dugSale != msg.sender);
 
         uint256 delayNextTime = 0;
@@ -115,7 +114,7 @@ contract PaymentBounty is Ownable {
             if (now >= dateDelay && bountyPayment[i].amountReserve > bountyPayment[i].totalPayout &&
               now >= delayNextTime && bountyPayment[i].reject == false) {
                 uint256 payout = bountyPayment[i].amountReserve.div(bountyPayment[i].periodPathOfPay);
-                NOUSTokenInterface(tokenAddress).transfer(bountyPayment[i].wallet, payout);
+                TokenInterface(tokenAddress).transfer(bountyPayment[i].wallet, payout);
                 PayBonuses(bountyPayment[i].wallet, payout);
                 // transfer bonuses
                 bountyPayment[i].totalPayout = bountyPayment[i].totalPayout.add(payout);
@@ -124,14 +123,22 @@ contract PaymentBounty is Ownable {
         }
     }
 
+    /**
+    * @notice Transfer token is this reserved to another address
+    * @param _to Address to transfer token
+    * @param _value
+    */
     function transferTokens(address _to, uint256 _value) public onlyOwner {
-        NOUSTokenInterface(tokenAddress).transfer(_to, _value);
+        TokenInterface(tokenAddress).transfer(_to, _value);
     }
 
-    function kill() public onlyOwner {
-        NOUSTokenInterface NST = NOUSTokenInterface(tokenAddress);
-        uint256 balance = NST.balanceOf(this);
-        NST.transfer(owner, balance);
+    /**
+    * @notice Kill this contract and all reserved tokens transfer on owner address
+    */
+    function kill() external onlyOwner {
+        TokenInterface Token = TokenInterface(tokenAddress);
+        uint256 balance = Token.balanceOf(this);
+        Token.transfer(owner, balance);
         selfdestruct(owner);
     }
 }
