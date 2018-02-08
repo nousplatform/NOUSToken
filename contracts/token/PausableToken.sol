@@ -22,6 +22,10 @@ contract PausableToken is StandardToken, Pausable {
     return super.approve(_spender, _value);
   }
 
+  function approveAndCall(address _spender, uint256 _value, bytes _extraData) public whenNotPaused returns (bool success){
+    return super.approveAndCall(_spender, _value);
+  }
+
   function increaseApproval(address _spender, uint _addedValue) public whenNotPaused returns (bool success) {
     return super.increaseApproval(_spender, _addedValue);
   }
