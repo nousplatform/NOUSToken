@@ -15,14 +15,22 @@ contract BonusSale is BaseSaleAgent {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function NOUSCrowdsale(address _saleContractAddress) {
+    function BonusSale(
+        address _dougSaleAddress,
+        uint256 _tokensLimit,
+        uint256 _minDeposit,
+        uint256 _maxDeposit,
+        uint256 _startTime,
+        uint256 _endTime,
+        uint256 _rate
+    ) SampleSale(_dougSaleAddress, _tokensLimit, _minDeposit, _maxDeposit, _startTime, _endTime, _rate) {
 
-        // todo переделать
-        addBonusRate(1, 7300);
+        // todo переделать с часами
+        //addBonusRate(1, 7300);
         // 1 Week = 7300 NOUS
-        addBonusRate(2, 7000);
+        //addBonusRate(2, 7000);
         // 2 Week 1 ETH = 7000 NOUS
-        addBonusRate(3, 6700);
+        //addBonusRate(3, 6700);
         // 3 Week 1 ETH = 6700 NOUS
     }
 

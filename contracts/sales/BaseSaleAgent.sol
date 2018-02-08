@@ -24,6 +24,7 @@ contract BaseSaleAgent is Ownable {
     uint256 weiRaised; // The current amount of tokens minted by this agent
     bool isFinalized; // Has this sales contract been completed and the ether sent to the deposit address
 
+
     /**
       @notice Set the address of a new crowdsale/presale contract agent if needed, usefull for upgrading
       @notice Only the owner can register a new sale agent
