@@ -3,7 +3,7 @@ pragma solidity ^0.4.4;
 
 import "./sales/NOUSPreorder.sol";
 import "./sales/SampleSale.sol";
-import "./sales/BonusSale.sol";
+import "./sales/StartBonusSale.sol";
 import "./sales/NOUSReservFund.sol";
 
 import "./Token.sol";

@@ -1,14 +1,18 @@
 pragma solidity ^0.4.11;
 
 
-import "./BaseSaleAgent.sol";
-import "../NousplatformCrowdSale.sol";
+import "./SampleSale.sol";
 
+/**
+@title StartBonusSale Interface
+@notice start of sales with bonuses on time
+@author Manchenko Valeriy
+*/
+contract StartBonusSale is SampleSale {
 
-contract BonusSale is BaseSaleAgent {
-
+    //@dev structure periods and rates
     struct BonusRateStruct {
-        uint256 period; // in week rate
+        uint256 period; // in hour
         uint256 rate;
     }
 
