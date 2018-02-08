@@ -1,8 +1,8 @@
 pragma solidity ^0.4.11;
 
 
-import "../lib/SafeMath.sol";
-import "../base/Ownable.sol";
+import "./lib/SafeMath.sol";
+import "./base/Ownable.sol";
 
 
 /**

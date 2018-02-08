@@ -1,25 +1,24 @@
 pragma solidity ^0.4.0;
 
 
-import "../base/Ownable.sol";
-import "../base/DougSale.sol";
-import "../interfaces/TokenInterface.sol";
-import "../lib/SafeMath.sol";
+import "./base/Ownable.sol";
+import "./interfaces/TokenInterface.sol";
+import "./lib/SafeMath.sol";
 
 
-contract PaymentBounty is Ownable, DougSale {
+contract PaymentBounty is Ownable {
 
     using SafeMath for uint256;
 
     address public tokenAddress;
 
-    uint256 delay = 1800; // 1800 hours => 30 dey to period pay
+    //uint256 delay = 1800; // 1800 hours => 30 dey to period pay
 
     event PayBonuses(address wallet, uint256 tokens);
 
     struct Bounty {
         address wallet; // wallet address for transfer
-        bytes32 name; // name bonus
+        string name; // name bonus
         uint256 delay; // delay to payment in month
         uint256 percent; // percent payed
         uint256 periodPathOfPay; // on how many equal parts to pay
@@ -31,9 +30,8 @@ contract PaymentBounty is Ownable, DougSale {
 
     Bounty[] public bountyPayment; // array bonuses
 
-    function PaymentBounty(address _tokenAddress) {
-        require(_tokenAddress != 0x0);
-        tokenAddress = _tokenAddress;
+    function PaymentBounty(address _tokenAddress) Ownable() {
+        setTokenAddress(_tokenAddress);
     }
 
     function setTokenAddress(address _tokenAddress) public onlyOwner {
@@ -41,14 +39,25 @@ contract PaymentBounty is Ownable, DougSale {
         tokenAddress = _tokenAddress;
     }
 
+    /**
+    * @dev Change delay for period pay bonuses
+    * @param _delay
+    */
     function setDelayBonuses(uint256 _delay) public onlyOwner {
         delay = _delay;
     }
 
-    /// @dev add bounty initial state
+    /**
+    * @notice Function set config for reserve and transfer tokens
+    * @param _walletAddress Address account for transfer
+    * @param _name Name baunty
+    * @param _percent Percent reserved bonuses from token totalSupplay
+    * @param _delay Delay time in hour for start transfer
+    * @param _periodPathOfPay Into how many equal parts to divide
+    */
     function setPaymentBounty(
         address _walletAddress,
-        bytes32 _name,
+        string _name,
         uint256 _percent,
         uint256 _delay,
         uint256 _periodPathOfPay
@@ -72,7 +81,7 @@ contract PaymentBounty is Ownable, DougSale {
     * @notice Function reject bonuses
     * @param _index Bonus index
     */
-    function rejectBonus(uint256 _index) public  onlyOwner {
+    function rejectBonus(uint256 _index) public onlyOwner {
         bountyPayment[_index].reject = true;
     }
 
@@ -88,10 +97,16 @@ contract PaymentBounty is Ownable, DougSale {
         return totalReserved;
     }
 
-    // @dev start only minet close payout after delay
-    // @dev and contract reserve funds
+
+    /**
+    * @notice All account can call this function, end start
+    * @param _startTime Start bonuses payed bonuses
+    */
     function payDelayBonuses(uint256 _startTime) public {
-        require(dugSale != msg.sender);
+        require(_startTime < now);
+
+        TokenInterface Token = TokenInterface(tokenAddress);
+        require(Token.bal()
 
         uint256 delayNextTime = 0;
 
@@ -99,9 +114,7 @@ contract PaymentBounty is Ownable, DougSale {
             uint256 dateDelay = _startTime;
 
             // calculate date delay  1 month = 30 dey
-            for (uint256 p = 0; p < bountyPayment[i].delay; p++) {
-                dateDelay = dateDelay + (delay * 1 hours); //delay bonuses 30 deys default
-            }
+            dateDelay = dateDelay + (bountyPayment[i].delay * 1 hours); //delay bonuses
 
             // set last date payaout
             if (bountyPayment[i].timeLastPayout == 0) {

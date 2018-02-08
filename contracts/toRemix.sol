@@ -8,22 +8,15 @@ import "./sales/ReserveBaunty.sol";
 import "./Token.sol";
 import "./CrowdSale.sol";
 
-import "./base/RefundVault.sol";
-import "./base/BonusForAffiliate.sol";
-import "./base/PaymentBounty.sol";
+import "./RefundVault.sol";
+import "./BonusForAffiliate.sol";
+import "./PaymentBounty.sol";
 import "./lib/SafeMath.sol";
 
 
 contract toRemix {
 
     using SafeMath for uint;
-
-    function toRemix(){
-
-    }
-    function() payable {
-
-    }
 
     function test(uint256 amount) constant returns(uint256){
         return amount * 1 ether;

@@ -30,7 +30,6 @@ contract BaseContract is Ownable {
 
     uint256 public weiRaised; // amount of raised money in wei
     uint256 public percentBonusForAffiliate = 10; // percent for bonus
-    uint256 public startTimeBonusPay;
 
     /**** Events ****/
     event BuyingTokens(address indexed agent, address indexed beneficiary, uint256 weiAmount);
@@ -77,7 +76,7 @@ contract BaseContract is Ownable {
         require(_bounty != 0x0);
 
         addContract("nous_token", _token);
-        NOUSTokenInterface(_token).setDougAddress(this);
+        TokenInterface(_token).setDougAddress(this);
 
         addContract("refund_vault", _vault);
         RefundVaultInterface(_vault).setDougAddress(this);

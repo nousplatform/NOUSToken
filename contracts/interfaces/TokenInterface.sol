@@ -1,9 +1,10 @@
-pragma solidity ^0.4.0;
+pragma solidity ^0.4.11;
 
 
-contract TokenInterface {
+import "../token/ERC20.sol";
 
-    uint256 public totalSupply;
+
+contract TokenInterface is ERC20 {
 
     function transferOwnership(address newOwner) public;
 

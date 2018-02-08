@@ -2,18 +2,10 @@ pragma solidity ^0.4.11;
 
 
 import "./BaseContract.sol";
-import "../interfaces/BonusForAffiliateInterface.sol";
-import "../interfaces/RefundVaultInterface.sol";
-import "../interfaces/PaymentBountyInterface.sol";
 
 
 /**
  * @title Crowdsale
- * @dev Crowdsale is a base contract for managing a token crowdsale.
- * Crowdsales have a start and end timestamps, where investors can make
- * token purchases and the crowdsale will assign them tokens based
- * on a token per ETH rate. Funds collected are forwarded to a wallet
- * as they arrive.
  */
 contract Crowdsale is BaseContract {
 
@@ -54,7 +46,7 @@ contract Crowdsale is BaseContract {
 
     //Todo FOR TEST
     function testTotalSuplay() public constant returns(uint256) {
-        NOUSTokenInterface(Doug["nous_token"]).totalSupply();
+        TokenInterface(Doug["nous_token"]).totalSupply();
     }
 
     //@notice Mintable Tokens
@@ -64,10 +56,10 @@ contract Crowdsale is BaseContract {
         require(_beneficiary != 0x0);
         require(_tokens > 0);
 
-        NOUSTokenInterface NOUSToken =  NOUSTokenInterface(Doug["nous_token"]);
-        require(TOTAL_SUPPLY_CAP >= NOUSToken.totalSupply().add(_tokens));
+        TokenInterface Token =  TokenInterface(Doug["nous_token"]);
+        require(TOTAL_SUPPLY_CAP >= Token.totalSupply().add(_tokens));
 
-        NOUSToken.mint(_beneficiary, _tokens);
+        Token.mint(_beneficiary, _tokens);
         TokenMinted(msg.sender, _beneficiary, _tokens);
     }
 
@@ -78,25 +70,20 @@ contract Crowdsale is BaseContract {
         require(totalSaleState != saleState.Ended);
         require(salesAgents[msg.sender].isFinalized == false);
 
-        NOUSTokenInterface NOUSToken =  NOUSTokenInterface(Doug["nous_token"]);
+        TokenInterface Token =  TokenInterface(Doug["nous_token"]);
 
         // reserve bonuses and write all tokens on paymentbounty contract
-        uint256 _totalReserved = PaymentBountyInterface(Doug["payment_bounty"]).reserveBonuses(NOUSToken.totalSupply());
-        NOUSToken.mint(Doug["payment_bounty"], _totalReserved);
+        uint256 _totalReserved = PaymentBountyInterface(Doug["payment_bounty"]).reserveBonuses(Token.totalSupply());
+        Token.mint(Doug["payment_bounty"], _totalReserved);
 
         // stop mining tokens
         totalSaleState = saleState.Ended;
     }
 
     // @dev payed bonuses as plan
-    function payDelayBonuses() external validateSaleAgent(msg.sender) {
-
+    function payDelayBonuses(uint256 _startTime) external validateSaleAgent(msg.sender) {
         require(totalSaleState == saleState.Ended);
-        if (startTimeBonusPay == 0) {
-            startTimeBonusPay = now;
-        }
-
-        PaymentBountyInterface(Doug["payment_bounty"]).payDelayBonuses(startTimeBonusPay);
+        PaymentBountyInterface(Doug["payment_bounty"]).payDelayBonuses(_startTime);
     }
 
 }

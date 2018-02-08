@@ -28,7 +28,7 @@ contract ReserveBaunty is BaseSaleAgent {
     * @dev bonus payout
     */
     function payoutBonuses() onlyOwner {
-        nousTokenSale.payDelayBonuses();
+        CrowdSale.payDelayBonuses(startTime);
     }
 
     /**
@@ -38,6 +38,5 @@ contract ReserveBaunty is BaseSaleAgent {
         uint256 _value = nousTokenSale.claimRefund(msg.sender);
         Refund(this, msg.sender, _value);
     }*/
-
 
 }
