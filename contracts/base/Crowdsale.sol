@@ -66,23 +66,17 @@ contract Crowdsale is BaseContract {
     /// @dev global finalization is activate this function all sales wos stoped.
     /// end reserve percent bonuses
     function finalizeICO() external validateSaleAgent(msg.sender) {
-
-        require(totalSaleState != saleState.Ended);
-        require(salesAgents[msg.sender].isFinalized == false);
-
         TokenInterface Token =  TokenInterface(Doug["nous_token"]);
-
         // reserve bonuses and write all tokens on paymentbounty contract
         uint256 _totalReserved = PaymentBountyInterface(Doug["payment_bounty"]).reserveBonuses(Token.totalSupply());
-        Token.mint(Doug["payment_bounty"], _totalReserved);
 
+        Token.mint(Doug["payment_bounty"], _totalReserved);
         // stop mining tokens
         totalSaleState = saleState.Ended;
     }
 
     // @dev payed bonuses as plan
     function payDelayBonuses(uint256 _startTime) external validateSaleAgent(msg.sender) {
-        require(totalSaleState == saleState.Ended);
         PaymentBountyInterface(Doug["payment_bounty"]).payDelayBonuses(_startTime);
     }
 

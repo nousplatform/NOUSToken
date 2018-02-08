@@ -9,8 +9,7 @@ contract PaymentBountyInterface {
         uint256 _percent,
         uint256 _delay,
         uint256 _periodPathOfPay
-    )
-    public;
+    ) public;
 
     function reserveBonuses(uint256 _totalSupply) public returns (uint256);
 

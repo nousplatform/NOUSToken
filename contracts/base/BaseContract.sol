@@ -47,6 +47,7 @@ contract BaseContract is Ownable {
     struct SaleAgent {
         string desc; //name internal name
         bool exists; // Check to see if the mapping exists
+        bool isFinalized;
     }
 
     mapping (address => SaleAgent) internal salesAgents; // Our contract addresses of our sales contracts
@@ -55,7 +56,8 @@ contract BaseContract is Ownable {
     //@dev Validate sale agent contract
     modifier validateSaleAgent(address _sender) {
         require(salesAgents[_sender].exists == true);
-        require(salesAgents[_sender].state == saleState.Active);
+        require(salesAgents[msg.sender].isFinalized == false);
+        require(totalSaleState != saleState.Ended);
         _;
     }
 
@@ -102,6 +104,7 @@ contract BaseContract is Ownable {
         SaleAgent memory _newSalesAgent;
         _newSalesAgent.desc = _desc;
         _newSalesAgent.exists = true;
+        _newSalesAgent.isFinalized = false;
 
         salesAgents[_saleAgent] = _newSalesAgent;
         salesAgentsAddresses.push(_saleAgent);
@@ -115,10 +118,28 @@ contract BaseContract is Ownable {
         percentBonusForAffiliate = _newPercent;
     }
 
-    //@notice Change sale state {Active, Pending, Ended}
-    //@param _state enum {0 - Active, 1 - Pending, 2- Ended}
-    function changeSaleState(saleState _state) external onlyOwner {
-        totalSaleState = _state;
+    function finalizeSale() external validateSaleAgent(msg.sender) {
+        salesAgents[msg.sender].isFinalized = true;
     }
+
+    /**
+    * @notice Paused sale, state Pending
+    */
+    function pausedSale() public onlyOwner {
+        totalSaleState = saleState.Pending;
+    }
+
+    /**
+    * @notice unPaused sale? sale state Active
+    */
+    function unpusedSale() public onlyOwner {
+        totalSaleState = saleState.Active;
+    }
+
+    //@notice Change sale state {Active, Pending, Ended}
+    //@param _state enum {0 - Active, 1 - Paused, 2- Ended}
+    /*function changeSaleState(saleState _state) external onlyOwner {
+        totalSaleState = _state;
+    }*/
 
 }

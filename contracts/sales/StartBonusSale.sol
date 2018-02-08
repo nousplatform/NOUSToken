@@ -19,7 +19,7 @@ contract StartBonusSale is SampleSale {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function BonusSale(
+    function StartBonusSale(
         address _dougSaleAddress,
         uint256 _tokensLimit,
         uint256 _minDeposit,
@@ -38,9 +38,9 @@ contract StartBonusSale is SampleSale {
         // 3 Week 1 ETH = 6700 NOUS
     }
 
-    function bayToken() payable external {
+    function bayToken(uint256 _value) internal {
         rate = getBonusRate();
-        super.bayToken();
+        super.bayToken(_value);
     }
 
     //@dev addBonusRate adding bonuses foe weeks period

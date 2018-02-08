@@ -20,17 +20,17 @@ contract SampleSale is BaseSaleAgent {
     }
 
     function() payable external {
-        bayToken();
+        bayToken(msg.value);
     }
 
-    function bayToken() payable external {
+    function bayToken(uint256 _value) internal {
         require(availabilityCheckPurchase());
-        require(checkValue(msg.value));
+        require(checkValue(_value));
 
         uint256 weiAmount = msg.value;
 
-        CrowdSale.buyTokens.value(msg.value)(msg.sender, rate);
-        TokenPurchase(msg.sender, msg.value, tokens);
+        CrowdSale.buyTokens.value(_value)(msg.sender, rate);
+        TokenPurchase(msg.sender, _value, _value.mul(rate));
     }
 
 }

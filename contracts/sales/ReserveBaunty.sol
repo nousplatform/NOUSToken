@@ -7,6 +7,8 @@ import "../CrowdSale.sol";
 
 contract ReserveBaunty is BaseSaleAgent {
 
+    event FinaliseICO();
+
     function ReserveBaunty(
         address _dougSaleAddress,
         uint256 _tokensLimit,
@@ -15,13 +17,13 @@ contract ReserveBaunty is BaseSaleAgent {
         uint256 _startTime,
         uint256 _endTime,
         uint256 _rate
-    ) SampleSale(_dougSaleAddress, _tokensLimit, _minDeposit, _maxDeposit, _startTime, _endTime, _rate) {
-
+    ) {
+        setParamsSaleAgent(_dougSaleAddress, _tokensLimit, _minDeposit, _maxDeposit, _startTime, _endTime, _rate);
     }
 
     function globalFinalizationStartBonusPayable() onlyOwner {
         CrowdSale.finalizeICO();
-        FinaliseICO(this, msg.sender);
+        FinaliseICO();
     }
 
     /**

@@ -8,11 +8,8 @@ import "./interfaces/PaymentBountyInterface.sol";
 
 contract CrowdSale is Crowdsale {
 
-    function NousplatformCrowdSale(address _token, address _vault, address _affiliate, address _bonuses)
-    BaseContract(_token, _vault, _affiliate, _bonuses)
-    {
-
-    }
+    function CrowdSale(address _token, address _vault, address _affiliate, address _bonuses)
+    BaseContract(_token, _vault, _affiliate, _bonuses) { }
 
     // @dev TODO If need manualy
     function setPaymentBounty(address wallet, bytes32 typeBounty, uint256 percent, uint256 payedPeriod, uint256 payedPath) public onlyOwner {

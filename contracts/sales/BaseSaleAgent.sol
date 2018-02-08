@@ -64,23 +64,24 @@ contract BaseSaleAgent is Ownable {
     }
 
     function getAllParams() public constant returns(
-        uint256 tokensLimit,
-        uint256 minDeposit,
-        uint256 maxDeposit,
-        uint256 startTime,
-        uint256 endTime,
-        uint256 rate,
-        uint256 tokensMinted,
-        uint256 weiRaised,
-        bool finalize
+        uint256 _tokensLimit,
+        uint256 _minDeposit,
+        uint256 _maxDeposit,
+        uint256 _startTime,
+        uint256 _endTime,
+        uint256 _rate,
+        uint256 _tokensMinted,
+        uint256 _weiRaised,
+        bool _finalize
     ) {
-        return (tokensLimit, minDeposit, maxDeposit, startTime, endTime, rate, tokensMinted, weiRaised, finalize);
+        return (tokensLimit, minDeposit, maxDeposit, startTime, endTime, rate, tokensMinted, weiRaised, isFinalized);
     }
 
     //@dev you may redefined this function, but coll method super
     function finalise() public onlyOwner {
         require(isFinalized == false);
         isFinalized = true;
+        CrowdSale.finalizeSale();
         FinaliseSale(tokensMinted, weiRaised, now);
     }
 
@@ -107,7 +108,7 @@ contract BaseSaleAgent is Ownable {
         require(_accountHolder != 0x0);
         uint256 _tokens = _amountOf.mul(EXPONENT);
 
-        CrowdSaleInterface(dougSaleAddress).tokenMint(_accountHolder, _tokens);
+        CrowdSale.tokenMint(_accountHolder, _tokens);
 
         TokenPurchase(
             _accountHolder,

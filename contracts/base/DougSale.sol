@@ -9,7 +9,7 @@ contract DougSale {
         _;
     }
 
-    function setDougAddress(address _dougAddr) public {
+    function setDougAddress(address _dougAddr) public returns(bool) {
         if(dougSale != 0x0 && msg.sender != dougSale) {
             return false;
         }

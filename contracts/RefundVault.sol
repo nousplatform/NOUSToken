@@ -41,10 +41,6 @@ contract RefundVault is Ownable, DougSale {
         wallet = _wallet;
     }*/
 
-    function setState(State _state) public onlyOwner {
-        state = _state;
-    }
-
     function deposit(address investor) public onlySaleAgent payable {
         require(msg.value > 0);
         require(state == State.Active);
@@ -53,14 +49,14 @@ contract RefundVault is Ownable, DougSale {
 
     // @dev stop sale? taransfer ether to wallet
     function close() public onlyOwner {
-        require(state == State.Active);
+        //require(state == State.Active);
         state = State.Closed;
         Closed();
         wallet.transfer(this.balance);
     }
 
     function enableRefunds() public onlyOwner {
-        require(state == State.Active);
+        //require(state == State.Active);
         state = State.Refunding;
         RefundsEnabled();
     }
@@ -75,7 +71,7 @@ contract RefundVault is Ownable, DougSale {
     }
 
     //TODO: only integer
-    function withdrawOnly(uint256 _amount) public onlyOwner {
+    function withdraw(uint256 _amount) public onlyOwner {
         require(_amount > 0);
         uint256 amount = _amount * 1 ether;
         assert(this.balance > amount);

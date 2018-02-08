@@ -12,7 +12,7 @@ contract PaymentBounty is Ownable {
 
     address public tokenAddress;
 
-    //uint256 delay = 1800; // 1800 hours => 30 dey to period pay
+    uint256 delay = 1800; // 1800 hours => 30 dey to period pay
 
     event PayBonuses(address wallet, uint256 tokens);
 
@@ -41,7 +41,7 @@ contract PaymentBounty is Ownable {
 
     /**
     * @dev Change delay for period pay bonuses
-    * @param _delay
+    * @param _delay interval delay bonuses
     */
     function setDelayBonuses(uint256 _delay) public onlyOwner {
         delay = _delay;
@@ -106,7 +106,8 @@ contract PaymentBounty is Ownable {
         require(_startTime < now);
 
         TokenInterface Token = TokenInterface(tokenAddress);
-        require(Token.bal()
+        uint256 _balance = Token.balanceOf(this);
+        assert(_balance > 0);
 
         uint256 delayNextTime = 0;
 
@@ -114,7 +115,9 @@ contract PaymentBounty is Ownable {
             uint256 dateDelay = _startTime;
 
             // calculate date delay  1 month = 30 dey
-            dateDelay = dateDelay + (bountyPayment[i].delay * 1 hours); //delay bonuses
+            for (uint256 p = 0; p < bountyPayment[i].delay; p++) {
+                dateDelay = dateDelay + (30 days);
+            }
 
             // set last date payaout
             if (bountyPayment[i].timeLastPayout == 0) {
@@ -127,7 +130,8 @@ contract PaymentBounty is Ownable {
             if (now >= dateDelay && bountyPayment[i].amountReserve > bountyPayment[i].totalPayout &&
               now >= delayNextTime && bountyPayment[i].reject == false) {
                 uint256 payout = bountyPayment[i].amountReserve.div(bountyPayment[i].periodPathOfPay);
-                TokenInterface(tokenAddress).transfer(bountyPayment[i].wallet, payout);
+                assert(_balance > payout);
+                Token.transfer(bountyPayment[i].wallet, payout);
                 PayBonuses(bountyPayment[i].wallet, payout);
                 // transfer bonuses
                 bountyPayment[i].totalPayout = bountyPayment[i].totalPayout.add(payout);
@@ -139,7 +143,7 @@ contract PaymentBounty is Ownable {
     /**
     * @notice Transfer token is this reserved to another address
     * @param _to Address to transfer token
-    * @param _value
+    * @param _value Token amount
     */
     function transferTokens(address _to, uint256 _value) public onlyOwner {
         TokenInterface(tokenAddress).transfer(_to, _value);
