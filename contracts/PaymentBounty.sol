@@ -4,6 +4,7 @@ pragma solidity ^0.4.18;
 import "./base/Ownable.sol";
 import "./interfaces/TokenInterface.sol";
 import "./lib/SafeMath.sol";
+//import "./base/DougSale.sol";
 
 
 contract PaymentBounty is Ownable {

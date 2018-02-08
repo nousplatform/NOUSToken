@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.18;
 
 
 import "../base/Ownable.sol";
@@ -87,7 +87,7 @@ contract BaseContract is Ownable {
         BonusForAffiliateInterface(_affiliate).setDougAddress(this);
 
         addContract("payment_bounty", _bounty);
-        PaymentBountyInterface(_bounty).setDougAddress(this);
+        //PaymentBountyInterface(_bounty).setDougAddress(this);
     }
 
     //@notice Update or add auxiliary contract

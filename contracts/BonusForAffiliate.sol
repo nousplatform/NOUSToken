@@ -3,13 +3,14 @@ pragma solidity ^0.4.18;
 
 import "./lib/SafeMath.sol";
 import "./base/Ownable.sol";
+import "./base/DougSale.sol";
 
 
 /**
 * @title Bonus for the invited
 * @dev Payed bonus * @dev function addAffiliate - added referral link on partner
 */
-contract BonusForAffiliate is Ownable {
+contract BonusForAffiliate is Ownable, DougSale {
 
     using SafeMath for uint256;
 
@@ -37,8 +38,6 @@ contract BonusForAffiliate is Ownable {
     mapping (address => PartnerStruct) private partners;
 
     address[] private partnerIndexes; // index for bonuses map
-
-    address public dugSale; // address Nous Sale contract
 
     address public nousplatform;
 
@@ -83,14 +82,6 @@ contract BonusForAffiliate is Ownable {
     }
 
     /**
-    * @dev Set dug sale address
-    */
-    function setDugSaleAddress(address _dugSale) external onlyOwner {
-        require(_dugSale != 0x0);
-        dugSale = _dugSale;
-    }
-
-    /**
     * sets address nous platform
     */
     function setNousplatformAddress(address _nousplatform) external onlyOwner {
@@ -121,8 +112,7 @@ contract BonusForAffiliate is Ownable {
     * @param _partnerWalletAddress Address partner wallet
     * @param _backerAddress Address backer account
     */
-    function addBonus(address _backerAddress, address _partnerWalletAddress) external payable {
-        require(msg.sender == dugSale);
+    function addBonus(address _backerAddress, address _partnerWalletAddress) external onlySaleAgent payable {
         require(_partnerWalletAddress != 0x0);
         require(referral[_backerAddress] == _partnerWalletAddress);
         require(msg.value > 0);

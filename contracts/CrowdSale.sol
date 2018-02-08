@@ -1,7 +1,5 @@
 pragma solidity ^0.4.18;
 
-
-import "./token/MintableToken.sol";
 import "./base/Crowdsale.sol";
 import "./interfaces/PaymentBountyInterface.sol";
 
@@ -9,6 +7,7 @@ import "./interfaces/PaymentBountyInterface.sol";
 contract CrowdSale is Crowdsale {
 
     function CrowdSale(address _token, address _vault, address _affiliate, address _bonuses)
+    Ownable()
     BaseContract(_token, _vault, _affiliate, _bonuses) { }
 
     // @dev TODO If need manualy

@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.18;
 
 
 import "./BaseContract.sol";
@@ -70,7 +70,8 @@ contract Crowdsale is BaseContract {
         // reserve bonuses and write all tokens on paymentbounty contract
         uint256 _totalReserved = PaymentBountyInterface(Doug["payment_bounty"]).reserveBonuses(Token.totalSupply());
 
-        Token.mint(Doug["payment_bounty"], _totalReserved);
+        Token.mint(Doug["payment_bounty"], _totalReserved); // last token
+        Token.finishMinting(); // finishing mining token
         // stop mining tokens
         totalSaleState = saleState.Ended;
     }
