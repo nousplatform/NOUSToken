@@ -16,10 +16,10 @@
         <th>SaleContractType</th>
         <td>
             <select id="SaleContractType">
-                <option  value="0">preorder</option>
-                <option  value="1">presale</option>
-                <option  value="2">crowdsale</option>
-                <option  value="3">reserve_funds</option>
+                <option value="0">preorder</option>
+                <option value="1">presale</option>
+                <option value="2">crowdsale</option>
+                <option value="3">reserve_funds</option>
             </select>
         </td>
         <!--<td><input type="text" id="SaleContractType" name="SaleContractType"  size="27"></td>-->
@@ -32,13 +32,13 @@
         <th>MinDeposit</th>
         <td><input type="text" id="MinDeposit" name="" size="27" value="0"></td>
     </tr>
-    <tr>
+    <!--<tr>
         <th>MaxDeposit</th>
         <td><input type="text" id="MaxDeposit" name="" size="27"></td>
-    </tr>
+    </tr>-->
     <tr>
         <th>StartTime</th>
-        <td >
+        <td>
             <input type="date" id="sd">
             <input type="time" id="st">
         </td>
@@ -59,7 +59,7 @@
 <input type="text" style="margin:15px " id="result" size="100"></input>
 
 <form id="nous_sale">
-    <table border="1"  width="" style="">
+    <table border="1" width="" style="">
         <tr>
             <th>Token address:</th>
             <td><input type="text" id="token" size="50"></td>
@@ -74,14 +74,26 @@
         </tr>
         <tr>
             <th>Bounty Payment:</th>
-            <td><input type="text" id="bounty" size="50" ></td>
+            <td><input type="text" id="bounty" size="50"></td>
         </tr>
     </table>
 </form>
 <button style="margin:15px " id="" onclick="document.getElementById('nous_sale').reset();">Reset</button>
 <button style="margin:15px " id="compile2" onclick="test2()">Compile</button>
-<input type="text" style="margin:15px " id="result2" size="100" >
-    <script>
+<input type="text" style="margin:15px " id="result2" size="100">
+
+<div id="page-wrapper">
+    <div>
+        Select a text file:
+        <input type="file" id="fileInput"/>
+    </div>
+    <pre id="fileDisplayArea"></pre>
+    <pre id="csvData"></pre>
+    <button onClick="test3()">Show Text</button>
+    <form id="datafile" size="50"></form>
+</div>
+
+<script>
 
     var date = new Date();
 
@@ -104,13 +116,18 @@
     var hh = date.getHours();
     var mm = date.getMinutes();
 
-    var minutes = hh+":"+mm;
+    var minutes = hh + ":" + mm;
 
     startDate.value = today;
     startTime.value = minutes;
 
     endDate.value = today;
     endTime.value = minutes;
+
+    Date.prototype.addHours = function (h) {
+        this.setHours(this.getHours() + h);
+        return this;
+    }
 
     function test() {
         var saleAddr = document.getElementById("SaleAddress").value;
@@ -120,15 +137,18 @@
 
         var TokensLimit = document.getElementById("TokensLimit").value;
         var MinDeposit = document.getElementById("MinDeposit").value;
-        var MaxDeposit = document.getElementById("MaxDeposit").value;
+        //var MaxDeposit = document.getElementById("MaxDeposit").value;
 
         //var MaxDeposit = document.getElementById("MaxDeposit").value;
         var rate = document.getElementById("rate").value;
 
-        var date_start = new Date(startDate.value+" "+startTime.value).getTime() / 1000;
-        var date_end = new Date(endDate.value+" "+endTime.value).getTime() / 1000;
 
-        var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+MaxDeposit+","+date_start+","+date_end+","+rate;
+        var date_start = new Date(startDate.value + " " + startTime.value).addHours(2).getTime() / 1000;
+        var date_end = new Date(endDate.value + " " + endTime.value).addHours(2).getTime() / 1000;
+
+
+        //var res = "\""+saleAddr+"\","+SaleContractType+","+TokensLimit+","+MinDeposit+","+MaxDeposit+","+date_start+","+date_end+","+rate; // max deposit
+        var res = "\"" + saleAddr + "\"," + SaleContractType + "," + TokensLimit + "," + MinDeposit + "," + date_start + "," + date_end + "," + rate;
 
         document.getElementById("result").value = res;
     }
@@ -139,8 +159,84 @@
         var vault = document.getElementById('vault').value;
         var affiliate = document.getElementById('affiliate').value;
         var bounty = document.getElementById('bounty').value;
-        var res = '"'+token +'","'+ vault +'","'+ affiliate +'","'+ bounty +'"';
+        var res = '"' + token + '","' + vault + '","' + affiliate + '","' + bounty + '"';
         document.getElementById("result2").value = res;
+    }
+
+    //var csv is the CSV file with headers
+    // Create an array of arrays
+    // Remove first line
+    // Split by ","
+    function process(dataString) {
+        var delimeter = 50;
+        var totalArr = [];
+        var totalArrIdex = 0;
+        //console.log("dataString", dataString);
+
+
+        var lines = dataString
+            .split(/\n/)                     // Convert to one string per line
+            .map(function (lineStr) {
+                return lineStr.split(",");   // Convert each line to array (,)
+            })
+            .filter((arr => {
+                return arr[1] > 0;
+            }))
+            .slice(0);
+
+        // Discard header line
+        var myform = $("#datafile");
+        console.log("lines.length", lines.length);
+
+
+        lines.forEach(function (currentValue, index) {
+
+            console.log("index", index);
+
+            if (index == 0 || index % delimeter == 0) {
+                totalArr[++totalArrIdex] = [];
+                totalArr[totalArrIdex][0] = [];
+                totalArr[totalArrIdex][1] = [];
+                console.log("totalArrIdex", totalArrIdex);
+            }
+
+            totalArr[totalArrIdex][0].push(currentValue[0]);
+            totalArr[totalArrIdex][1].push(+currentValue[1]);
+
+            if (((index + 1) % delimeter === 0 && index != 0) || index == lines.length-1) {
+
+                $('<div>', {
+                    style: "padding:2px"
+                }).append(
+                    $('<input/>', {
+                        id: 'myinput-' + totalArrIdex,
+                        size: '150',
+                        val: JSON.stringify(totalArr[totalArrIdex][0]) + "," + JSON.stringify(totalArr[totalArrIdex][1])
+                    })
+                ).appendTo(myform);
+            }
+
+        });
+    }
+
+    function test3() {
+        var file = fileInput.files[0];
+        var textType = /text.*/;
+        var csvType = 'text/csv';
+        $("#datafile").html("");
+        if (file.type.match(csvType)) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                process(reader.result);
+
+                //document.getElementById("arrayData").value = process(reader.result);
+                //document.getElementById("csvData").innerText = process(reader.result);
+            }
+
+            reader.readAsText(file);
+        } else {
+            fileDisplayArea.innerText = "File not supported!";
+        }
     }
 
 
