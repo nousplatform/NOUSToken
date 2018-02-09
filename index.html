@@ -185,8 +185,10 @@
 
       // Discard header line
       var myform = $("#datafile");
+        console.log("lines.length", lines.length);
 
-      lines.forEach(function (currentValue, index) {
+
+        lines.forEach(function (currentValue, index) {
 
         if (index == 0 || index % delimeter == 0) {
           totalArr[++totalArrIdex] = [];
