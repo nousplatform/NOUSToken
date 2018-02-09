@@ -4,10 +4,11 @@ pragma solidity ^0.4.18;
 import "./BaseSaleAgent.sol";
 import "../interfaces/CrowdSaleInterface.sol";
 
+//"0x7204b06b4c344bd969457462f4d9e933650049c0"10000,1,3,1518190980,1518196200,7400
 
-contract SampleSale is BaseSaleAgent {
+contract Sale is BaseSaleAgent {
 
-    function SampleSale(
+    function Sale(
         address _dougSaleAddress,
         uint256 _tokensLimit,
         uint256 _minDeposit,
@@ -20,17 +21,14 @@ contract SampleSale is BaseSaleAgent {
     }
 
     function() payable external {
-        bayToken(msg.value);
+        bayToken();
     }
 
-    function bayToken(uint256 _value) internal {
+    function bayToken() payable {
         require(availabilityCheckPurchase());
-        require(checkValue(_value));
-
-        uint256 weiAmount = msg.value;
-
-        CrowdSale.buyTokens.value(_value)(msg.sender, rate);
-        TokenPurchase(msg.sender, _value, _value.mul(rate));
+        require(checkValue(msg.value));
+        CrowdSale.buyTokens.value(msg.value)(msg.sender, rate);
+        TokenPurchase(msg.sender, msg.value, msg.value.mul(rate));
     }
 
 }

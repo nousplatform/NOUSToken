@@ -137,14 +137,32 @@ contract BaseContract is Ownable {
     }
 
     /**
-    * @notice
-    * @param
-    * @return
+    * @notice  Function returned all params sales
+    * TODO Change string to bytes32 for implementing to array
+    */
+    function getSales() public constant returns(address[] memory saleAddress, /*string[] memory desc,*/ bool[] memory finalize) {
+        uint256 length = salesAgentsAddresses.length;
+        saleAddress = new address[](length);
+        //desc = new string[](length);
+        finalize = new bool[](length);
+
+        for (uint256 i=0; i < length; i++) {
+            saleAddress[i] = salesAgentsAddresses[i];
+            //desc[i] = salesAgents[salesAgentsAddresses[i]].desc;
+            finalize[i] = salesAgents[salesAgentsAddresses[i]].isFinalized;
+        }
+
+        return (saleAddress,/* desc,*/ finalize);
+    }
+
+    /**
+    * @notice Kill contract and changes doug address in all contracts
+    * @param newAddress New address for cahges
     */
     function changeKill(address newAddress) public onlyOwner {
-        TokenInterface(_token).setDougAddress(newAddress);
-        RefundVaultInterface(_vault).setDougAddress(newAddress);
-        BonusForAffiliateInterface(_affiliate).setDougAddress(newAddress);
+        TokenInterface(Doug["nous_token"]).setDougAddress(newAddress);
+        RefundVaultInterface(Doug["refund_vault"]).setDougAddress(newAddress);
+        BonusForAffiliateInterface(Doug["bonus_for_affiliate"]).setDougAddress(newAddress);
     }
 
 }

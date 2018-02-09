@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import "./sales/SampleSale.sol";
-import "./sales/StartBonusSale.sol";
+import "./sales/Sale.sol";
+import "./sales/FastStartBonusSale.sol";
 import "./sales/ReserveBaunty.sol";
 
 import "./Token.sol";

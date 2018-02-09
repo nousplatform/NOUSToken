@@ -121,7 +121,7 @@ contract BaseSaleAgent is Ownable {
         return isFinalized == false && now > startTime && now < endTime;
     }
 
-    function checkValue(uint256 _value) public constant returns (bool) {
-        return _value > 0 && minDeposit > _value && maxDeposit < _value;
+    function checkValue(uint256 _value) internal constant returns (bool) {
+        return _value > 0 && minDeposit >= _value && maxDeposit < _value;
     }
 }

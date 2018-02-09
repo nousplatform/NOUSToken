@@ -1,14 +1,14 @@
 pragma solidity ^0.4.18;
 
 
-import "./SampleSale.sol";
+import "./Sale.sol";
 
 /**
 @title StartBonusSale Interface
 @notice start of sales with bonuses on time
 @author Manchenko Valeriy
 */
-contract StartBonusSale is SampleSale {
+contract FastStartBonusSale is Sale {
 
     //@dev structure periods and rates
     struct BonusRateStruct {
@@ -19,7 +19,7 @@ contract StartBonusSale is SampleSale {
     BonusRateStruct[] bonusRates; // index rates
 
     /// @dev constructor
-    function StartBonusSale(
+    function FastStartBonusSale(
         address _dougSaleAddress,
         uint256 _tokensLimit,
         uint256 _minDeposit,
@@ -27,7 +27,7 @@ contract StartBonusSale is SampleSale {
         uint256 _startTime,
         uint256 _endTime,
         uint256 _rate
-    ) SampleSale(_dougSaleAddress, _tokensLimit, _minDeposit, _maxDeposit, _startTime, _endTime, _rate) {
+    ) Sale(_dougSaleAddress, _tokensLimit, _minDeposit, _maxDeposit, _startTime, _endTime, _rate) {
 
         // todo переделать с часами
         //addBonusRate(1, 7300);
@@ -38,9 +38,9 @@ contract StartBonusSale is SampleSale {
         // 3 Week 1 ETH = 6700 NOUS
     }
 
-    function bayToken(uint256 _value) internal {
+    function bayToken() payable {
         rate = getBonusRate();
-        super.bayToken(_value);
+        super.bayToken();
     }
 
     //@dev addBonusRate adding bonuses foe weeks period
