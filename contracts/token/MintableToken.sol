@@ -1,7 +1,7 @@
 pragma solidity ^0.4.18;
 
 import "./PausableToken.sol";
-import "./base/DougSale.sol";
+import "../base/DougSale.sol";
 
 
 /**

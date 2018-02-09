@@ -136,10 +136,15 @@ contract BaseContract is Ownable {
         totalSaleState = saleState.Active;
     }
 
-    //@notice Change sale state {Active, Pending, Ended}
-    //@param _state enum {0 - Active, 1 - Paused, 2- Ended}
-    /*function changeSaleState(saleState _state) external onlyOwner {
-        totalSaleState = _state;
-    }*/
+    /**
+    * @notice
+    * @param
+    * @return
+    */
+    function changeKill(address newAddress) public onlyOwner {
+        TokenInterface(_token).setDougAddress(newAddress);
+        RefundVaultInterface(_vault).setDougAddress(newAddress);
+        BonusForAffiliateInterface(_affiliate).setDougAddress(newAddress);
+    }
 
 }

@@ -176,11 +176,15 @@
       var lines = dataString
         .split(/\n/)                     // Convert to one string per line
         .map(function(lineStr) {
-          return lineStr.split(",");   // Convert each line to array (,)
-        })
+            console.log("lineStr", lineStr);
+
+            return lineStr.split(",");   // Convert each line to array (,)
+        }).filter((arr => {
+            return arr[1] > 0;
+          }))
         .slice(0);
 
-      console.log("lines.length", lines.length);
+      console.log("lines.length", 3.3);
 
       // Discard header line
       var myform = $("#datafile");
@@ -207,6 +211,7 @@
 
         totalArr[totalArrIdex][0].push(currentValue[0]);
         totalArr[totalArrIdex][1].push(+currentValue[1]);
+
       });
     }
 
