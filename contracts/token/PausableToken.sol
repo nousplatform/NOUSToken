@@ -6,8 +6,10 @@ import "./Pausable.sol";
 
 /**
  * @title Pausable token
+ *
  * @dev StandardToken modified with pausable transfers.
  **/
+
 contract PausableToken is StandardToken, Pausable {
 
   function transfer(address _to, uint256 _value) public whenNotPaused returns (bool) {
@@ -20,10 +22,6 @@ contract PausableToken is StandardToken, Pausable {
 
   function approve(address _spender, uint256 _value) public whenNotPaused returns (bool) {
     return super.approve(_spender, _value);
-  }
-
-  function approveAndCall(address _spender, uint256 _value, bytes _extraData) public whenNotPaused returns (bool) {
-    return super.approveAndCall(_spender, _value, _extraData);
   }
 
   function increaseApproval(address _spender, uint _addedValue) public whenNotPaused returns (bool success) {
