@@ -69,6 +69,7 @@ contract StandardToken is ERC20, BasicToken {
     */
     function approveAndCall(address _spender, uint256 _value, bytes _extraData) public
     canTransfer returns (bool success) {
+        allowance[msg.sender][_spender] = _value;
         TokenRecipient spender = TokenRecipient(_spender);
         if (approve(_spender, _value)) {
             spender.receiveApproval(msg.sender, _value, this, _extraData);
