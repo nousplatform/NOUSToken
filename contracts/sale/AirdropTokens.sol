@@ -15,7 +15,7 @@ contract AirdropTokens is Crowdsale, Bounty {
     // @param _salesAgent addresses sale agent
     // @param _batchOfAddresses list of addresses
     // @param _amountOf matching list of address balances
-    function deliverPresaleTokens(address[] _batchOfAddresses, uint256[] _amountOf) external onlyOwner {
+    function deliverTokens(address[] _batchOfAddresses, uint256[] _amountOf) external onlyOwner {
         require(_batchOfAddresses.length == _amountOf.length);
 
         for (uint256 i = 0; i < _batchOfAddresses.length; i++) {
