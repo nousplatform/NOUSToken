@@ -3,13 +3,10 @@ pragma solidity ^0.4.18;
 
 import "./Crowdsale.sol";
 import "./Bounty.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 contract AirdropTokens is Crowdsale, Bounty {
-
-    constructor() Crowdsale {
-
-    }
 
     // Deliver
     // @param _salesAgent addresses sale agent
@@ -28,7 +25,7 @@ contract AirdropTokens is Crowdsale, Bounty {
     function deliverTokenToClient(address _accountHolder, uint256 _amountOf) public onlyOwner {
         require(_amountOf > 0);
         require(_accountHolder != 0x0);
-        require(tokensAvailableSale >= token.totalSupply().add(_tokenAmount));
+        require(tokensAvailableSale >= token.totalSupply().add(_amountOf));
         uint256 _tokens = _amountOf.mul(EXPONENT);
 
         _processPurchase(_accountHolder, _tokens);

@@ -21,9 +21,8 @@ contract Crowdsale is FinalizableCrowdsale {
 
     event TokenPurchase(address indexed beneficiary, uint256 amount);
 
-    function CrowdSale(ERC20 _token) {
-        require(_token != address(0));
-        token = _token;
+    constructor() {
+        token = new Token();
     }
 
     /**
