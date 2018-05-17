@@ -1,9 +1,9 @@
 pragma solidity ^0.4.18;
 
 
-import {Token} from "../Token.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
+import "../Token.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./FinalizableCrowdsale.sol";
 
 
@@ -21,23 +21,15 @@ contract Crowdsale is FinalizableCrowdsale {
 
     event TokenPurchase(address indexed beneficiary, uint256 amount);
 
-    function CrowdSale() {
-        token = new Token();
+    function CrowdSale(ERC20 _token) {
+        require(_token != address(0));
+        token = _token;
     }
 
-    function bayTokens(address _beneficiary, uint256 _tokenAmount) {
-        _preValidatePurchase(_beneficiary);
-
-        uint totalSupply = token.totalSupply();
-        require(tokensAvailableSale >= totalSupply.add(_tokenAmount));
-
-        _processPurchase(_beneficiary, _tokenAmount);
-    }
-
-   /**
-   * @dev Validation of an incoming purchase. Use require statements to revert state when conditions are not met. Use super to concatenate validations.
-   * @param _beneficiary Address performing the token purchase
-   */
+    /**
+    * @dev Validation of an incoming purchase. Use require statements to revert state when conditions are not met. Use super to concatenate validations.
+    * @param _beneficiary Address performing the token purchase
+    */
     function _preValidatePurchase(address _beneficiary) internal {
         require(_beneficiary != address(0));
     }

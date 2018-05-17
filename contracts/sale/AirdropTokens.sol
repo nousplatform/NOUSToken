@@ -7,9 +7,11 @@ import "./Bounty.sol";
 
 contract AirdropTokens is Crowdsale, Bounty {
 
+    constructor() Crowdsale {
+
+    }
+
     // Deliver
-    // @dev Function to send NOUS to presale investors
-    // Can only be called while the presale is not over.
     // @param _salesAgent addresses sale agent
     // @param _batchOfAddresses list of addresses
     // @param _amountOf matching list of address balances
@@ -21,13 +23,12 @@ contract AirdropTokens is Crowdsale, Bounty {
         }
     }
 
-    // @dev Logic to transfer presale tokens
-    // Can only be called while the there are leftover presale tokens to allocate. Any multiple contribution from
-    // the same address will be aggregated.
     // @param _accountHolder user address
     // @param _amountOf balance to send out
     function deliverTokenToClient(address _accountHolder, uint256 _amountOf) public onlyOwner {
+        require(_amountOf > 0);
         require(_accountHolder != 0x0);
+        require(tokensAvailableSale >= token.totalSupply().add(_tokenAmount));
         uint256 _tokens = _amountOf.mul(EXPONENT);
 
         _processPurchase(_accountHolder, _tokens);

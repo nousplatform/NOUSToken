@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 
 import "./Crowdsale.sol";
-import "zeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/TokenTimelock.sol";
 
 
 contract Bounty is Crowdsale {
