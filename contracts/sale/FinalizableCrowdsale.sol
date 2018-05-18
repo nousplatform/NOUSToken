@@ -1,7 +1,7 @@
 pragma solidity ^0.4.11;
 
 
-import 'https://github.com/OpenZeppelin/zeppelin-solidity/contracts/ownership/Ownable.sol';
+import "zeppelin-solidity/contracts/ownership/Ownable.sol";
 
 
 /**
@@ -23,7 +23,7 @@ contract FinalizableCrowdsale is Ownable {
     require(!isFinalized);
 
     finalization();
-    Finalized();
+    emit Finalized();
 
     isFinalized = true;
   }

@@ -2,8 +2,8 @@ pragma solidity ^0.4.18;
 
 
 import "../Token.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "zeppelin-solidity/contracts/math/SafeMath.sol";
 import "./FinalizableCrowdsale.sol";
 
 
@@ -23,14 +23,6 @@ contract Crowdsale is FinalizableCrowdsale {
 
     constructor() {
         token = new Token();
-    }
-
-    /**
-    * @dev Validation of an incoming purchase. Use require statements to revert state when conditions are not met. Use super to concatenate validations.
-    * @param _beneficiary Address performing the token purchase
-    */
-    function _preValidatePurchase(address _beneficiary) internal {
-        require(_beneficiary != address(0));
     }
 
     /**
@@ -57,4 +49,12 @@ contract Crowdsale is FinalizableCrowdsale {
         Token(token).finishMinting();
     }
 
+    function pauseToken() external {
+        require(!isFinalized);
+        Token(token).pause();
+    }
+
+    function unpauseToken() external {
+        Token(token).unpause();
+    }
 }

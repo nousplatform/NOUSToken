@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
 
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "zeppelin-solidity/contracts/token/ERC20/PausableToken.sol";
 
 
 contract TokenRecipient {
@@ -27,6 +27,8 @@ contract Token is MintableToken, PausableToken {
     string public constant symbol = "NSU";
 
     uint32 public constant decimals = 18;
+
+    bool public paused = true;
 
     /**
       * Set allowance for other address and notify
