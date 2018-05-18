@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 
 import "./Crowdsale.sol";
 import "./Bounty.sol";
-import "zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
+import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/ERC20.sol";
 
 
 contract AirdropTokens is Crowdsale, Bounty {
