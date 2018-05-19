@@ -30,7 +30,12 @@ contract Crowdsale is FinalizableCrowdsale {
      * @param _beneficiary Address receiving the tokens
      * @param _tokenAmount Number of tokens to be purchased
      */
-    function _processPurchase(address _beneficiary, uint256 _tokenAmount) internal {
+    function _processPurchase(
+        address _beneficiary,
+        uint256 _tokenAmount
+    )
+    internal
+    {
         require(totalSupplyCap >= token.totalSupply().add(_tokenAmount));
         emit TokenPurchase(_beneficiary, _tokenAmount);
         _mintTokens(_beneficiary, _tokenAmount);
@@ -41,20 +46,33 @@ contract Crowdsale is FinalizableCrowdsale {
    * @param _beneficiary Address performing the token purchase
    * @param _tokenAmount Number of tokens to be emitted
    */
-    function _mintTokens(address _beneficiary, uint256 _tokenAmount) internal {
+    function _mintTokens(
+        address _beneficiary,
+        uint256 _tokenAmount
+    )
+    internal
+    {
         require(Token(token).mint(_beneficiary, _tokenAmount));
     }
 
-    function finalization() internal {
+    function finalization()
+    internal
+    {
         Token(token).finishMinting();
     }
 
-    function pauseToken() external {
+    function pauseToken()
+    external
+    onlyOwner
+    {
         require(!isFinalized);
         Token(token).pause();
     }
 
-    function unpauseToken() external {
+    function unpauseToken()
+    external
+    onlyOwner
+    {
         Token(token).unpause();
     }
 }
