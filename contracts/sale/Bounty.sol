@@ -31,18 +31,19 @@ contract Bounty is Crowdsale {
 
     function reserveBounty() internal {
         for (uint i; i < listAllocation.length; i++) {
-            if (listAllocation[i].beneficiary != 0x0) {
-                address _currentRecipient = listAllocation[i].beneficiary;
+            Allocation storage _curAll = listAllocation[i];
+            if (_curAll.beneficiary != 0x0) {
+                address _currentRecipient = _curAll.beneficiary;
 
-                if (listAllocation[i].delayDays > 0) {
-                    uint _releaseTime = block.timestamp.add(listAllocation[i].delayDays.mul(1 days));
-                    listAllocation[i].safeWallet = new TokenTimelock(token, listAllocation[i].beneficiary, _releaseTime);
-                    _currentRecipient = listAllocation[i].safeWallet;
+                if (_curAll.delayDays > 0) {
+                    uint _releaseTime = block.timestamp.add(_curAll.delayDays.mul(1 days));
+                    _curAll.safeWallet = new TokenTimelock(token, _curAll.beneficiary, _releaseTime);
+                    _currentRecipient = _curAll.safeWallet;
                 }
 
-                uint _tokenAmount = token.totalSupply().mul(listAllocation[i].percent).div(100);
+                uint _tokenAmount = token.totalSupply().mul(_curAll.percent).div(100);
                 _processPurchase(_currentRecipient, _tokenAmount);
-                emit BountyPurchase(listAllocation[i].beneficiary, listAllocation[i].safeWallet, _tokenAmount);
+                emit BountyPurchase(_curAll.beneficiary, _curAll.safeWallet, _tokenAmount);
             }
         }
     }
@@ -61,7 +62,7 @@ contract Bounty is Crowdsale {
             _totalPercent += listAllocation[i].percent;
         }
 
-        require(MAXPercentage > _totalPercent.add(_percent));
+        require(MAXPercentage >= _totalPercent.add(_percent));
 
         Allocation memory _allocation;
         _allocation.beneficiary = _beneficiary;

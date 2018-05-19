@@ -28,7 +28,9 @@ contract Token is MintableToken, PausableToken {
 
     uint32 public constant decimals = 18;
 
-    bool public paused = true;
+    constructor() {
+        paused = true;
+    }
 
     /**
       * Set allowance for other address and notify
