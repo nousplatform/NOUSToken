@@ -6,7 +6,7 @@ import "https://github.com/OpenZeppelin/zeppelin-solidity/contracts/token/ERC20/
 
 
 contract TokenRecipient {
-    function receiveApproval(address _from, uint _value) public;
+    function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData) public;
 }
 
 interface TokenInterface {
@@ -40,10 +40,10 @@ contract Token is MintableToken, PausableToken {
       * @param _spender The address authorized to spend
       * @param _value the max amount they can spend in EXPONENTS
       */
-    function approveAndCall(address _spender, uint256 _value) public returns (bool) {
+    function approveAndCall(address _spender, uint256 _value, bytes _extraData) public returns (bool) {
         TokenRecipient spender = TokenRecipient(_spender);
         if (approve(_spender, _value)) {
-            spender.receiveApproval(msg.sender, _value);
+            spender.receiveApproval(msg.sender, _value, this, _extraData);
             return true;
         }
     }
